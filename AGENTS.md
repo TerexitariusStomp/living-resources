@@ -25,7 +25,13 @@ Tests run directly:
 ```
 guile --no-auto-compile -L module -L . tests/e2e/sensing-cell.scm
 guile --no-auto-compile -L module -L . tests/e2e/refused-lanes.scm
+guile --no-auto-compile -L module -L . tests/e2e/write-lanes.scm
 ```
+
+No system guile? Fedora ships it as `guile30`; a no-sudo local install
+works too: `dnf download --resolve guile30`, `rpm2cpio … | cpio -idm`
+into a prefix, then run with `LD_LIBRARY_PATH`, `GUILE_LOAD_PATH` and
+`GUILE_LOAD_COMPILED_PATH` pointed at it. Verified: 63/63 checks pass.
 
 No build step: Guile modules under `module/`, seam adapters under
 `adapters/` (repo root on `-L`), OPA policies under `deploy/policies/`,
