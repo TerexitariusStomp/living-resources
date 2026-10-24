@@ -1,109 +1,97 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
-# EcoCell carrier PCB — fabrication package
+# EcoCell PCB fabrication packages
 
-`ecocell-carrier.kicad_pcb` is a manufacturable 2-layer carrier board
-(100 × 80 mm) generated parametrically by `tools/pcb/gen_carrier.py`.
-KiCad DRC: **0 violations, 0 unconnected items** (`kicad-cli pcb drc`).
-Gerbers, drill, BOM and pick-and-place are exported and ready to upload.
+Two boards live here. Order **the node** for deployment; the carrier is
+the earlier dev adapter, kept for bench work.
 
-## Board spec (Seeed Fusion standard capabilities)
+| Board | File | Role |
+|---|---|---|
+| **EcoCell One** (integrated node) | `ecocell-node.kicad_pcb` | the deployable product — one PCBA = the whole electronics |
+| EcoCell carrier | `ecocell-carrier.kicad_pcb` | dev adapter: socketed XIAO + head headers |
+
+Both are generated parametrically (`tools/pcb/gen_node.py`,
+`gen_carrier.py`) and DRC-clean: **0 violations, 0 unconnected items**.
+
+## EcoCell One — the one-order board
+
+100 × 100 mm, 2-layer. Everything electronic is on the board; the only
+off-board items are transducer heads, antenna, battery, enclosure.
+
+### On-board
+
+| Subsystem | Parts |
+|---|---|
+| MCU | U1 — **Seeed XIAO ESP32-S3**, reflowed as castellated SMD module (no sockets) |
+| Radio | U5 — **EBYTE E22-400M22S** UART LoRa module + J14 edge-mount SMA |
+| Sensors (bare ICs) | U2 BME280 (temp/RH/press), U3 BH1750 (lux), U4 AD7746 (capacitance → C4D electrodes) |
+| Charge+power | U6 TP4056 Li-ion charger, U7 MT3608 boost, J12 JST-XH battery, J13 PWR-SEL jumper |
+| Protection | F1 polyfuse 0.75 A, D3 SMAJ5.0A rail TVS, D2 SS14 reverse-polarity, D4–D6 PESD5V0 signal ESD |
+| Emit driver | R1 → Q1 2N7002 → J10 transducer terminal — **populated but consent-gated** |
+| Power LED | LED1/R2 (3V3 rail), LED2/R8 (charge status) |
+| Expansion | J1 PIR, J2 hydrophone, J3 ultrasonic, J4 I2C expansion, J6 C4D electrodes, J7 UART, J8 SPI, J9 5V-AUX |
+| Assembly | FID1–3 fiducials, 4× M3 mounts |
+
+### Board spec (Seeed Fusion standard)
 
 | Parameter | Value |
 |---|---|
-| Layers | 2 (F.Cu, B.Cu) |
-| Dimensions | 100 × 80 mm |
-| Min trace / space | 0.5 mm / 0.2 mm (signal), 0.8 mm (power) |
-| Min drill | 0.4 mm (vias), 1.0 mm (headers), 3.2 mm (M3 mounts) |
-| Thickness | 1.6 mm FR4 |
-| Copper | 1 oz |
-| Finish | HASL or ENIG — no special requirements |
-| Vias | through-hole only, no blind/buried |
-| Assembly marks | 3 fiducials (FID1–3), mask-margin type |
+| Layers / size | 2 / 100 × 100 mm |
+| Min trace / space | 0.35 mm / 0.2 mm (0.65 mm-pitch sensor cluster) |
+| Min via | 0.6 mm pad / 0.3 mm drill |
+| Thickness / copper / finish | 1.6 mm FR4 / 1 oz / HASL or ENIG |
+| Special | castellated-module reflow (U1, U5), edge-mount SMA |
 
-Well inside Fusion's cheapest tier — no HDI, no impedance control,
-no castellated edges.
-
-## What's on the board
-
-### Sensing / expansion
-
-- **U1A/U1B**: two 1×7 pin-socket rows for Seeed XIAO ESP32-S3 Sense
-  (17.78 mm row spacing; headers, so the XIAO stays socketed/removable)
-- **J1–J3** (left): PIR / hydrophone / ultrasonic heads — SIG, 3V3, GND
-- **J4–J6** (right): I2C sensors — 3V3, GND, SDA, SCL
-- **J7** (bottom): UART backhaul — RX, TX, GND, 5V
-- **J8** (bottom-left): SPI/expansion — 3V3, GND, MOSI, MISO, SCK
-- **J9**: 5V-AUX tap (protected side — feeds a 5V peripheral such as a
-  LoRa/RNode module)
-- **J10**: emit transducer terminal (EMIT_SW + 3V3, consent-gated lane)
-- **Emit driver**: R1 100R → Q1 2N7002 gate; D1 1N4148W flyback;
-  C1 decoupling
-
-### Field protection (v2 additions)
-
-- **J11**: Phoenix MKDS 2-pole screw terminal — rugged 5V input
-  (6–12 V tolerant wiring practice; the Schottky drop makes the rail
-  ≈ VIN − 0.4 V, so feed 5.5–6 V for a full 5 V rail, or feed 5 V and
-  accept ~4.6 V — ESP32-S3 regulates from its own 5V pin down to 3V3
-  either way)
-- **F1**: 1206 resettable polyfuse, 0.75 A hold
-- **D3**: SMAJ5.0A unidirectional TVS across the rail (clamps transients)
-- **D2**: SS14 Schottky in series — reverse-polarity protection
-- **D4–D6**: PESD5V0 SOD-323 ESD/TVS clamps on the J1–J3 signal pins
-  (the exposed head inputs that get handled/walked in the field)
-- **LED1 + R2**: green 0805 power indicator on the 3V3 rail
-- Power order: J11 → F1 → [D3 to GND] → D2 → +5V net (trunk on B.Cu)
-
-### Plane
-
-- GND plane on B.Cu + explicit GND backbone (spine + top bus + stubs);
-  M3 mounting holes with copper keepouts
-
-## Files for Seeed
+### Files for Seeed
 
 ```
 hardware/pcb/
-  ecocell-carrier.kicad_pcb          KiCad source (regenerate via tools/pcb/gen_carrier.py)
-  gerbers/ecocell-carrier-gerbers.zip  upload this to Fusion
-  gerbers/ecocell-carrier/           raw Gerber + drill files
-  assembly/ecocell-carrier-bom.csv   manufacturing BOM (25 line items)
-  assembly/ecocell-carrier-cpl.csv   pick-and-place (12 SMT parts)
-  render-top.svg                     copper/mask/edge plot
-  render.png                         3D render
+  ecocell-node.kicad_pcb            KiCad source (regen via tools/pcb/gen_node.py)
+  ecocell-node.png                  3D render
+  gerbers/ecocell-node-gerbers.zip  upload this to Fusion
+  gerbers/ecocell-node/             raw Gerber + drill
+  assembly/ecocell-node-bom.csv     manufacturing BOM (46 lines)
+  assembly/ecocell-node-cpl.csv     pick-and-place (30 SMT placements)
 ```
 
-## Ordering — the click path
+### Ordering
 
-1. **Fusion → PCB + Assembly**: upload
-   `gerbers/ecocell-carrier-gerbers.zip`; set 2-layer, 100×80 mm,
-   1.6 mm FR4, 1 oz, HASL, qty 5–10 (first run).
-2. **PCBA**: upload `assembly/ecocell-carrier-bom.csv` +
-   `assembly/ecocell-carrier-cpl.csv`; mark every SMT line "acceptable
-   equivalent" (all jellybean values — Seeed substitutes their stock).
-   Ask in the quote for the THT lines (sockets/headers/J11) to be
-   placed too if you want zero hand work — otherwise ~10 min of
-   through-hole soldering per board.
-3. **Same order or separate**: add XIAO ESP32-S3 Sense (Seeed
-   113991115) + microSD from the Seeed store — they plug in, no solder.
-4. **Field kit** (other suppliers): heads, radio, power, enclosure —
-   the full matrix with part numbers is `FIELD-KIT.md`.
-5. **Then**: `PROVISIONING.md` — flash, identity, consent, pairing.
+1. **Fusion → PCB + Assembly**: upload the Gerber zip; 2-layer,
+   100×100 mm, 1.6 mm, 1 oz, HASL, qty 5–10 first run.
+2. **PCBA**: upload `ecocell-node-bom.csv` + `ecocell-node-cpl.csv`.
+   Mark jellybean lines (R/C/diodes/fuse) "acceptable equivalent".
+   **Modules need explicit sourcing** — ask Seeed to supply
+   XIAO ESP32-S3 (they make it) and EBYTE E22-400M22S; both are
+   castellated reflow parts. If Fusion won't source them, order the
+   modules from the Seeed store / EBYTE and consign them.
+3. **THT leftovers**: J1–J10 headers, J11 screw terminal, J12 JST-XH,
+   J13 PWR-SEL, J14 SMA — ~15 min hand solder, or ask Fusion to place.
+4. **Field kit**: heads, antenna, battery, enclosure → `FIELD-KIT.md`.
+5. **Provision**: `PROVISIONING.md`.
 
 ## Honest flags before ordering
 
-- **Pin mapping is provisional** — verify D0–D10 assignments against the
-  exact XIAO ESP32-S3 Sense board revision before committing to a run.
-- **Ultrasonic head** (D2): 20–100 kHz exceeds easy ESP32 ADC capture;
-  header is wired but firmware needs decimation or the ESP-IDF path.
-- **Emit lane**: populated but consent-gated — the J10 path is inert
-  until firmware + policy unlock it. That is the product, not a defect.
-- The emit MOSFET/diode sizes are chosen for a small piezo transducer;
-  a higher-power actuator needs a bigger Q1 + diode and a review of
-  trace widths on EMIT_SW.
-- **D4–D6 are ESD clamps, not surge arrestors** — they protect the
-  signal pins against handling/static; a direct lightning-induced
-  surge on a long head cable still needs the cable kept short or an
-  inline GDT at the enclosure gland (noted in FIELD-KIT.md).
-- This is **fab-ready, not yet production-proven**: no unit has been
-  fabricated or bench-tested. Order a small run (5–10 boards), run the
-  first-article checklist in `ASSEMBLY.md`, then scale.
+- **Region**: E22-400M22S is the 433 MHz variant. For EU868/US915 order
+  E22-900M22S — same footprint, same UART, swap the BOM line.
+- **XIAO reflow**: verify Fusion can place the castellated XIAO module
+  (it's a tall, heavy part vs typical SMD). If not, the fallback is
+  hand-soldering the module's castellated pads — doable but defeats
+  the one-item goal; ask in the quote first.
+- **BH1750 footprint is custom-drawn** (WSOF-6): verify against the
+  ROHM datasheet land pattern before a second spin.
+- **Pin map is provisional** — verify D0–D10 against the XIAO Sense
+  board revision (same flag as the carrier).
+- **PWR-SEL (J13)**: jumper selects protected-5V-in (J11/J9) vs
+  battery-boost (J12+U7). Ship with a jumper or specify default.
+- **Ultrasonic head** firmware caveat unchanged (decimation / ESP-IDF).
+- **Emit lane** populated but consent-gated — inert until firmware +
+  policy unlock it. That is the product, not a defect.
+- **0/0 DRC ≠ production-proven**: no fabricated unit exists. The
+  first-article checklist in `ASSEMBLY.md` + `FIELD-KIT.md` is what
+  turns this into a field-proven product. Order 5–10, bench one.
+
+## Carrier (dev board, kept for reference)
+
+`ecocell-carrier.kicad_pcb`, 100 × 80 mm — socketed XIAO + header
+breakout. Also DRC-clean with its own Gerbers/BOM/CPL under `gerbers/`
+and `assembly/`. Useful for bring-up before committing to the
+integrated spin.

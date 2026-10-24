@@ -1,9 +1,12 @@
 # BOM — EcoCell universal node
 
 Prices are rough 2026 spot prices — verify at order time. Every item is
-commodity. For the manufactured-carrier path, `pcb/assembly/` is the
-Seeed BOM and `FIELD-KIT.md` is the complete per-node sourcing matrix —
-use those two when ordering a run; this file stays the hand-build list.
+commodity. For a manufactured run, `pcb/assembly/` has the Seeed BOMs
+and `FIELD-KIT.md` is the complete sourcing matrix — use those two.
+**EcoCell One** (`ecocell-node.kicad_pcb`) reflows the XIAO, E22 LoRa
+module and the BME280/BH1750/AD7746 as bare ICs onto one board — the
+integrated path supersedes the module/perfboard build below, which
+stays the hand-build/prototype list.
 
 ## Core (on every unit)
 
