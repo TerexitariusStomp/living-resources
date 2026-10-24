@@ -39,6 +39,7 @@ ifeq ($(strip $(GUILE)),)
 	  '            if c == ";": st = 2' \
 	  '            elif c == chr(34): st = 1' \
 	  '            elif s[i:i+2] == "#|": st = 3; i += 1' \
+	  '            elif s[i:i+2] == "#" + chr(92): i += 1' \
 	  '            elif s[i:i+2] == "#;": i += 1' \
 	  '            elif c == "(": d += 1' \
 	  '            elif c == ")":' \

@@ -66,7 +66,7 @@
                  (band . ,(get 'band))
                  (start . ,(get 'start))
                  (end . ,(get 'end))
-                 (audio-said . ,(get 'audio_said))))
+                 (audio-said . ,(get 'audio_said)))
      #:mic-cal (or (get 'mic_cal) (get 'mic-cal) (get 'calibration))
      #:gain (or (get 'gain) 0))))
 

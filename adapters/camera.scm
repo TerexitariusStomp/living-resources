@@ -63,7 +63,7 @@
                  (confidence . ,(get 'confidence))
                  (pheno-stage . ,(get 'pheno_stage))
                  (count . ,(get 'count))
-                 (frame-said . ,(get 'frame_said))))
+                 (frame-said . ,(get 'frame_said)))
      #:mic-cal (get 'frame_said)
      #:gain 0)))
 

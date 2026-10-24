@@ -51,7 +51,9 @@ firmware/node/   MicroPython universal node (incl. consent-gated EmitLane)
 deploy/policies/ OPA: lane-gate.rego · consent.rego
 spec/            the system spec
 docs/            SCIENCE (claim table) · EXPERIMENTS (E-gates) · ROADMAP
-tests/e2e/       sensing-cell · refused-lanes
+tests/e2e/       sensing-cell · refused-lanes · write-lanes
+tools/edge/      classify.py (edge ML seam) · rns_edge.py (LXMF daemon)
+tools/e0/        score.py (blinded field-validation scorer)
 ```
 
 ## Non-interference

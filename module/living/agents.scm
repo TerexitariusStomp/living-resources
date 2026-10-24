@@ -76,7 +76,7 @@
     ;; signs the credential's name, binding this agent to that consent.
     ((grant-consent guardian-aid signature consent-said)
      (cond
-      ((revoked? (error "eco-agent: revoked subjects take no new consent")))
+      (revoked? (error "eco-agent: revoked subjects take no new consent"))
       ((not (equal? guardian-aid (ecological-agent-guardian-aid agent)))
        (error "eco-agent: only the guardian grants consent"))
       ((not (guardian-verified? agent signature consent-said))
@@ -115,7 +115,7 @@
     ((amend guardian-aid signature fields)
      (let ((guardians-only '(voice guardian-aid consent id)))
        (cond
-        ((revoked? (error "eco-agent: revoked subjects are immutable")))
+        (revoked? (error "eco-agent: revoked subjects are immutable"))
         ((not (equal? guardian-aid (ecological-agent-guardian-aid agent)))
          (error "eco-agent: only the guardian amends"))
         ((any (lambda (f) (memq (car f) guardians-only)) fields)
@@ -142,7 +142,7 @@
     ((transfer guardian-aid signature new-guardian-aid new-custody)
      (let ((payload (list 'transfer new-guardian-aid new-custody)))
        (cond
-        ((revoked? (error "eco-agent: revoked subjects do not transfer")))
+        (revoked? (error "eco-agent: revoked subjects do not transfer"))
         ((not (equal? guardian-aid (ecological-agent-guardian-aid agent)))
          (error "eco-agent: only the sitting guardian transfers custody"))
         ((not (guardian-verified? agent signature payload))

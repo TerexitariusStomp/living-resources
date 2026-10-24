@@ -81,6 +81,10 @@ firmware/node/   main.py — MicroPython universal node: I2S 48kHz/16-bit →
                  lanes populated incl. consent-gated EmitLane
 deploy/policies/ lane-gate.rego · consent.rego
 tests/e2e/       sensing-cell.scm (full pipeline) · refused-lanes.scm
+                 · write-lanes.scm (consent-gated writes)
+tools/edge/      classify.py (OpenSoundscape seam + energy-gate fallback)
+                 · rns_edge.py (real RNS/LXMF edge daemon)
+tools/e0/        score.py (blinded-validation scorer for field E0)
 ```
 
 ## Conventions

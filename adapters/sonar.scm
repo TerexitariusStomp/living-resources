@@ -60,7 +60,7 @@
                  (band-hz . ,(get 'band_hz))
                  (depth-m . ,(get 'depth_m))
                  (snr . ,(get 'snr))
-                 (consent-said . ,(get 'consent_said))))
+                 (consent-said . ,(get 'consent_said)))
      #:mic-cal (get 'calibration)
      #:gain 0)))
 

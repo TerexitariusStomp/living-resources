@@ -14,6 +14,7 @@
              (living offers)
              (living settlement)
              (srfi srfi-1)
+             (srfi srfi-11)
              (ice-9 format))
 
 (define pass-count 0)

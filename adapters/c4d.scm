@@ -58,7 +58,7 @@
                  (conductance . ,(get 'conductance))
                  (wave-period-s . ,(get 'wave_period_s))
                  (amplitude . ,(get 'amplitude))
-                 (vessel-id . ,(get 'vessel_id))))
+                 (vessel-id . ,(get 'vessel_id)))
      #:mic-cal (get 'electrode_cal)
      #:gain 0)))
 
