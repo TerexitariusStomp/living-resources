@@ -29,7 +29,8 @@ for i, name in enumerate([
         "GND", "+3V3", "+5V",
         "D0_PIR", "D1_HYDRO", "D2_ULTRA", "D3_EMIT", "EMIT_GATE",
         "EMIT_SW", "SDA", "SCL", "TX_D6", "RX_D7",
-        "SCK_D8", "MISO_D9", "MOSI_D10"], start=1):
+        "SCK_D8", "MISO_D9", "MOSI_D10",
+        "VIN", "VPROT", "LEDPWR"], start=1):
     n = pcbnew.NETINFO_ITEM(board, name)
     n.SetNetCode(i)
     board.Add(n)
@@ -113,7 +114,6 @@ place(HDR, "PinHeader_1x05_P2.54mm_Vertical", "J8", "SPI", (15, 70),
 # battery/5V input (GND, 5V) — p2 sits on the 5V trunk
 place(HDR, "PinHeader_1x02_P2.54mm_Vertical", "J9", "5V-IN", (46, 75),
       pin_nets={"1": "GND", "2": "+5V"})
-
 # emit transducer terminal (EMIT_SW, 3V3)
 place(HDR, "PinHeader_1x02_P2.54mm_Vertical", "J10", "EMIT-40k", (64, 68),
       pin_nets={"1": "EMIT_SW", "2": "+3V3"})
@@ -128,6 +128,34 @@ place("Package_TO_SOT_SMD.pretty", "SOT-23", "Q1", "2N7000", (50, 52),
 # flyback diode, rotated so cathode faces right (toward 3V3)
 place("Diode_SMD.pretty", "D_SOD-123", "D1", "1N4148W", (56, 52), rot=180,
       pin_nets={"1": "+3V3", "2": "EMIT_SW"})
+
+# --- production: protected 5V input + signal TVS + power LED + fiducials
+TB = "TerminalBlock_Phoenix.pretty"
+place(TB, "TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",
+      "J11", "5V-SCREW", (80, 74.5), pin_nets={"1": "VIN", "2": "GND"})
+place("Fuse.pretty", "Fuse_1206_3216Metric", "F1", "0.75A", (74, 74.5),
+      pin_nets={"1": "VPROT", "2": "VIN"})
+# rail TVS: rot=180 puts cathode (pad1) at +2.0 -> VPROT side
+place("Diode_SMD.pretty", "D_SMA", "D3", "SMAJ5.0A", (68, 76), rot=180,
+      pin_nets={"1": "VPROT", "2": "GND"})
+# series Schottky (reverse-polarity): pad1 cathode -> +5V, pad2 anode <- VPROT
+place("Diode_SMD.pretty", "D_SMA", "D2", "SS14", (59, 74.5),
+      pin_nets={"1": "+5V", "2": "VPROT"})
+# signal TVS on the exposed head inputs (cathode pad1 -> SIG, anode -> GND)
+for ref, y, snet, gndy in [("D4", 22.5, "D0_PIR", 25.08),
+                           ("D5", 32.5, "D1_HYDRO", 35.08),
+                           ("D6", 42.5, "D2_ULTRA", 45.08)]:
+    place("Diode_SMD.pretty", "D_SOD-323", ref, "PESD5V0", (15.5, y),
+          rot=270, pin_nets={"1": snet, "2": "GND"})
+# power LED: 3V3 -> R2 -> LED anode, LED cathode -> GND
+place("Resistor_SMD.pretty", "R_0805_2012Metric", "R2", "1k", (71.5, 20),
+      pin_nets={"1": "+3V3", "2": "LEDPWR"})
+place("LED_SMD.pretty", "LED_0805_2012Metric", "LED1", "PWR-GRN",
+      (76, 20), rot=180, pin_nets={"1": "GND", "2": "LEDPWR"})
+# fiducials for the PCBA line (pad has no pin number -> netless marker)
+for i, pos in enumerate([(10, 10), (90, 10), (10, 66)], start=1):
+    place("Fiducial.pretty", "Fiducial_1mm_Mask3mm", "FID%d" % i,
+          "FID", pos)
 
 # mounting holes
 HOLES = [(5, 5), (95, 5), (5, 75), (95, 75)]
@@ -264,12 +292,43 @@ seg([(15, 74), (12, 74)], B, TRACK, "GND")
 for y in (25.08, 35.08, 45.08):
     seg([(10, y), (12, y)], F, TRACK, "GND")
     via((12, y), "GND")
-# J7.3 + J9.1 + Q1: F.Cu hop past the B.Cu pocket, via to spine
-seg([(40, 69.08), (42, 69.08), (42, 75), (60.5, 75)], F, TRACK, "GND")
-via((60.5, 75), "GND")
+# J7.3 + J9.1: F.Cu run along the left, via at (38.5,60) outside the
+# B.Cu pocket -> lands in the main fill
+seg([(40, 69.08), (38.5, 69.08), (38.5, 75), (46, 75)], F, TRACK, "GND")
+seg([(38.5, 69.08), (38.5, 60)], F, TRACK, "GND")
+via((38.5, 60), "GND")
 qx, qy = pad_xy("Q1", "2")
-seg([(qx, qy), (47.5, 54.5), (44, 56), (44, 72), (42, 72)], F, TRACK,
-    "GND")
+seg([(qx, qy), (47.5, 54.5), (44, 56), (44, 72), (42, 72), (42, 74),
+     (38.5, 74)], F, TRACK, "GND")
+
+# --- protected 5V input chain: J11 -> F1 -> D3 TVS -> D2 Schottky -> trunk
+seg([(80, 74.5), (75.4, 74.5)], F, PWR, "VIN")        # J11.1 -> F1.2
+seg([(72.6, 74.5), (61, 74.5)], F, PWR, "VPROT")      # F1.1 -> D2.2
+seg([(70, 76), (70, 74.5)], F, TRACK, "VPROT")        # D3 cathode tap
+seg([(66, 76), (63.5, 76.2)], F, TRACK, "GND")        # D3 anode -> via
+via((63.5, 76.2), "GND")
+seg([(63.5, 76.2), (60.5, 75)], B, TRACK, "GND")      # joins spine end
+seg([(57, 74.5), (57, 77.54)], F, PWR, "+5V")         # D2.1 -> via
+via((57, 77.54), "+5V")                               # onto the B.Cu trunk
+seg([(85, 74.5), (86.5, 75.5)], F, TRACK, "GND")      # J11.2 -> via
+via((86.5, 75.5), "GND")
+seg([(86.5, 75.5), (86.5, 72)], B, TRACK, "GND")
+
+# --- signal TVS stubs (pad_xy picks up the actual rotated pad spots)
+for ref, sig_y, gnd_y, snet in [("D4", 20, 25.08, "D0_PIR"),
+                                ("D5", 30, 35.08, "D1_HYDRO"),
+                                ("D6", 40, 45.08, "D2_ULTRA")]:
+    cx, cy = pad_xy(ref, "1")
+    ax, ay = pad_xy(ref, "2")
+    seg([(cx, cy), (cx, sig_y), (10, sig_y)], F, TRACK, snet)
+    seg([(ax, ay), (ax, gnd_y), (10, gnd_y)], F, TRACK, "GND")
+
+# --- power LED chain: 3V3 -> R2 -> LED anode; cathode -> GND via spine
+seg([(70.56, 15), (70.56, 20)], F, TRACK, "+3V3")
+seg([(72.44, 20), (75.06, 20)], F, TRACK, "LEDPWR")
+seg([(76.94, 20), (76.94, 22.5)], F, TRACK, "GND")
+via((76.94, 22.5), "GND")
+seg([(76.94, 22.5), (76.94, 24), (60.5, 24)], B, TRACK, "GND")
 
 # --------------------------------------------------------------- zones
 # GND plane on B.Cu
@@ -323,6 +382,8 @@ text("XIAO-S3 USB-up", (44, 13), 1.0)
 text("J1 PIR / J2 HYDRO / J3 ULTRA", (16, 55), 1.0)
 text("I2C x3", (86, 62), 1.0)
 text("EMIT: consent-gated", (52, 44), 1.0)
+text("5V-IN protected", (58, 78.8), 0.9)
+text("PWR", (68, 17), 0.9)
 
 # -------------------------------------------------------------- fill+save
 try:

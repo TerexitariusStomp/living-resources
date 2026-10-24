@@ -1,8 +1,13 @@
 Designator,Val,Package,Layer,Notes
 C1,100nF,C_0805_2012Metric,top,SMT - PCBA
 D1,1N4148W,D_SOD-123,top,SMT - PCBA
+D2,SS14,D_SMA,top,SMT - PCBA
+D3,SMAJ5.0A,D_SMA,top,SMT - PCBA
+D4,PESD5V0,D_SOD-323,top,SMT - PCBA
+D5,PESD5V0,D_SOD-323,top,SMT - PCBA
+D6,PESD5V0,D_SOD-323,top,SMT - PCBA
+F1,0.75A,Fuse_1206_3216Metric,top,SMT - PCBA
 J1,PIR,PinHeader_1x03_P2.54mm_Vertical,top,THT - hand solder
-J10,EMIT-40k,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
 J2,HYDRO,PinHeader_1x03_P2.54mm_Vertical,top,THT - hand solder
 J3,ULTRA,PinHeader_1x03_P2.54mm_Vertical,top,THT - hand solder
 J4,I2C-BME280,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
@@ -11,7 +16,11 @@ J6,I2C-AD7746,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
 J7,UART,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
 J8,SPI,PinHeader_1x05_P2.54mm_Vertical,top,THT - hand solder
 J9,5V-IN,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
+J10,EMIT-40k,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
+J11,5V-SCREW,"TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",top,THT - hand solder
+LED1,PWR-GRN,LED_0805_2012Metric,top,SMT - PCBA
 Q1,2N7000,SOT-23,top,SMT - PCBA
 R1,100R,R_0805_2012Metric,top,SMT - PCBA
-U1A,XIAO-L,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder
+R2,1k,R_0805_2012Metric,top,SMT - PCBA
 U1B,XIAO-R,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder
+U1A,XIAO-L,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder

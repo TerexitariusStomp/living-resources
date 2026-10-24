@@ -9,6 +9,7 @@ never an upgrade purchase.
 | File | For |
 |---|---|
 | `BOM.md` | What to buy — core board + every head + per-deployment kits |
+| `FIELD-KIT.md` | **Complete sourcing matrix** — Seeed-assembled vs plug-in vs field kit, first-article test plan |
 | `PINOUT.md` | How it wires — the pin map the firmware and heads share |
 | `ASSEMBLY.md` | How to build — solder points, flash steps, bench test |
 | `ENCLOSURE.md` | How to deploy — garden / shore-dock / reef-float / submerged forms |
@@ -37,10 +38,13 @@ never an upgrade purchase.
 
 1. **Hand build (v1, now):** XIAO ESP32-S3 Sense + breakout modules on
    headers — no PCB fab needed, ~1–2 h per unit, ~$35–45.
-2. **Carrier board (v1.5, tender path):** `pcb/` holds a **DRC-clean,
+2. **Carrier board (v2, tender path):** `pcb/` holds a **DRC-clean,
    fab-ready KiCad design** — upload `gerbers/ecocell-carrier-gerbers.zip`
-   to Seeed Fusion (2-layer, 100×80, standard spec). See `PCB.md` for the
-   full package, ordering steps, and flags.
+   to Seeed Fusion (2-layer, 100×80, standard spec). v2 adds the field
+   layer: screw-terminal 5V input, fuse, reverse-polarity Schottky, rail
+   TVS, ESD clamps on the head inputs, power LED, fiducials. See `PCB.md`
+   for the package and `FIELD-KIT.md` for everything else a deployable
+   node still needs (XIAO, heads, radio, power, enclosure).
 
 ## Honest flags
 

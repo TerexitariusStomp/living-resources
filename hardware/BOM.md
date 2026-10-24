@@ -1,7 +1,9 @@
 # BOM — EcoCell universal node
 
 Prices are rough 2026 spot prices — verify at order time. Every item is
-commodity; nothing custom until the v1.5 carrier board.
+commodity. For the manufactured-carrier path, `pcb/assembly/` is the
+Seeed BOM and `FIELD-KIT.md` is the complete per-node sourcing matrix —
+use those two when ordering a run; this file stays the hand-build list.
 
 ## Core (on every unit)
 
