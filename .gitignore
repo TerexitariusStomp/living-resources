@@ -1,0 +1,13 @@
+*~
+*.pyc
+__pycache__/
+*.go
+*.wav
+*.flac
+*.pcm
+data/
+.env
+.env.*
+node_modules/
+dist/
+build/
