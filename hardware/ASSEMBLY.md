@@ -3,6 +3,10 @@
 Time: ~1–2 h per unit. Tools: soldering iron, hookup wire, perfboard or
 header strips, multimeter. Skill level: through-hole soldering only.
 
+**Visual references**: `diagrams/wiring.svg` (every wire, color-coded by
+net), `diagrams/layout.svg` (where each part sits on the carrier),
+`diagrams/enclosure-forms.svg` (how it looks assembled per site).
+
 ## 1. Board prep
 
 1. Solder the supplied headers to the XIAO ESP32-S3 Sense (both rows).

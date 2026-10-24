@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="700" font-family="monospace" font-size="12">
+  <rect width="1100" height="700" fill="#1c2023"/>
+  <text x="30" y="34" fill="#eaeaea" font-size="18" font-weight="bold">Enclosure forms — cross-sections (not to scale)</text>
+
+  <!-- FORM A: garden -->
+  <g>
+    <text x="60" y="70" fill="#9fd5cc" font-size="14" font-weight="bold">A · Garden stake</text>
+    <rect x="80" y="110" width="180" height="160" rx="10" fill="#3a4a4a" stroke="#6a8a8a" stroke-width="2"/>
+    <rect x="100" y="130" width="140" height="90" rx="6" fill="#7a5a30" stroke="#a8844a"/>
+    <text x="170" y="180" fill="#f0e0c0" text-anchor="middle" font-size="10">carrier + XIAO</text>
+    <rect x="100" y="230" width="50" height="30" fill="#2a6a4a"/>
+    <text x="125" y="249" fill="#d0f0dc" text-anchor="middle" font-size="9">PTFE vent</text>
+    <rect x="190" y="230" width="50" height="30" fill="#2a4a6a"/>
+    <text x="215" y="249" fill="#c8dcf0" text-anchor="middle" font-size="9">cam window</text>
+    <rect x="155" y="270" width="30" height="130" fill="#5a4a2a"/>
+    <text x="170" y="345" fill="#c8b080" text-anchor="middle" font-size="10">stake</text>
+    <text x="85" y="420" fill="#8a8f94" font-size="10">strap mount — no screws in bark</text>
+    <text x="85" y="438" fill="#8a8f94" font-size="10">mic vent + cam window face out</text>
+  </g>
+
+  <!-- FORM B: shore-dock -->
+  <g>
+    <text x="340" y="70" fill="#9fd5cc" font-size="14" font-weight="bold">B · Shore-dock (ocean primary)</text>
+    <rect x="350" y="90" width="220" height="40" fill="#4a3a2a"/>
+    <text x="460" y="115" fill="#c8b080" text-anchor="middle" font-size="10">dock / breakwater</text>
+    <rect x="380" y="140" width="150" height="120" rx="10" fill="#3a4a4a" stroke="#6a8a8a" stroke-width="2"/>
+    <text x="455" y="205" fill="#d0e0e0" text-anchor="middle" font-size="10">node (dry, above waterline)</text>
+    <rect x="440" y="260" width="10" height="60" fill="#6a6a8a"/>
+    <ellipse cx="445" cy="340" rx="22" ry="16" fill="#1f4a6e" stroke="#4f9fd0" stroke-width="1.5"/>
+    <text x="445" y="344" fill="#c8dcf0" text-anchor="middle" font-size="9">hydro</text>
+    <rect x="330" y="330" width="260" height="60" fill="#16324a" opacity="0.7"/>
+    <text x="460" y="360" fill="#6a9ac0" text-anchor="middle" font-size="10">water column</text>
+    <text x="350" y="410" fill="#8a8f94" font-size="10">nothing on seabed · lead through gland</text>
+  </g>
+
+  <!-- FORM C: reef float -->
+  <g>
+    <text x="700" y="70" fill="#9fd5cc" font-size="14" font-weight="bold">C · Moored reef float</text>
+    <ellipse cx="800" cy="150" rx="90" ry="45" fill="#a8843a" stroke="#d0b058" stroke-width="2"/>
+    <text x="800" y="145" fill="#3a2a10" text-anchor="middle" font-weight="bold">float = node</text>
+    <text x="800" y="162" fill="#4a3a18" text-anchor="middle" font-size="9">solar + antenna top</text>
+    <rect x="795" y="195" width="8" height="80" fill="#6a6a8a"/>
+    <ellipse cx="799" cy="295" rx="18" ry="13" fill="#1f4a6e" stroke="#4f9fd0"/>
+    <text x="799" y="299" fill="#c8dcf0" text-anchor="middle" font-size="9">hydro</text>
+    <rect x="680" y="330" width="240" height="60" fill="#16324a" opacity="0.7"/>
+    <rect x="775" y="390" width="50" height="35" fill="#4a4a4a"/>
+    <text x="800" y="411" fill="#a0a0a0" text-anchor="middle" font-size="9">weight</text>
+    <line x1="800" y1="195" x2="800" y2="390" stroke="#888" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <text x="690" y="450" fill="#8a8f94" font-size="10">deadweight or existing structure · sat/LoRa</text>
+  </g>
+
+  <!-- FORM D: submerged pod -->
+  <g>
+    <text x="60" y="480" fill="#9fd5cc" font-size="14" font-weight="bold">D · Submerged pod (shore-cabled)</text>
+    <rect x="80" y="500" width="260" height="50" fill="#16324a" opacity="0.7"/>
+    <rect x="120" y="505" width="70" height="40" rx="18" fill="#3a3a4a" stroke="#6a6a8a" stroke-width="2"/>
+    <text x="155" y="529" fill="#c0c0e0" text-anchor="middle" font-size="9">potted pod</text>
+    <line x1="190" y1="525" x2="330" y2="525" stroke="#8a8a5a" stroke-width="2.5"/>
+    <text x="255" y="515" fill="#a8a86a" font-size="10">power + serial</text>
+    <text x="80" y="585" fill="#8a8f94" font-size="10">lays on bottom · hydrophone integral</text>
+  </g>
+
+  <!-- emit note -->
+  <g>
+    <text x="450" y="480" fill="#d07850" font-size="14" font-weight="bold">Emit head — on every unit</text>
+    <rect x="450" y="495" width="300" height="85" rx="8" fill="#2a3236" stroke="#d07850"/>
+    <text x="465" y="518" fill="#c0a890" font-size="10">40 kHz transducer mounted inside the</text>
+    <text x="465" y="534" fill="#c0a890" font-size="10">enclosure facing the medium (air/water).</text>
+    <text x="465" y="555" fill="#d07850" font-size="10">Hardware live; activation = consent flag.</text>
+    <text x="465" y="573" fill="#d07850" font-size="10">No consent → pin stays silent, always.</text>
+  </g>
+</svg>

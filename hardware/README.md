@@ -13,6 +13,9 @@ never an upgrade purchase.
 | `ASSEMBLY.md` | How to build — solder points, flash steps, bench test |
 | `ENCLOSURE.md` | How to deploy — garden / shore-dock / reef-float / submerged forms |
 | `DATASHEET.md` | The tender-attachable product sheet (prospective — v1 target) |
+| `diagrams/wiring.svg` | **Visual: full wiring diagram** — every pin→head wire, net colors |
+| `diagrams/layout.svg` | **Visual: carrier top-view** — component placement on perfboard |
+| `diagrams/enclosure-forms.svg` | **Visual: 4 cross-sections** — garden/shore/float/pod |
 
 ## The build in one picture
 

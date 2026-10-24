@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" font-family="monospace" font-size="12">
+  <rect width="900" height="560" fill="#1c2023"/>
+  <text x="30" y="34" fill="#eaeaea" font-size="18" font-weight="bold">Carrier layout — top view (perfboard, ~100×70 mm)</text>
+
+  <!-- perfboard -->
+  <rect x="60" y="60" width="780" height="440" rx="6" fill="#7a5a30" stroke="#a8844a" stroke-width="2"/>
+  <!-- hole grid suggestion -->
+  <g fill="#5a4220" opacity="0.55">
+    <g>
+      <circle cx="80" cy="80" r="1.6"/><circle cx="100" cy="80" r="1.6"/><circle cx="120" cy="80" r="1.6"/><circle cx="140" cy="80" r="1.6"/><circle cx="160" cy="80" r="1.6"/><circle cx="180" cy="80" r="1.6"/><circle cx="200" cy="80" r="1.6"/><circle cx="220" cy="80" r="1.6"/><circle cx="240" cy="80" r="1.6"/><circle cx="260" cy="80" r="1.6"/><circle cx="280" cy="80" r="1.6"/><circle cx="300" cy="80" r="1.6"/><circle cx="320" cy="80" r="1.6"/><circle cx="340" cy="80" r="1.6"/><circle cx="360" cy="80" r="1.6"/><circle cx="380" cy="80" r="1.6"/><circle cx="400" cy="80" r="1.6"/><circle cx="420" cy="80" r="1.6"/><circle cx="440" cy="80" r="1.6"/><circle cx="460" cy="80" r="1.6"/><circle cx="480" cy="80" r="1.6"/><circle cx="500" cy="80" r="1.6"/><circle cx="520" cy="80" r="1.6"/><circle cx="540" cy="80" r="1.6"/><circle cx="560" cy="80" r="1.6"/><circle cx="580" cy="80" r="1.6"/><circle cx="600" cy="80" r="1.6"/><circle cx="620" cy="80" r="1.6"/><circle cx="640" cy="80" r="1.6"/><circle cx="660" cy="80" r="1.6"/><circle cx="680" cy="80" r="1.6"/><circle cx="700" cy="80" r="1.6"/><circle cx="720" cy="80" r="1.6"/><circle cx="740" cy="80" r="1.6"/><circle cx="760" cy="80" r="1.6"/><circle cx="780" cy="80" r="1.6"/><circle cx="800" cy="80" r="1.6"/>
+    </g>
+  </g>
+
+  <!-- XIAO center -->
+  <rect x="360" y="140" width="180" height="240" rx="8" fill="#24504f" stroke="#3aa08f" stroke-width="2"/>
+  <text x="450" y="200" fill="#fff" text-anchor="middle" font-weight="bold">XIAO ESP32-S3</text>
+  <text x="450" y="218" fill="#bfe8e0" text-anchor="middle" font-size="10">Sense (headers both sides)</text>
+  <rect x="370" y="140" width="8" height="240" fill="#3aa08f" opacity="0.6"/>
+  <rect x="522" y="140" width="8" height="240" fill="#3aa08f" opacity="0.6"/>
+
+  <!-- power rails -->
+  <rect x="80" y="430" width="740" height="22" fill="#8a3030" stroke="#c05858"/>
+  <text x="90" y="446" fill="#f0c8c8" font-size="11">3V3 rail</text>
+  <rect x="80" y="460" width="740" height="22" fill="#202a3a" stroke="#4a6a9a"/>
+  <text x="90" y="476" fill="#b0c4e0" font-size="11">GND rail</text>
+
+  <!-- env module block -->
+  <rect x="80" y="140" width="120" height="110" rx="6" fill="#505038" stroke="#c8b058"/>
+  <text x="140" y="165" fill="#f0e4b0" text-anchor="middle" font-weight="bold">ENV modules</text>
+  <text x="140" y="185" fill="#c8bc80" text-anchor="middle" font-size="10">BME280</text>
+  <text x="140" y="200" fill="#c8bc80" text-anchor="middle" font-size="10">BH1750</text>
+  <text x="140" y="215" fill="#c8bc80" text-anchor="middle" font-size="10">AD7746 (C4D)</text>
+  <line x1="200" y1="195" x2="360" y2="195" stroke="#c8b058" stroke-width="2" stroke-dasharray="5,4"/>
+
+  <!-- analog front-end block -->
+  <rect x="80" y="280" width="120" height="110" rx="6" fill="#1f4a6e" stroke="#4f9fd0"/>
+  <text x="140" y="305" fill="#d0e8f5" text-anchor="middle" font-weight="bold">Analog front-ends</text>
+  <text x="140" y="325" fill="#9cc4e0" text-anchor="middle" font-size="10">hydro preamp</text>
+  <text x="140" y="340" fill="#9cc4e0" text-anchor="middle" font-size="10">ICS-40730</text>
+  <line x1="200" y1="335" x2="360" y2="335" stroke="#4f9fd0" stroke-width="2" stroke-dasharray="5,4"/>
+
+  <!-- emit driver block -->
+  <rect x="620" y="140" width="160" height="110" rx="6" fill="#6e3a2a" stroke="#d07850"/>
+  <text x="700" y="165" fill="#f5d8c8" text-anchor="middle" font-weight="bold">Emit driver</text>
+  <text x="700" y="185" fill="#e0a88c" text-anchor="middle" font-size="10">MOSFET + 100Ω</text>
+  <text x="700" y="200" fill="#e0a88c" text-anchor="middle" font-size="10">40 kHz transducer</text>
+  <text x="700" y="220" fill="#d07850" text-anchor="middle" font-size="10">consent-gated</text>
+  <line x1="620" y1="195" x2="540" y2="195" stroke="#d07850" stroke-width="2" stroke-dasharray="5,4"/>
+
+  <!-- backhaul block -->
+  <rect x="620" y="280" width="160" height="110" rx="6" fill="#2a4a2a" stroke="#58a858"/>
+  <text x="700" y="305" fill="#d8f0d0" text-anchor="middle" font-weight="bold">Backhaul</text>
+  <text x="700" y="325" fill="#a8d098" text-anchor="middle" font-size="10">UART header →</text>
+  <text x="700" y="340" fill="#a8d098" text-anchor="middle" font-size="10">LoRa/sat/serial</text>
+  <line x1="620" y1="335" x2="540" y2="335" stroke="#58a858" stroke-width="2" stroke-dasharray="5,4"/>
+
+  <!-- PIR -->
+  <rect x="80" y="80" width="120" height="40" rx="6" fill="#4a3a5a" stroke="#a07ac0"/>
+  <text x="140" y="105" fill="#e8d8f5" text-anchor="middle" font-size="11">PIR (dome out)</text>
+  <line x1="200" y1="100" x2="360" y2="150" stroke="#a07ac0" stroke-width="2" stroke-dasharray="5,4"/>
+
+  <!-- head gland note -->
+  <rect x="60" y="520" width="780" height="32" fill="#24282b"/>
+  <text x="70" y="541" fill="#8a8f94" font-size="11">Head cables exit one gland at the enclosure wall · internal mic vents through PTFE membrane · camera faces a window · all ground to GND rail</text>
+</svg>
