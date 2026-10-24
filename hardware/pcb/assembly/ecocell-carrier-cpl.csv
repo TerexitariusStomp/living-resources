@@ -1,0 +1,5 @@
+Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
+C1,100nF,C_0805_2012Metric,63.0,28.0,0.0,top
+D1,1N4148W,D_SOD-123,56.0,52.0,180.0,top
+Q1,2N7000,SOT-23,50.0,52.0,0.0,top
+R1,100R,R_0805_2012Metric,42.0,52.0,0.0,top

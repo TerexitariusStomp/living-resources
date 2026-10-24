@@ -1,0 +1,17 @@
+Designator,Val,Package,Layer,Notes
+C1,100nF,C_0805_2012Metric,top,SMT - PCBA
+D1,1N4148W,D_SOD-123,top,SMT - PCBA
+J1,PIR,PinHeader_1x03_P2.54mm_Vertical,top,THT - hand solder
+J10,EMIT-40k,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
+J2,HYDRO,PinHeader_1x03_P2.54mm_Vertical,top,THT - hand solder
+J3,ULTRA,PinHeader_1x03_P2.54mm_Vertical,top,THT - hand solder
+J4,I2C-BME280,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
+J5,I2C-BH1750,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
+J6,I2C-AD7746,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
+J7,UART,PinHeader_1x04_P2.54mm_Vertical,top,THT - hand solder
+J8,SPI,PinHeader_1x05_P2.54mm_Vertical,top,THT - hand solder
+J9,5V-IN,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
+Q1,2N7000,SOT-23,top,SMT - PCBA
+R1,100R,R_0805_2012Metric,top,SMT - PCBA
+U1A,XIAO-L,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder
+U1B,XIAO-R,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder

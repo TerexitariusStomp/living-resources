@@ -13,6 +13,7 @@ never an upgrade purchase.
 | `ASSEMBLY.md` | How to build — solder points, flash steps, bench test |
 | `ENCLOSURE.md` | How to deploy — garden / shore-dock / reef-float / submerged forms |
 | `DATASHEET.md` | The tender-attachable product sheet (prospective — v1 target) |
+| `PCB.md` | **Manufacturable carrier** — KiCad source, DRC-clean Gerbers, Seeed ordering |
 | `diagrams/wiring.svg` | **Visual: full wiring diagram** — every pin→head wire, net colors |
 | `diagrams/layout.svg` | **Visual: carrier top-view** — component placement on perfboard |
 | `diagrams/enclosure-forms.svg` | **Visual: 4 cross-sections** — garden/shore/float/pod |
@@ -36,8 +37,10 @@ never an upgrade purchase.
 
 1. **Hand build (v1, now):** XIAO ESP32-S3 Sense + breakout modules on
    headers — no PCB fab needed, ~1–2 h per unit, ~$35–45.
-2. **Carrier board (v1.5, tender path):** same circuits on a JLCPCB
-   fabricated carrier + Seeed Co-Create submission — ~$8–12/unit at 100+.
+2. **Carrier board (v1.5, tender path):** `pcb/` holds a **DRC-clean,
+   fab-ready KiCad design** — upload `gerbers/ecocell-carrier-gerbers.zip`
+   to Seeed Fusion (2-layer, 100×80, standard spec). See `PCB.md` for the
+   full package, ordering steps, and flags.
 
 ## Honest flags
 
