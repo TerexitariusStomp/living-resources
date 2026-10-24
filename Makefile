@@ -14,8 +14,8 @@
 
 GUILE     ?= $(shell command -v guile 2>/dev/null)
 PYTHON3   ?= python3
-SCM_TESTS := tests/e2e/sensing-cell.scm tests/e2e/refused-lanes.scm
-ADOPTED_STUBS := adapters/reticulum.scm adapters/mic.scm adapters/camera.scm adapters/weather.scm
+SCM_TESTS := tests/e2e/sensing-cell.scm tests/e2e/refused-lanes.scm tests/e2e/write-lanes.scm
+ADOPTED_STUBS := adapters/reticulum.scm adapters/mic.scm adapters/camera.scm adapters/sonar.scm adapters/c4d.scm adapters/weather.scm
 FIRST_PARTY := module/living adapters tests/e2e firmware deploy/policies/living
 CUSTOM_BUDGET ?= 4000
 

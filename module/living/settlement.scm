@@ -22,7 +22,7 @@
             credit-event-id credit-event-account credit-event-agent-id
             credit-event-guardian-aid credit-event-receipt-id
             credit-event-quantity credit-event-at
-            settle-receipt balance-of))
+            settle-receipt settle-write balance-of))
 
 
 ;;; ── the credit event ────────────────────────────────────────────────────
@@ -79,6 +79,38 @@
                                       (cdr (receipt-window receipt)))))))
         (values (assoc-set! book account (+ prior quantity))
                 event))))))
+
+;;; ── write legs — the operator's side of the ledger ──────────────────────
+;;; A node that performs a consent-gated write (task/store/emit) earns for
+;;; the operator, not the ecology. The gate is identical: a receipt without
+;;; both evidence SAIDs earns nothing — proof of the write is what pays.
+
+(define* (settle-write book receipt operator-account operator-aid
+                       #:key (at #f))
+  "Settle a write leg to OPERATOR-ACCOUNT. Same evidence rule as
+   settle-receipt; the earner is the node operator, not a subject."
+  (cond
+   ((not (witnessed-receipt? receipt))
+    (error "settle-write: not a witnessed receipt" receipt))
+   ((not (and (receipt-audio-said receipt)
+              (receipt-detection-said receipt)))
+    (error "settle-write: a receipt without both evidence SAIDs earns nothing"))
+   ((not operator-account)
+    (error "settle-write: the operator names no account"))
+   (else
+    (let* ((quantity (receipt-quantity receipt))
+           (prior (or (assoc-ref book operator-account) 0))
+           (event (make-credit-event
+                   #:id (generate-id "cr-")
+                   #:account operator-account
+                   #:agent-id operator-aid
+                   #:guardian-aid operator-aid
+                   #:receipt-id (receipt-id receipt)
+                   #:quantity quantity
+                   #:at (or at (and (receipt-window receipt)
+                                    (cdr (receipt-window receipt)))))))
+      (values (assoc-set! book operator-account (+ prior quantity))
+              event)))))
 
 (define (balance-of book account)
   (or (assoc-ref book account) 0))

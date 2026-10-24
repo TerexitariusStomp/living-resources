@@ -74,8 +74,8 @@ Subjects earn credit; guardians hold custody. Every mutating act on an
 module/living/   specs · agents (^eco-agent) · sense-subject (^sense-node)
                  attest (quorum→receipt) · settlement (mutual credit)
                  offers (the evidence gate)
-adapters/        mic (JSON-lines→readings) · reticulum (LXMF/UDP stub)
-                 weather (Open-Meteo context)
+adapters/        mic · camera · sonar · c4d · reticulum (UDP socket
+                 + LXMF seam) · weather (Open-Meteo context)
 firmware/node/   main.py — MicroPython universal node: I2S 48kHz/16-bit →
                  SD spool → LXMF uplink (stub) → duty-cycle sleep; all
                  lanes populated incl. consent-gated EmitLane

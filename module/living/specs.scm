@@ -40,7 +40,7 @@
             sense-offer-taxa-scope sense-offer-evidence-said
             <cell-decl> make-cell-decl cell-decl?
             cell-decl-node-id cell-decl-heads cell-decl-link-type
-            cell-decl-location-class
+            cell-decl-location-class cell-decl-accepts-write
             ;; the reading, the leg, the receipt
             <reading> make-reading reading?
             reading-subject reading-channel reading-timestamp
@@ -211,19 +211,21 @@
 ;;; a policy flag — never a purchase and never a missing part.
 
 (define-record-type <cell-decl>
-  (%make-cell-decl node-id heads link-type location-class)
+  (%make-cell-decl node-id heads link-type location-class accepts-write)
   cell-decl?
   (node-id        cell-decl-node-id)
   (heads          cell-decl-heads)          ; list of head symbols
   (link-type      cell-decl-link-type)      ; 'wifi 'lora 'lte-m 'satellite 'serial
-  (location-class cell-decl-location-class)); 'garden 'shore-dock 'reef-float …
+  (location-class cell-decl-location-class) ; 'garden 'shore-dock 'reef-float …
+  (accepts-write  cell-decl-accepts-write)) ; #t: node processes task/store intents
 
 (define *link-types* '(wifi lora lte-m satellite serial mesh))
 
-(define* (make-cell-decl #:key node-id heads link-type location-class)
+(define* (make-cell-decl #:key node-id heads link-type location-class
+                         (accepts-write #t))
   (unless (memq link-type *link-types*)
     (error "cell-decl: not a link type" link-type))
-  (%make-cell-decl node-id heads link-type location-class))
+  (%make-cell-decl node-id heads link-type location-class accepts-write))
 
 
 ;;; ── the reading ─────────────────────────────────────────────────────────

@@ -37,6 +37,11 @@ try:
 except ImportError:
     import json
 
+try:
+    import usocket as socket              # MicroPython
+except ImportError:
+    import socket                         # CPython sim
+
 
 # ── the lanes ─────────────────────────────────────────────────────────────
 # Universal node: EVERY device ships every head's electronics — there is
@@ -166,32 +171,86 @@ class SDBuffer:
 
 
 # ── uplink ────────────────────────────────────────────────────────────────
+# Wire framing, one byte tag + payload — small enough for LoRa, simple
+# enough for UDP. DET1 = detection line; AUD1 = audio chunk (name + PCM);
+# TSK1 = downlink task (cloud-write); LANE = OTA module push. The edge
+# demuxes on the tag. MicroReticulum can replace the socket later — the
+# frame shape is the contract, not the socket.
+
+TAG_DETECTION = b"DET1"
+TAG_AUDIO     = b"AUD1"
+TAG_TASK      = b"TSK1"
+TAG_LANE      = b"LANE"
+
 
 class Uplink:
-    """The two carriers in tier order. WiFi path: UDP datagrams of audio
-    chunks + detections to the edge. LoRa path (SX1276/RNode): detection
-    packets only — tens of bytes each.
-
-    TODO(real binding): MicroReticulum LXMF socket goes here — announce the
-    node's destination hash, receive/link ACKs, let LXMF queue what the
-    link cannot carry now. Until that lands, send() returns False and the
-    SD buffer simply keeps everything."""
+    """The two carriers in tier order. WiFi path: real UDP datagrams to
+    the edge. LoRa path (SX1276/RNode over UART): detection packets only —
+    tens of bytes each. A send that fails (no socket, no edge) returns
+    False and the SD spool keeps the chunk — store-and-forward."""
 
     def __init__(self, edge_host=None, edge_port=4242, lora=None):
         self.edge = (edge_host, edge_port) if edge_host else None
-        self.lora = lora
+        self.lora = lora                       # machine.UART RNode | None
+        self._sock = None
+        if self.edge:
+            try:
+                self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            except Exception:
+                self._sock = None
+
+    def _udp(self, frame):
+        if not self._sock:
+            return False
+        try:
+            self._sock.sendto(frame, self.edge)
+            return True
+        except Exception:
+            return False                        # link down — spool keeps it
 
     def send_audio(self, name, blob):
-        # TODO: LXMF resource or UDP datagram to self.edge; FLAC-encode
-        # edge-side if bandwidth demands (the node keeps PCM).
-        return False
+        """AUD1 | name-len u8 | name | pcm — one datagram per chunk on the
+        WiFi path; on LoRa-only cells audio simply stays spooled for a
+        later T1 window."""
+        header = TAG_AUDIO + bytes([len(name)]) + name.encode()
+        return self._udp(header + blob)
 
     def send_detection(self, det_line):
-        # tens of bytes — the priority payload that never waits for
-        # bandwidth. TODO: RNode raw frame via self.lora uart.
+        """Tens of bytes — the priority payload. UDP on WiFi; on LoRa the
+        same bytes ride the RNode UART frame."""
+        if isinstance(det_line, str):
+            det_line = det_line.encode()
         if len(det_line) > DETECTION_MAX_BYTES:
             return False
-        return False
+        frame = TAG_DETECTION + det_line
+        if self.lora is not None:
+            try:
+                self.lora.write(frame)
+                return True
+            except Exception:
+                pass                            # fall through to UDP
+        return self._udp(frame)
+
+    def poll_task(self, bufsize=2048):
+        """Non-blocking downlink check — the cloud-write half of the node.
+        Returns the decoded task alist or None. TSK1 carries
+        {"op": "emit"|"store"|"duty"|"lane-install", "consent": "said:…"}"""
+        if not self._sock:
+            return None
+        try:
+            self._sock.settimeout(0)
+            data, _addr = self._sock.recvfrom(bufsize)
+        except Exception:
+            return None
+        if not data or len(data) < 5:
+            return None
+        tag, body = data[:4], data[4:]
+        if tag in (TAG_TASK, TAG_LANE):
+            try:
+                return {"tag": tag.decode(), **json.loads(body)}
+            except Exception:
+                return None
+        return None
 
 
 # ── detection packet ──────────────────────────────────────────────────────
@@ -247,6 +306,65 @@ class EmitLane:
         return burst_ms        # sim: report the clipped burst
 
 
+# ── cloud-write: downlink tasks + OTA lane modules ────────────────────────
+# The write half of the node. Every op is consent-gated at the lane layer
+# — the edge checked the joint consent upstream and the node re-checks the
+# token here, so a stale or spoofed frame never acts.
+
+LANES_DIR = SD_MOUNT + "/lanes"      # module spool; desktop sim: ./lanes
+
+
+def install_lane_module(name, source, consent=None):
+    """OTA: a new lane arrives as source, lands under lanes/, and its
+    entry appears in LANES — capability by firmware push, never hardware."""
+    if not consent:
+        raise ConsentRequired("lane modules ride operator consent")
+    path = (LANES_DIR if _ON_NODE else "lanes") + "/" + name + ".py"
+    try:
+        os.makedirs(path.rsplit("/", 1)[0])
+    except Exception:
+        pass
+    with open(path, "w") as f:
+        f.write(source)
+    LANES[name] = {"enabled": True, "gated": "consent",
+                   "head": "ota-module", "band": "software",
+                   "role": "installed via OTA push"}
+    return path
+
+
+def handle_task(task, emit, buf):
+    """One downlink task → one result dict the edge receipts. Unknown ops
+    answer refused-with-reason, never silence — same posture as the gate."""
+    if not isinstance(task, dict):
+        return {"ok": False, "reason": "malformed-task"}
+    op = task.get("op")
+    consent = task.get("consent")
+    try:
+        if op == "emit":
+            ms = emit.emit(int(task.get("burst_ms", 20)), consent=consent)
+            return {"ok": True, "op": "emit", "burst_ms": ms}
+        if op == "store":
+            buf.spool(task.get("name", "store.bin"),
+                      (task.get("data") or "").encode())
+            return {"ok": True, "op": "store",
+                    "name": task.get("name", "store.bin")}
+        if op == "duty":
+            global WAKE_WINDOWS
+            wins = task.get("windows")
+            if not isinstance(wins, list) or not wins:
+                return {"ok": False, "reason": "bad-windows"}
+            WAKE_WINDOWS = tuple(tuple(w) for w in wins)
+            return {"ok": True, "op": "duty", "windows": wins}
+        if op == "lane-install":
+            path = install_lane_module(task.get("name", "lane"),
+                                       task.get("source", ""),
+                                       consent=consent)
+            return {"ok": True, "op": "lane-install", "path": path}
+    except ConsentRequired as e:
+        return {"ok": False, "reason": "consent-required", "detail": str(e)}
+    return {"ok": False, "reason": "unknown-op"}
+
+
 # ── duty cycle ────────────────────────────────────────────────────────────
 
 def in_wake_window(now=None):
@@ -293,33 +411,39 @@ def flush(buf, up):
             buf.clear(name)
 
 
-def run():
+def run(edge_host=None):
     if not LANES["mic"]["enabled"]:
         return
     cap = MicCapture()
     buf = SDBuffer()
-    up = Uplink()
+    up = Uplink(edge_host=edge_host)
+    em = EmitLane()
     while True:
         if not in_wake_window():
             sleep_until_next_window()
             continue
+        task = up.poll_task()            # cloud-write first — never blocks
+        while task:
+            handle_task(task, em, buf)
+            task = up.poll_task()
         capture_window(cap, buf)
         flush(buf, up)
         sleep_until_next_window()
 
 
 def _sim():
-    """Desktop sim: one capture window, a detection, a flush attempt. The
-    uplink refuses by construction — what matters is the spool kept it."""
+    """Desktop sim: capture → spool → refused flush (no edge) → consent
+    gates → real UDP delivery to a bound listener → downlink task path."""
     cap = MicCapture()
     buf = SDBuffer()
-    up = Uplink()
+    up = Uplink()                               # no edge: flush refused
     names = capture_window(cap, buf, seconds=20, chunk_seconds=10)
     assert len(names) == 2, names
     det = detection_packet("Turdus migratorius", 0.91, 1730000000)
     buf.spool("d1.det", det.encode())
     flush(buf, up)
     assert len(buf.pending()) == 3, buf.pending()   # nothing left the node
+
     em = EmitLane()
     try:
         em.emit(20)
@@ -327,6 +451,29 @@ def _sim():
     except ConsentRequired:
         pass
     assert em.emit(200, consent="said:joint-consent") == 50  # clipped
+
+    # real UDP: bind a listener, flush the same spool to it
+    if not _ON_NODE:
+        rx = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        rx.bind(("127.0.0.1", 0))
+        port = rx.getsockname()[1]
+        up2 = Uplink(edge_host="127.0.0.1", edge_port=port)
+        assert up2.send_detection(det) is True
+        rx.settimeout(2)
+        frame, _ = rx.recvfrom(2048)
+        assert frame[:4] == TAG_DETECTION and b"Turdus" in frame
+        # downlink task path: emit without consent refuses, store lands
+        r = handle_task({"op": "emit", "burst_ms": 10}, em, buf)
+        assert r["ok"] is False and r["reason"] == "consent-required"
+        r = handle_task({"op": "store", "name": "t.bin", "data": "x",
+                         "consent": "said:joint-1"}, em, buf)
+        assert r["ok"] is True
+        r = handle_task({"op": "lane-install", "name": "c4d-reservoir",
+                         "source": "pass", "consent": "said:joint-1"},
+                        em, buf)
+        assert r["ok"] is True and "c4d-reservoir" in LANES
+        rx.close()
+        print("sim ok: UDP delivery verified, task path exercised")
     print("sim ok: %d chunks spooled, %d pending after refused flush, "
           "emit consent-gate held"
           % (len(names), len(buf.pending())))

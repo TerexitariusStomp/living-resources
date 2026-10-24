@@ -88,10 +88,17 @@
     (refused lane 'lane-refused
              "no evidence on file; hop/compute/engineered stay refused"))
    ((lane-consent-gated? lane)
-    (if (valid-consent? (consent-of params))
-        (admitted lane)
+    (let ((c (consent-of params))
+          (cell (assq-ref params 'cell)))
+      (cond
+       ((not (valid-consent? c))
         (refused lane 'consent-required
-                 "emit/cast/store ride the joint consent of guardian and node operator")))
+                 "emit/cast/store ride the joint consent of guardian and node operator"))
+       ((and (eq? lane 'store) cell (cell-decl? cell)
+             (not (cell-decl-accepts-write cell)))
+        (refused lane 'write-refused
+                 "the cell declared it accepts no writes"))
+       (else (admitted lane)))))
    ((not (gate-evidence book lane))
     (refused lane 'evidence-required
              "the lane's gate carries no evidence SAID"))
