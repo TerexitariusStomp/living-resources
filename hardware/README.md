@@ -10,6 +10,7 @@ never an upgrade purchase.
 |---|---|
 | `BOM.md` | What to buy — core board + every head + per-deployment kits |
 | `FIELD-KIT.md` | **Complete sourcing matrix** — Seeed-assembled vs plug-in vs field kit, first-article test plan |
+| `PROVISIONING.md` | **Parcel→live node** — flash, identity, consent defaults, edge pairing, commissioning |
 | `PINOUT.md` | How it wires — the pin map the firmware and heads share |
 | `ASSEMBLY.md` | How to build — solder points, flash steps, bench test |
 | `ENCLOSURE.md` | How to deploy — garden / shore-dock / reef-float / submerged forms |

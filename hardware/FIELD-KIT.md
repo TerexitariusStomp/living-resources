@@ -3,110 +3,117 @@
 
 The EcoCell carrier is the interconnect. A deployable node = assembled
 carrier + XIAO + heads + radio + power + enclosure. This file is the
-full buy list, split by who supplies what, with the first-article test
-plan that turns "fab-ready" into "field-ready".
+full buy list — concrete part numbers wherever a fab or distributor
+needs one — plus the first-article test plan.
 
-## A — Seeed assembles (on the carrier)
+## A — Seeed PCBA (on the carrier, 12 SMT parts)
 
-| Part | On-board ref | Package | Notes |
+| Ref | Value | Suggested MPN (any equivalent OK) | Role |
 |---|---|---|---|
-| 100 Ω resistor | R1 | 0805 | emit gate series |
-| 1 kΩ resistor | R2 | 0805 | power LED |
-| 100 nF cap | C1 | 0805 | 3V3 decoupling |
-| 2N7000 MOSFET | Q1 | SOT-23 | emit driver (consent-gated) |
-| 1N4148W diode | D1 | SOD-123 | emit flyback |
-| SS14 Schottky | D2 | SMA | reverse-polarity protection |
-| SMAJ5.0A TVS | D3 | SMA | rail transient clamp |
-| PESD5V0 ESD ×3 | D4–D6 | SOD-323 | J1/J2/J3 signal clamps |
-| Polyfuse 0.75 A | F1 | 1206 | input fuse |
-| Green LED | LED1 | 0805 | power indicator |
+| R1 | 100 Ω | Yageo RC0805FR-07100RL | emit gate series |
+| R2 | 1 kΩ | Yageo RC0805FR-071KL | power LED |
+| C1 | 100 nF / 50 V | Samsung CL21B104KBCNNNC | 3V3 decoupling |
+| Q1 | 2N7002 | onsemi 2N7002LT1G | emit driver (consent-gated) |
+| D1 | 1N4148W | 1N4148W-7-F | emit flyback |
+| D2 | SS14 | SS14 / 1N5819 SMA-equiv | reverse-polarity |
+| D3 | SMAJ5.0A | Littelfuse SMAJ5.0A | rail transient clamp |
+| D4–D6 | PESD5V0 | Nexperia PESD5V0S1BA | head-signal ESD clamps |
+| F1 | 0.75 A hold | Bourns MF-MSMF075-2 | input polyfuse |
+| LED1 | green | Lite-On LTST-C170GKT | power indicator |
 
-Any generic equivalents are fine — mark them "acceptable substitute" on
-the Fusion BOM line rather than locking a brand.
+All are jellybean parts — mark "acceptable equivalent" on the Fusion
+BOM line and Seeed will substitute their stock.
 
-## B — Seeed stocks but you buy separately (plug-in, no solder)
+## B — Seeed store, plug-in (no solder)
 
-| Item | Typical part | ~USD |
+| Item | Part | ~USD |
 |---|---|---|
-| XIAO ESP32-S3 Sense | Seeed 113991115 (camera+mic+SD onboard) | 14 |
-| MicroSD card | 32 GB A1 | 5 |
+| XIAO ESP32-S3 Sense | Seeed 113991115 — camera + mic + SD onboard | 14 |
+| microSD card | 32 GB, class A1 | 5 |
 
-## C — Sensor heads (buy per deployment)
+## C — THT on the board (hand-solder or ask Fusion to place)
+
+| Ref | Part | Notes |
+|---|---|---|
+| U1A/U1B | 2.54 mm socket strips, 1×7 ×2 | XIAO stays removable |
+| J1–J8 | 2.54 mm pin headers | cut from a 40-pin strip |
+| J9, J10 | 2.54 mm pin headers | 5V-AUX tap + emit terminal |
+| J11 | Phoenix MKDS 1.5/2-5.0 screw terminal | field 5V input |
+
+## D — Sensor heads (per deployment; nothing attaches to an organism)
 
 | Lane | Connector | Typical part | ~USD |
 |---|---|---|---|
-| PIR | J1 | HC-SR501 or AM312 module | 1 |
-| Hydrophone | J2 | electret/piezo hydrophone + preamp module | 5–10 |
-| Ultrasonic | J3 | MEMS ultrasonic mic board (e.g. SPH0641-class breakout) | 4 |
-| Temp/RH/pressure | J4 (I2C) | BME280 module | 2 |
+| PIR | J1 | HC-SR501 / AM312 module | 1 |
+| Hydrophone | J2 | piezo disc + MAX9814 preamp module | 5–10 |
+| Ultrasonic | J3 | MEMS ultrasonic mic breakout | 4 |
+| Temp/RH/press | J4 (I2C) | BME280 module (3.3 V) | 2 |
 | Light | J5 (I2C) | BH1750 module | 1 |
-| C4D / capacitive | J6 (I2C) | AD7746 breakout | 4 |
-| Emit transducer | J10 | 40 kHz piezo pair (T/R) | 2 |
+| C4D | J6 (I2C) | AD7746 breakout | 4 |
+| Emit 40 kHz | J10 | piezo T/R pair | 2 |
 
-Every lane is on the board; attach only the heads the deployment needs.
-Nothing attaches to an organism — heads mount on the enclosure or a
-free-standing stake (zero-disruption rule).
+## E — Backhaul (J7: RX, TX, GND, 5V)
 
-## D — Backhaul radio (J7: RX, TX, GND, 5V)
-
-| Option | Use when | ~USD |
+| Option | Part | ~USD |
 |---|---|---|
-| LoRa RNode/Heltec V3 | mesh within km of a gateway | 8–20 |
-| Wi-Fi/UART bridge | node near infrastructure | 5 |
-| Satellite modem (Swarm-class) | open ocean / remote | 60–150 |
+| LoRa RNode | Heltec WiFi LoRa 32 V3 / RNode kit | 8–20 |
+| Wi-Fi/UART bridge | any ESP UART→Wi-Fi | 5 |
+| Satellite | Swarm M138 modem | 60–150 |
 
-Reticulum runs over whatever serial the radio offers; firmware picks
-the uplink at config time.
+## F — Power (J11)
 
-## E — Power (J11 screw terminal)
+Recommended: **off-shelf certified power module, not on-board** —
+cheaper, safer, already tested. Any of:
+
+| Item | Part | ~USD |
+|---|---|---|
+| Solar+battery kit | 5 V solar power bank (ruggedized) | 15–25 |
+| DIY chain | TP4056 charger module + 18650 + MT3608 boost (set 5.5–6 V out) | 8–15 |
+| Mains/site | 5.5–6 V 1 A wall adapter + gland | 5 |
+
+Feed J11 with 5.5–6 V → rail lands ~5 V after the SS14 drop. Reverse
+polarity, transients and overcurrent are handled on-board.
+
+## G — Enclosure & mounting
 
 | Item | Spec | ~USD |
 |---|---|---|
-| Battery | 18650 pack + holder, or 6 V SLA | 5–15 |
-| Charge controller | TP4056/CN3791 module (solar-in) | 2–4 |
-| Solar panel | 5–10 W, 6 V | 8–15 |
-| DC-DC (optional) | buck to 5.5–6 V if panel/battery ≠ 5–6 V | 2 |
-
-Feed J11 with 5.5–6 V so the rail lands at ~5 V after the SS14 drop;
-5 V in still works (~4.6 V rail — the XIAO's onboard regulator covers it).
-Reverse polarity and transients are handled on-board (D2/D3/F1).
-
-## F — Enclosure & mounting
-
-| Item | Spec | ~USD |
-|---|---|---|
-| Enclosure | IP65+ box, UV-stable ABS/polycarbonate | 5–15 |
-| Cable glands | M12/M16 IP68, one per head cable | 1–2 ea |
+| Enclosure | IP65+ ABS/polycarbonate box | 5–15 |
+| Cable glands | M12/M16 IP68, one per head lead | 1–2 ea |
 | Mount | stake / pole clamp / moored-float bracket | 2–10 |
-| Conformal coat (optional) | acrylic spray for shore/marine units | 5 |
+| Conformal coat | acrylic spray — shore/marine units | 5 |
 
-Enclosure forms and mounting notes: `ENCLOSURE.md` (garden, shore-dock,
-moored float, submerged pod).
+Forms and gland positions: `ENCLOSURE.md`.
 
-## First-article test plan (do this before calling it production)
+## After the parcel arrives — deploy in this order
 
-1. **Bench power-up**: J11 at 5.5 V → LED1 lights; measure +5V net at
-   J9 pin 2 (expect ~5.1 V) and 3V3 at J1 pin 2 (expect ~3.3 V).
-2. **Protection check**: apply reversed polarity at J11 → no damage,
-   no LED; restore correct polarity → normal power-up.
-3. **Socket the XIAO**, flash `firmware/node/main.py`, confirm I2S
-   capture → SD spool → uplink frames on J7 TX.
-4. **Head smoke test**: each attached head produces readings;
-   wiggle cables — no resets (TVS/filter sanity).
-5. **48-h soak**: one unit powered continuously, enclosure closed;
-   check temperature rise and dropouts.
-6. **Field pilot**: 1–2 nodes through the E0 protocol
-   (`tools/e0/score.py` for scoring) before any fleet order.
-7. **Compliance review**: ESP32-S3 module carries FCC/CE on the radio
-   side; the assembled product still needs a regional conformity
-   check before commercial sale.
+1. Solder the THT strip (U1A/U1B sockets, headers, J11) — ~10 min.
+2. Flash + provision: `PROVISIONING.md` — firmware, device identity,
+   consent defaults.
+3. Bench checklist (below).
+4. Mount enclosure, route heads through glands, attach heads.
+5. Commission: power at J11 → LED1 on → frames on uplink → receipts
+   in the ledger.
 
-## What "production-ready" means here
+## First-article test plan (before any fleet order)
 
-- **Now**: fab-ready v2 — DRC-clean files, complete BOM, protected
-  I/O, assembly marks. Orderable today.
+1. **Bench power-up**: J11 at 5.5 V → LED1 on; +5V at J9 p2 ≈ 5.1 V,
+   3V3 at J1 p2 ≈ 3.3 V.
+2. **Fault checks**: reversed J11 → no damage; brief rail short → F1
+   trips and recovers.
+3. **Function**: XIAO flashed → I2S capture → SD spool → frames on
+   J7 TX / uplink.
+4. **Heads**: each attached head produces readings; cable wiggle →
+   no resets.
+5. **48-h soak**: closed enclosure, continuous power — temperature
+   and dropouts.
+6. **Field pilot**: 1–2 nodes through E0 (`tools/e0/score.py`).
+7. **Compliance**: ESP32-S3 radio carries FCC/CE on the module;
+   assembled product still needs a regional conformity check before
+   commercial sale.
+
+## Status honesty
+
+- **Now**: fab-ready v2 — orderable today.
 - **After first-article + E0**: pilot-ready.
-- **Production**: additionally needs the compliance check, finalized
-  suppliers for every line above, and a documented flashing/config
-  procedure (device identity, consent defaults) — tracked on the
-  roadmap, not assumed done.
+- **Production**: pilot + compliance + locked suppliers. Not assumed.

@@ -36,7 +36,7 @@ no castellated edges.
 - **J9**: 5V-AUX tap (protected side — feeds a 5V peripheral such as a
   LoRa/RNode module)
 - **J10**: emit transducer terminal (EMIT_SW + 3V3, consent-gated lane)
-- **Emit driver**: R1 100R → Q1 2N7000 gate; D1 1N4148W flyback;
+- **Emit driver**: R1 100R → Q1 2N7002 gate; D1 1N4148W flyback;
   C1 decoupling
 
 ### Field protection (v2 additions)
@@ -72,18 +72,22 @@ hardware/pcb/
   render.png                         3D render
 ```
 
-## Ordering
+## Ordering — the click path
 
-1. **PCB order**: upload `ecocell-carrier-gerbers.zip`, spec as above.
-2. **PCBA (recommended now)**: 12 SMT parts — R1, R2, C1, Q1, D1–D6,
-   F1, LED1 — all common values/packages Seeed stocks or sources
-   cheaply. Hand-soldering is also fine (0805, SOD-323, SOT-23, SMA,
-   1206 are all iron-friendly).
-3. **THT**: headers, sockets and the J11 terminal are marked
-   `THT - hand solder` in the BOM. Seeed can place THT for extra cost —
-   ask in the PCBA quote — or solder them in minutes.
-4. **Not on this BOM**: XIAO module, sensor heads, radio, power system,
-   enclosure — see `FIELD-KIT.md` for the complete sourcing matrix.
+1. **Fusion → PCB + Assembly**: upload
+   `gerbers/ecocell-carrier-gerbers.zip`; set 2-layer, 100×80 mm,
+   1.6 mm FR4, 1 oz, HASL, qty 5–10 (first run).
+2. **PCBA**: upload `assembly/ecocell-carrier-bom.csv` +
+   `assembly/ecocell-carrier-cpl.csv`; mark every SMT line "acceptable
+   equivalent" (all jellybean values — Seeed substitutes their stock).
+   Ask in the quote for the THT lines (sockets/headers/J11) to be
+   placed too if you want zero hand work — otherwise ~10 min of
+   through-hole soldering per board.
+3. **Same order or separate**: add XIAO ESP32-S3 Sense (Seeed
+   113991115) + microSD from the Seeed store — they plug in, no solder.
+4. **Field kit** (other suppliers): heads, radio, power, enclosure —
+   the full matrix with part numbers is `FIELD-KIT.md`.
+5. **Then**: `PROVISIONING.md` — flash, identity, consent, pairing.
 
 ## Honest flags before ordering
 

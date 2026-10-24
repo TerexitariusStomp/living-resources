@@ -123,7 +123,7 @@ place("Resistor_SMD.pretty", "R_0805_2012Metric", "R1", "100R", (42, 52),
       pin_nets={"1": "D3_EMIT", "2": "EMIT_GATE"})
 place("Capacitor_SMD.pretty", "C_0805_2012Metric", "C1", "100nF", (63, 28),
       pin_nets={"1": "+3V3", "2": "GND"})
-place("Package_TO_SOT_SMD.pretty", "SOT-23", "Q1", "2N7000", (50, 52),
+place("Package_TO_SOT_SMD.pretty", "SOT-23", "Q1", "2N7002", (50, 52),
       pin_nets={"1": "EMIT_GATE", "2": "GND", "3": "EMIT_SW"})
 # flyback diode, rotated so cathode faces right (toward 3V3)
 place("Diode_SMD.pretty", "D_SOD-123", "D1", "1N4148W", (56, 52), rot=180,

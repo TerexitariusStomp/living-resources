@@ -19,8 +19,8 @@ J9,5V-IN,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
 J10,EMIT-40k,PinHeader_1x02_P2.54mm_Vertical,top,THT - hand solder
 J11,5V-SCREW,"TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",top,THT - hand solder
 LED1,PWR-GRN,LED_0805_2012Metric,top,SMT - PCBA
-Q1,2N7000,SOT-23,top,SMT - PCBA
+Q1,2N7002,SOT-23,top,SMT - PCBA
 R1,100R,R_0805_2012Metric,top,SMT - PCBA
 R2,1k,R_0805_2012Metric,top,SMT - PCBA
-U1B,XIAO-R,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder
 U1A,XIAO-L,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder
+U1B,XIAO-R,PinSocket_1x07_P2.54mm_Vertical,top,THT - hand solder
