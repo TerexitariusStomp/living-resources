@@ -15,7 +15,7 @@ routine if an equity raise requires it.
 | Program | Est. | Status | Next action |
 |---|---|---|---|
 | Wetware verification audits — Cortical Labs | $5–25k/engagement | **SENT** | Email sent to info@corticallabs.com — await reply |
-| Wetware verification audits — FinalSpark | $5–25k/engagement | drafted | Their Neuroplatform access is an application form, not email — apply via finalspark.com form |
+| Wetware verification audits — FinalSpark | $5–25k/engagement | SUBMITTED | Researchers form on finalspark.com/contact submitted 2026-10-25 — portal confirmed "request received, ~3-day reply window". Watch terexmaps@gmail.com |
 | Bench certification reports (edge-AI / neuromorphic / MRV vendors) | $2–10k/report | drafted | `applications/lane-a-bench-cert.md` — attach to follow-up emails once targets named |
 | Replay-verified compute API | MRR | drafted | `applications/lane-a-api-page.md` — needs the worker endpoint shipped |
 | Evidence-layer re-analysis of existing datasets | $5–20k/project | drafted | Fold into audit pitch as the "your data, receipted" offer |
