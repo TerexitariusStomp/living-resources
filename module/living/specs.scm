@@ -52,6 +52,7 @@
             receipt-id receipt-subject receipt-witnessed
             receipt-audio-said receipt-detection-said
             receipt-window receipt-quantity receipt-digest
+            receipt-connectome-said
             ;; the gate
             <lane-gate> make-lane-gate lane-gate?
             lane-gate-lane lane-gate-evidence-said
@@ -280,7 +281,7 @@
 
 (define-record-type <witnessed-receipt>
   (%make-witnessed-receipt id subject witnessed audio-said detection-said
-                           window quantity digest)
+                           window quantity digest connectome-said)
   witnessed-receipt?
   (id             receipt-id)
   (subject        receipt-subject)
@@ -289,12 +290,14 @@
   (detection-said receipt-detection-said) ; SAID of the detection record | #f
   (window         receipt-window)         ; (start-ms . end-ms)
   (quantity       receipt-quantity)       ; readings the receipt attests
-  (digest         receipt-digest))        ; string | #f
+  (digest         receipt-digest)         ; string | #f
+  (connectome-said receipt-connectome-said)) ; connectome verdict digest | #f
 
 (define* (make-witnessed-receipt #:key id subject witnessed audio-said
-                                 detection-said window quantity (digest #f))
+                                 detection-said window quantity
+                                 (digest #f) (connectome-said #f))
   (%make-witnessed-receipt id subject witnessed audio-said detection-said
-                           window quantity digest))
+                           window quantity digest connectome-said))
 
 
 ;;; ── the lane gate ───────────────────────────────────────────────────────

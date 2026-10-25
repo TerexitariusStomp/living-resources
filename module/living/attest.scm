@@ -90,9 +90,15 @@
 ;;; a buyer replays, detection is the record a ledger cites — one without
 ;;; the other is not a receipt, it is half a claim.
 
+;;; #:connectome-said is ADDITIVE evidence — the digest of a connectome
+;;; verdict set produced by (living connectome). It never substitutes for
+;;; the audio/detection pair; it only binds the wiring-diagram witness
+;;; signatures into the receipt so a buyer can replay them.
+
 (define* (build-witnessed-receipt #:key subject legs audio-said detection-said
                                   (size *default-quorum-size*)
-                                  (min-nodes *default-quorum-nodes*))
+                                  (min-nodes *default-quorum-nodes*)
+                                  (connectome-said #f))
   (cond
    ((not subject)
     (cons 'refused 'subject-required))
@@ -108,7 +114,8 @@
     (let* ((nodes (distinct-nodes legs))
            (window (legs-window legs))
            (digest (%digest-fields 'living-receipt/v1 subject nodes
-                                   audio-said detection-said window)))
+                                   audio-said detection-said window
+                                   connectome-said)))
       (cons 'receipt
             (make-witnessed-receipt
              #:id (generate-id "rcpt-")
@@ -118,7 +125,8 @@
              #:detection-said detection-said
              #:window window
              #:quantity (length legs)
-             #:digest digest))))))
+             #:digest digest
+             #:connectome-said connectome-said))))))
 
 (define (attested? r) (and (pair? r) (eq? 'receipt (car r))))
 (define (refusal-of r) (and (pair? r) (eq? 'refused (car r)) (cdr r)))
@@ -140,10 +148,14 @@
     (receiver . "commons:living-sensing")
     (resource-quantity . ((unit . "readings")
                           (amount . ,(receipt-quantity receipt))))
-    (evidence . ((audio . ,(receipt-audio-said receipt))
-                 (detection . ,(receipt-detection-said receipt))
-                 (witnessed . ,(receipt-witnessed receipt))
-                 (window . ,(receipt-window receipt))))
+    (evidence . ,(append
+                  `((audio . ,(receipt-audio-said receipt))
+                    (detection . ,(receipt-detection-said receipt))
+                    (witnessed . ,(receipt-witnessed receipt))
+                    (window . ,(receipt-window receipt)))
+                  (if (receipt-connectome-said receipt)
+                      `((connectome . ,(receipt-connectome-said receipt)))
+                      '())))
     (receipt . ,(receipt-id receipt))
     (digest . ,(receipt-digest receipt))
     (state . "draft")))

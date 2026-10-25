@@ -15,6 +15,7 @@ says.
 | K⁺ waves attract distant motile cells across species | Humphries et al., *Cell* 2017 | Biofilm is a broadcast channel, not just internal |
 | Passive acoustics + human validation produce credible MRV | standard practice; SAGED criteria below | Our guardian/witness architecture matches field methodology |
 | C4D (capacitively-coupled contactless conductivity detection) | established analytical technique | Non-invasive biofilm electrical readout through vessel walls |
+| Packed EM connectomes run deterministic LIF inference | `~/fly-data` + FlyEngine deployed in fly.ai; `tools/connectome/lif.py` reproduces verdicts bit-for-bit | Connectome-witness lane: replayable response signatures as a third evidence class |
 
 ## Plausible (worth an experiment, not a lane)
 
@@ -32,6 +33,7 @@ says.
 | General-purpose computation in living systems | Unproven (Pieters Sci Rep 2022 — eco-physiological tasks only) |
 | Ultrasound as a programmable instruction set for wild organisms | Refused — perturbation ≠ programming; engineered circuits out of scope |
 | `hop`/`compute`/`store`-into-organism lanes | Refused until evidence SAID lands |
+| Connectome verdicts as biological validation of detections | Refused framing — a verdict is a replayable structural signature, not cognition or truth about the observed organism |
 
 ## SAGED MRV criteria (Ford et al., J Appl Ecol 2024)
 
