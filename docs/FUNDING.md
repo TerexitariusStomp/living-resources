@@ -50,7 +50,7 @@ routine if an equity raise requires it.
 | Program | Amount | Timing | Status | Next action |
 |---|---|---|---|---|
 | Superorganism (pre-seed) | $250–500k | Rolling | **SENT** | Email sent to hello@superorganism.com — await reply |
-| NSF SBIR Phase I — Project Pitch | first gate | Rolling | **portal tab open** | Log into nsfgov.my.site.com (tab open in Brave), paste `applications/nsf-project-pitch.txt` |
+| NSF SBIR Phase I — Project Pitch | first gate | Rolling | **SUBMITTED** | Pitch #00131003 (ET topic, Phase I) — NSF reviews within ~1 month; invite → full proposal |
 | NSF SBIR Phase I — full proposal | $275k | ~3 windows/yr | drafted | `applications/nsf-sbir.md` — only after pitch invite |
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |
 | SOSV HAX / Elemental / Carbon13 | $75–500k | Rolling/cohort | drafted | `applications/accelerators.md` — optional equity route |
