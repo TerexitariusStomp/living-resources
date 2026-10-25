@@ -17,6 +17,7 @@ says.
 | C4D (capacitively-coupled contactless conductivity detection) | established analytical technique | Non-invasive biofilm electrical readout through vessel walls |
 | Packed EM connectomes run deterministic LIF inference | `~/fly-data` + FlyEngine deployed in fly.ai; `tools/connectome/lif.py` reproduces verdicts bit-for-bit | Connectome-witness lane: replayable response signatures as a third evidence class |
 | Packed int4 CSR wiring is algorithmically sparse: ops ≪ equivalent dense transform | counted exactly by `tools/connectome/bench.py` (celegans ~35k ops vs 91k dense MACs; 7.8KB vs 365KB) | Structural-efficiency claim, measured not projected |
+| At ≥~10⁴-neuron scale, LIF-over-wiring uses fewer measured joules than dense fp32 on x86 | RAPL deltas, `bench.py` --all: medulla 0.117 J vs 8.3 J dense (~70×); small connectomes lose — reported | Connectome-compute efficiency is scale-dependent evidence, not a blanket claim |
 
 ## Plausible (worth an experiment, not a lane)
 
@@ -35,7 +36,7 @@ says.
 | Ultrasound as a programmable instruction set for wild organisms | Refused — perturbation ≠ programming; engineered circuits out of scope |
 | `hop`/`compute`/`store`-into-organism lanes | Refused until evidence SAID lands |
 | Connectome verdicts as biological validation of detections | Refused framing — a verdict is a replayable structural signature, not cognition or truth about the observed organism |
-| Connectome compute is more energy-efficient than silicon | Not claimed — bench reports whatever RAPL measures; the substrate projection is labeled extrapolation only |
+| Connectome compute is categorically more energy-efficient than silicon | Not claimed — small wiring loses to SIMD (measured); the win is at scale, and the substrate projection is labeled extrapolation |
 
 ## SAGED MRV criteria (Ford et al., J Appl Ecol 2024)
 

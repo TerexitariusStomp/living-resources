@@ -176,10 +176,10 @@ def sparse_workload(name):
     n = meta["nNeurons"]
     w = w4.astype(np.float32)
     x = np.random.default_rng(3).standard_normal(n).astype(np.float32)
+    rows = np.repeat(np.arange(n), np.diff(indptr))
 
     def rep():
-        return np.add.reduceat(w * x[indices],
-                               np.unique(indptr[:-1]))
+        return np.bincount(rows, weights=w * x[indices], minlength=n)
 
     return {"subject": f"sparse-matmul:{name}",
             "rep": rep,
@@ -191,18 +191,29 @@ def sparse_workload(name):
 
 # ── measurement ───────────────────────────────────────────────────────────
 
+# RAPL counters update on ~1ms granularity; a window shorter than this
+# resolves to ~0 J and silently misreports fast workloads. Run until the
+# window is at least MIN_WINDOW_MS so deltas are real.
+MIN_WINDOW_MS = 100.0
+
+
 def measure(work, reps):
-    """REPS consecutive reps inside one measurement window."""
+    """At least REPS reps in a window ≥ MIN_WINDOW_MS; counts actuals."""
     before = rapl_snapshot()
     cpu0 = cpu_time_ms()
     rss0 = rss_kb()
     t0 = time.perf_counter()
-    for _ in range(reps):
+    n = 0
+    while True:
         work["rep"]()
-    wall_ms = (time.perf_counter() - t0) * 1000.0
+        n += 1
+        wall_ms = (time.perf_counter() - t0) * 1000.0
+        if n >= reps and wall_ms >= MIN_WINDOW_MS:
+            break
     cpu_ms = cpu_time_ms() - cpu0
     rss_peak = max(rss_kb(), rss0)
     d = rapl_delta(before, rapl_snapshot())
+    reps = n
 
     tier = "measured" if d.get("package") is not None else "estimated"
     if d.get("package") is not None:
@@ -219,16 +230,18 @@ def measure(work, reps):
         "rss_kb": rss_peak,
         "joules": j,
         "energy_tier": tier,
+        "reps_actual": reps,
     }
 
 
 def run_leg(work, features, reps):
     m = measure(work, reps)
+    reps_actual = m.pop("reps_actual")
     return {
         "bench": BENCH_ENCODER,
         "subject": work["subject"],
         "features": features,
-        "reps": reps,
+        "reps": reps_actual,
         "ops_per_decision": work["ops_per_decision"],
         "bytes": work["bytes"],
         "spikes": work["spikes"],
@@ -237,9 +250,19 @@ def run_leg(work, features, reps):
     }
 
 
+def cpu_model():
+    try:
+        for line in open("/proc/cpuinfo"):
+            if line.startswith("model name"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    return platform.processor() or "unknown"
+
+
 def env_block():
     return {
-        "cpu": platform.processor() or "unknown",
+        "cpu": cpu_model(),
         "machine": platform.machine(),
         "python": platform.python_version(),
         "numpy": np.__version__,
