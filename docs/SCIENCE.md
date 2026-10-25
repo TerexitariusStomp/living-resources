@@ -16,6 +16,7 @@ says.
 | Passive acoustics + human validation produce credible MRV | standard practice; SAGED criteria below | Our guardian/witness architecture matches field methodology |
 | C4D (capacitively-coupled contactless conductivity detection) | established analytical technique | Non-invasive biofilm electrical readout through vessel walls |
 | Packed EM connectomes run deterministic LIF inference | `~/fly-data` + FlyEngine deployed in fly.ai; `tools/connectome/lif.py` reproduces verdicts bit-for-bit | Connectome-witness lane: replayable response signatures as a third evidence class |
+| Packed int4 CSR wiring is algorithmically sparse: ops ≪ equivalent dense transform | counted exactly by `tools/connectome/bench.py` (celegans ~35k ops vs 91k dense MACs; 7.8KB vs 365KB) | Structural-efficiency claim, measured not projected |
 
 ## Plausible (worth an experiment, not a lane)
 
@@ -34,6 +35,7 @@ says.
 | Ultrasound as a programmable instruction set for wild organisms | Refused — perturbation ≠ programming; engineered circuits out of scope |
 | `hop`/`compute`/`store`-into-organism lanes | Refused until evidence SAID lands |
 | Connectome verdicts as biological validation of detections | Refused framing — a verdict is a replayable structural signature, not cognition or truth about the observed organism |
+| Connectome compute is more energy-efficient than silicon | Not claimed — bench reports whatever RAPL measures; the substrate projection is labeled extrapolation only |
 
 ## SAGED MRV criteria (Ford et al., J Appl Ecol 2024)
 

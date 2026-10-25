@@ -85,6 +85,12 @@ throughput. E5 is its graduation path.
 `emit`/`cast` — unchanged: consent-gated; rasterization is already the
 input direction of a response loop.
 
+**Efficiency** — `tools/connectome/bench.py` + `docs/EFFICIENCY.md`:
+the compute form's efficiency is *evidenced*, not claimed — ops and
+bytes per decision measured and replay-verifiable, joules from RAPL
+(or labeled estimate), vs same-silicon/neuromorphic/GPU/wetware
+baselines. E6 is its experiment.
+
 ### L4 — Signal relay through wiring (vision-tier)
 
 Route a sensed signal *through* a connectome: encoded input injected as

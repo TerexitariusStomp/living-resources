@@ -67,6 +67,18 @@ criterion stated *before* it runs, and a refusal is a valid result.
 - **Pass:** relay traces replay deterministically across verifiers and
   carry input→output provenance digests end to end.
 
+## E6 — connectome compute efficiency benchmark
+
+- **What:** `tools/connectome/bench.py` measures ops/decision (exact
+  op-model), bytes/decision (packed int4 vs fp32) and joules/decision
+  (RAPL when readable, labeled estimate otherwise) for LIF-over-wiring
+  vs same-silicon numpy baselines, emitting SAIDed bench bundles.
+- **Pass:** the bundle reproduces identical op-counts and trace digests
+  on `--replay` across two independent runs; every comparison cell
+  carries its honesty tier (measured/estimated/cited).
+- **Honesty rule:** results ship as measured — unfavorable cells are
+  part of the evidence, not failures.
+
 ## Emission protocol (applies to every emit act, E-gated or consented)
 
 1. Joint guardian + node-operator consent SAID — required, recorded.

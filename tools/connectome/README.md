@@ -28,3 +28,17 @@ Verdicts feed the commons via `adapters/connectome.scm` →
 `module/living/connectome.scm` → an optional `connectome-said` leg on
 witnessed receipts. See `docs/CONNECTOME.md` for the evidence model and
 its honesty table. `CONNECTOME_PACKED_DIR` overrides the blob path.
+
+## bench.py — efficiency evidence
+
+```bash
+python3 bench.py run --connectome celegans --reps 30 --baselines > b.jsonl
+python3 bench.py --replay b.jsonl    # op-counts + trace digests must reproduce
+python3 bench.py compare b.jsonl     # ops/bytes/ms/joules per decision, tiered
+```
+
+Measures ops/decision (exact op-model), bytes/decision, wall/CPU/RSS,
+and joules via RAPL when `energy_uj` is readable
+(`sudo chmod 444 /sys/class/powercap/intel-rapl*/energy_uj` unlocks it;
+otherwise a labeled estimate). Baselines: dense and sparse fp32 matmul
+on the same silicon. Methodology + claim table: `docs/EFFICIENCY.md`.
