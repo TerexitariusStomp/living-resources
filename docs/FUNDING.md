@@ -6,15 +6,15 @@ Status key: `drafted` | `submitted` | `awarded` | `declined` | `watching`
 All application drafts live in `docs/funding/applications/`; the shared
 two-page concept note is `docs/funding/concept-note.md`.
 
-Entity: US entity confirmed, SAM.gov registered — SBIR and federal lanes
-are unblocked today. Verify entity type supports equity before the
-Superorganism conversation (LLC → C-corp conversion is routine).
+Entity: **Treetable LLC** — US entity confirmed, SAM.gov registered.
+SBIR and federal lanes unblocked today. LLC → C-corp conversion is
+routine if an equity raise requires it.
 
 ## Lane A — earned revenue, $0 capital (now)
 
 | Program | Est. | Status | Next action |
 |---|---|---|---|
-| Wetware verification audits — Cortical Labs | $5–25k/engagement | **draft in Gmail** | Draft saved to Gmail Drafts → info@corticallabs.com — review + send |
+| Wetware verification audits — Cortical Labs | $5–25k/engagement | **SENT** | Email sent to info@corticallabs.com — await reply |
 | Wetware verification audits — FinalSpark | $5–25k/engagement | drafted | Their Neuroplatform access is an application form, not email — apply via finalspark.com form |
 | Bench certification reports (edge-AI / neuromorphic / MRV vendors) | $2–10k/report | drafted | `applications/lane-a-bench-cert.md` — attach to follow-up emails once targets named |
 | Replay-verified compute API | MRR | drafted | `applications/lane-a-api-page.md` — needs the worker endpoint shipped |
@@ -42,14 +42,14 @@ Superorganism conversation (LLC → C-corp conversion is routine).
 
 | Program | Amount | Timing | Status | Next action |
 |---|---|---|---|---|
-| Crowd Supply campaign (EcoCell) | $30–100k typical | — | **form filled in Brave** | Review the open tab (verify company_name = real entity) → submit |
+| Crowd Supply campaign (EcoCell) | $30–100k typical | — | **SUBMITTED** | Submitted as Treetable LLC — welcome email → account setup → SoW (~5 days review) |
 | Lab pre-orders | $150–300/unit | Anytime | drafted | `applications/lab-preorder-email.md` — needs named lab contacts |
 
 ## Lane E — equity + big non-dilutive
 
 | Program | Amount | Timing | Status | Next action |
 |---|---|---|---|---|
-| Superorganism (pre-seed) | $250–500k | Rolling | **draft in Gmail** | Draft saved to Gmail Drafts → hello@superorganism.com — review + send |
+| Superorganism (pre-seed) | $250–500k | Rolling | **SENT** | Email sent to hello@superorganism.com — await reply |
 | NSF SBIR Phase I — Project Pitch | first gate | Rolling | **portal tab open** | Log into nsfgov.my.site.com (tab open in Brave), paste `applications/nsf-project-pitch.txt` |
 | NSF SBIR Phase I — full proposal | $275k | ~3 windows/yr | drafted | `applications/nsf-sbir.md` — only after pitch invite |
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |

@@ -84,7 +84,7 @@ and the $45 universal node multiplies the addressable fleet.
 ====================================================================
 4. COMPANY AND TEAM
 ====================================================================
-[ENTITY NAME], a US small business. The founder has designed and built
+Treetable LLC, a US small business. The founder has designed and built
 the complete stack to date: the evidence protocol (quorum witnessing,
 witnessed receipts, consent-gated lanes), a manufacturable universal
 field node (design-complete, DRC-clean, fabrication package ready),
