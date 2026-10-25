@@ -1,0 +1,103 @@
+NSF SBIR/STTR PROJECT PITCH — ready to paste into nsfgov.my.site.com/mywork
+(4 required sections; stay under their word limits)
+
+====================================================================
+1. TECHNOLOGY INNOVATION
+====================================================================
+Verifiable Ecological Sensing (VES): a distributed sensing pipeline in
+which every field reading is content-addressed at capture (SAID),
+merged through quorum witnessing across independent nodes, and issued
+as a replayable receipt — making provenance a property of the data
+artifact itself rather than a claim by the data provider.
+
+The breakthrough: today's monitoring pipelines lose provenance at the
+export boundary. Readings become indistinguishable from fabrications the
+moment they leave the device; downstream integrity depends entirely on
+provider trust. VES binds identity, calibration provenance, quorum
+context, and computation into a content-addressed receipt that any
+third party can independently replay and verify — integrity that
+travels with the data, not the vendor.
+
+A second novel component is replay-verified computation: deterministic
+inference over preserved real-organism neural wiring diagrams produces
+task traces that independent parties recompute bit-for-bit, giving
+self-evidencing computation with no trusted enclave or fraud-proof
+machinery. We have demonstrated this across 15 EM-derived connectomes
+(302–40,000 neurons) with measured efficiency benchmarks published
+under explicit measured/estimated/cited honesty tiers.
+
+The core research question is whether per-reading evidentiary integrity
+can survive real field conditions — intermittent mesh backhaul,
+heterogeneous low-cost nodes, adversarial readings — at a cost point
+($35–45/node) compatible with conservation deployment scale.
+
+====================================================================
+2. TECHNICAL OBJECTIVES AND CHALLENGES
+====================================================================
+Phase I objective: demonstrate that content-addressed, quorum-witnessed
+receipts preserve verifiable provenance for ecological readings under
+field-realistic conditions at consumer-hardware cost.
+
+Objective 1 — Quorum integrity under partition: characterize receipt
+validity as a function of witness count, churn, and network partition
+on Reticulum/LXMF store-and-forward backhaul. Measurable outcome: a
+formal bound on false-witness admission vs quorum parameters, validated
+in a 10-node field pilot.
+
+Objective 2 — Replay-verification cost at scale: measure compute and
+bandwidth cost of receipt generation + independent replay per reading;
+target <5% overhead on ESP32-S3-class nodes and <1% on the edge.
+Existing bench harness (exact op-model + RAPL joule deltas) provides
+the measurement method.
+
+Objective 3 — Calibration-to-receipt binding: extend the receipt format
+to bind sensor calibration provenance end-to-end, so "verified reading"
+implies "verified calibrated reading."
+
+Technical risks: quorum parameterization under real partition
+dynamics; digest/replay cost on constrained silicon; calibration-
+binding format stability. Mitigations: degraded-quorum receipt tiers,
+digest batching, calibration-registry indirection.
+
+====================================================================
+3. MARKET OPPORTUNITY
+====================================================================
+The integrity gap in environmental data is a recognized market
+bottleneck. Post-ICVCM/VCMI carbon-market reform, biodiversity-credit
+frameworks, and Article 6 all name measurement-verification trust as
+the binding constraint on nature finance — a market projected in the
+tens of billions. MRV tooling is the acknowledged choke point.
+
+Customers: (1) carbon/biodiversity project developers needing
+audit-grade evidence; (2) monitoring vendors needing third-party-
+verifiable claims; (3) research and protected-area buyers needing
+fleet-scale low-cost sensing. First revenue requires no hardware
+capital: verification services and receipts over existing datasets.
+
+Competition: proprietary loggers (AudioMoth-class, $300–1000+) produce
+data with no provenance; MRV platforms (aggregate dashboards) verify
+nothing at the reading level. No competitor offers witnessed,
+replayable per-reading evidence. Scalability: the evidence layer is
+hardware-agnostic — existing deployments adopt it without new hardware,
+and the $45 universal node multiplies the addressable fleet.
+
+====================================================================
+4. COMPANY AND TEAM
+====================================================================
+[ENTITY NAME], a US small business. The founder has designed and built
+the complete stack to date: the evidence protocol (quorum witnessing,
+witnessed receipts, consent-gated lanes), a manufacturable universal
+field node (design-complete, DRC-clean, fabrication package ready),
+MicroPython node firmware, and the connectome replay-verification
+machinery — all public under AGPL-3.0.
+
+Team gap to fill in Phase I: field-deployment partner (conservation or
+research organization) for the 10-node pilot; advisor with
+carbon-market/MRV methodology experience. [Add names when confirmed.]
+
+====================================================================
+PASTE NOTES
+- Sign into the TIP portal (tab is open in Brave), Start New Pitch
+- The form also asks: company name, address, contact info, keywords,
+  topic area → pick "Environmental Technologies" or closest fit
+- Save a copy of the submitted pitch ID in docs/FUNDING.md status
