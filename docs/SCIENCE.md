@@ -17,7 +17,7 @@ says.
 | C4D (capacitively-coupled contactless conductivity detection) | established analytical technique | Non-invasive biofilm electrical readout through vessel walls |
 | Packed EM connectomes run deterministic LIF inference | `~/fly-data` + FlyEngine deployed in fly.ai; `tools/connectome/lif.py` reproduces verdicts bit-for-bit | Connectome-witness lane: replayable response signatures as a third evidence class |
 | Packed int4 CSR wiring is algorithmically sparse: ops ≪ equivalent dense transform | counted exactly by `tools/connectome/bench.py` (celegans ~35k ops vs 91k dense MACs; 7.8KB vs 365KB) | Structural-efficiency claim, measured not projected |
-| At ≥~10⁴-neuron scale, LIF-over-wiring uses fewer measured joules than dense fp32 on x86 | RAPL deltas, `bench.py` --all: medulla 0.117 J vs 8.3 J dense (~70×); small connectomes lose — reported | Connectome-compute efficiency is scale-dependent evidence, not a blanket claim |
+| At ≥~10⁴-neuron scale, LIF-over-wiring uses fewer measured joules than dense fp32 on x86 | RAPL deltas, `bench.py` --all: medulla 0.117 J vs 8.3 J dense (~70×); small connectomes lose — reported | Scale-dependent evidence, not a blanket claim; degree-matched shuffled wiring performs identically — the win is sparsity (known CS), biology's contribution is the specific topology |
 
 ## Plausible (worth an experiment, not a lane)
 

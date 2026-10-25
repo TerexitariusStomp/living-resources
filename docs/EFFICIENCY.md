@@ -63,8 +63,14 @@ Large wiring — medulla (40,000 neurons):
   O(n²) cost inverts the table — medulla's connectome leg runs in
   **1.17e-1 J vs 8.30 J (~70× less energy) and 3.3 ms vs 104 ms**;
   it also beats the fp32 sparse baseline on joules because int4 packed
-  data moves ~2.2× fewer bytes through memory. Biological wiring is
-  *provably* the efficient substrate at scale, on this silicon, today.
+  data moves ~2.2× fewer bytes through memory.
+- **Topology control (measured):** `--control` benches degree-matched
+  *shuffled* wiring — same neurons, same out-degrees, same weights,
+  random targets. Real and shuffled wiring are statistically identical
+  on every axis (medulla 9.16e-2 vs 8.37e-2 J). **The efficiency is
+  sparsity — established computer science, not a biological finding.**
+  What real wiring contributes is the *specific* topology: the
+  replayable signature, not the speed.
 - The LIF's ~35k ops vs the sparse baseline's 3,009 MACs at celegans
   shows the temporal cost — ten steps of dynamics, not a one-shot
   transform. Different compute categories; the table reports both.
@@ -85,7 +91,8 @@ Large wiring — medulla (40,000 neurons):
 |---|---|
 | Packed int4 CSR compute is algorithmically sparse (ops ≪ n² dense) | **measured** — counted, replayable |
 | Footprint: packed wiring ≈ 46×–5,900× smaller than fp32 dense | **measured** — bytes are exact |
-| At scale (≥~10⁴ neurons) connectome legs use fewer measured joules AND less wall-time than dense fp32 on this CPU | **measured** — medulla ~70× J, ~31× wall |
+| At scale (≥~10⁴ neurons) connectome legs use fewer measured joules AND less wall-time than dense fp32 on this CPU | **measured** — medulla ~70× J, ~31× wall; consistent with established sparse-vs-dense complexity, not new science |
+| The efficiency belongs to biological wiring specifically | **refuted by control** — degree-matched shuffled wiring is statistically identical; biology contributes the signature, not the speed |
 | Small connectomes lose to SIMD numpy on J/decision | **measured** — interpreter overhead, reported not hidden |
 | Deterministic task traces replay bit-for-bit | **measured** — `--replay` (15/15 legs) |
 | On purpose hardware the same wiring would run at ~24 pJ/synop | **projected** — spike counts measured, J/spike cited; projection labeled |

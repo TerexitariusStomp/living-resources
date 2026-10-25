@@ -149,6 +149,32 @@ def lif_workload(name, features):
     }
 
 
+def shuffled_workload(name, features, seed=11):
+    """Topology control: identical neuron count, out-degree sequence and
+    weight multiset — synaptic targets shuffled. Isolates whether real
+    wiring contributes anything beyond generic sparsity."""
+    meta, indptr, indices, w4, src = lif.load_connectome(name)
+    rng = np.random.default_rng(seed)
+    sh_idx = rng.permutation(indices)          # same edges, random targets
+    inp = lif.rasterize(features, meta["nNeurons"])
+    outdeg = np.diff(indptr)
+
+    def rep():
+        return lif.simulate(meta, indptr, sh_idx, w4, src, inp)
+
+    v, raster = rep()
+    ops_prop = int((raster[:-1] * outdeg).sum())
+    ops = meta["nNeurons"] * meta["nSteps"] * UPDATE_OPS + ops_prop
+    digest = hashlib.blake2s(raster.tobytes() + v.tobytes()).hexdigest()
+
+    return {"subject": f"connectome-shuffled:{name}",
+            "rep": rep,
+            "ops_per_decision": ops,
+            "bytes": meta["totalSize"],
+            "spikes": int(raster.sum()),
+            "trace_digest": "blake2s:" + digest}
+
+
 def dense_workload(name):
     """fp32 n x n dense matvec — same I/O shape as the connectome."""
     meta = json.load(open(os.path.join(lif.PACKED_DIR, name,
@@ -306,11 +332,15 @@ def replay(path):
         leg = json.loads(line)
         if "subject" not in leg:
             continue  # bundle/trailer lines
-        if not leg["subject"].startswith("connectome:"):
+        if leg["subject"].startswith("connectome-shuffled:"):
+            name = leg["subject"].split(":", 1)[1]
+            work = shuffled_workload(name, leg["features"])
+        elif leg["subject"].startswith("connectome:"):
+            name = leg["subject"].split(":", 1)[1]
+            work = lif_workload(name, leg["features"])
+        else:
             print(f"skip {leg['subject']} (baseline — no trace digest)")
             continue
-        name = leg["subject"].split(":", 1)[1]
-        work = lif_workload(name, leg["features"])
         same = (work["ops_per_decision"] == leg["ops_per_decision"]
                 and work["trace_digest"] == leg["trace_digest"])
         print(f"{'replay-ok' if same else 'REPLAY-MISMATCH'} "
@@ -332,6 +362,9 @@ def main():
                              '"env_anomaly":0.15,"fleet_agreement":0.9}')
     run.add_argument("--baselines", action="store_true",
                      help="also measure dense/sparse matmul references")
+    run.add_argument("--control", action="store_true",
+                     help="also measure degree-matched shuffled wiring — "
+                          "isolates topology from generic sparsity")
 
     cmp_ = sub.add_parser("compare")
     cmp_.add_argument("legs")
@@ -357,6 +390,8 @@ def main():
     legs = []
     for name in names:
         works = [lif_workload(name, features)]
+        if a.control:
+            works.append(shuffled_workload(name, features))
         if a.baselines:
             works += [dense_workload(name), sparse_workload(name)]
         for w in works:
