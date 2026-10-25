@@ -33,12 +33,14 @@ replay it — the computation is the proof.
 | Lab | 10k tasks/mo + private bundles | $99/mo |
 | Registry | standing task registry, co-branded receipts | $499/mo |
 
-## Build checklist (the only work left)
+## Build checklist
 
-- [ ] CF Worker wrapping `tools/connectome/lif.py` logic (port LIF core
-      to TS/WASM or call a cheap container — packed blobs are ≤1.1MB)
-- [ ] `/replay` endpoint re-running the task, comparing digests
-- [ ] API keys + per-task logging
+- [x] CF Worker — `workers/compute-api/` (TS port of `lif.py`, verified
+      bit-identical vs the Python runner: 930/930 checks in
+      `test/diff.mjs`)
+- [x] `/verify` endpoint re-runs the task and compares digests
+- [x] LIVE: `https://connectome-compute-api.terexmaps.workers.dev`
+- [ ] API keys + per-task logging (needed before paid tiers)
 - [ ] Landing page with a live "verify this task" button
 
 ## Positioning line
