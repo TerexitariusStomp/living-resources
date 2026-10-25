@@ -60,6 +60,31 @@ clickable through to the receipts — is the visible artifact:
 competitors publish dashboards and PDF reports; this publishes a
 machine-checkable evidence graph that grows from the field.
 
+### L2.5 — Resource lanes: what connectomes can and cannot provide
+
+`compute` — **real, narrow, uniquely verifiable.** A connectome is a
+fixed recurrent dynamical system: input vector in, spike-trace transform
+out (reservoir-computing shape). The proof property no competitor has:
+**replay is the receipt** — independent verifiers recompute input→trace
+and require bit-identical digests; unanimity, not majority. Topology-
+parameterized: *which organism's wiring ran the task* is part of the
+result. Built: `--task` mode in lif.py, `<connectome-task>` +
+`replays-agree?` + `task-evidence-digest` in connectome.scm. The refused
+`compute` lane (living systems computing) stays refused — a
+connectome-compute lane would be its own graduation via E4.
+
+`store` — **honestly no for organism-side persistence.** LIF state is
+transient (membrane decay → fading memory). What is real: trace digests
+are commitments and checkpoints are tamper-evident state — evidence
+material, not bulk storage. The `store` lane stays node-SD hardware.
+
+`hop` — **real but vision-tier** (L4): propagation along real synaptic
+paths is a relay through organism topology — a receipted trace, not
+throughput. E5 is its graduation path.
+
+`emit`/`cast` — unchanged: consent-gated; rasterization is already the
+input direction of a response loop.
+
 ### L4 — Signal relay through wiring (vision-tier)
 
 Route a sensed signal *through* a connectome: encoded input injected as

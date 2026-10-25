@@ -203,6 +203,41 @@ def run_connectome(name, features):
     }
 
 
+def run_task(name, features):
+    """A compute task: arbitrary input in, committed trace out.
+
+    Two input forms: the named-feature vector (rasterized like a
+    verdict) or a raw per-neuron {"input": [v, ...]} current list —
+    broadcast to length n if short. The result is the transform the
+    wiring performed: raster digest + membrane tail. Replay IS the
+    proof — any verifier reruns input->trace and checks the digest."""
+    meta, indptr, indices, w4, src = load_connectome(name)
+    n = meta["nNeurons"]
+    if "input" in features:
+        vec = np.asarray(features["input"], dtype=np.float64)
+        if len(vec) > n:
+            raise SystemExit(f"input vector {len(vec)} > neurons {n}")
+        inp = np.zeros(n, dtype=np.int64)
+        inp[: len(vec)] = np.round(vec * Q24 / max(1.0, np.abs(vec).max()))
+        inp = (inp * EYE_GAIN_Q24) // Q24
+        encoder = "lif-task-v1"
+    else:
+        inp = rasterize(features, n)
+        encoder = ENCODER
+    v, raster = simulate(meta, indptr, indices, w4, src, inp)
+    return {
+        "connectome": name,
+        "input_said": input_said(features),
+        "features": features,
+        "trace_digest": "blake2s:" + hashlib.blake2s(
+            raster.tobytes() + v.tobytes()).hexdigest(),
+        "spike_count": int(raster.sum()),
+        "tail_v": int(v[v > 0].sum()),
+        "steps": meta["nSteps"],
+        "encoder": encoder,
+    }
+
+
 def list_packed():
     return sorted(d for d in os.listdir(PACKED_DIR)
                   if os.path.exists(os.path.join(PACKED_DIR, d,
@@ -225,6 +260,10 @@ def main():
     ap.add_argument("--features", required=False,
                     help="JSON feature vector: confidence, event_rate, "
                          "env_anomaly, fleet_agreement (each 0..1)")
+    ap.add_argument("--task", action="store_true",
+                    help="compute-task mode: emit trace digests, no "
+                         "verdict decode; features may carry a raw "
+                         "'input' per-neuron current vector")
     ap.add_argument("--replay", metavar="FILE",
                     help="rerun verdict(s) from a JSONL file and verify "
                          "digests reproduce")
@@ -247,17 +286,25 @@ def main():
             if not line:
                 continue
             v = json.loads(line)
-            same, _ = replay(v)
+            if "trace_digest" in v:
+                again = run_task(v["connectome"], v["features"])
+                same = (again["trace_digest"] == v["trace_digest"]
+                        and again["input_said"] == v["input_said"])
+            else:
+                same, _ = replay(v)
             tag = "replay-ok" if same else "REPLAY-MISMATCH"
+            dg = v.get("spike_digest") or v.get("trace_digest", "")
+            act = v.get("action", "task")
             print(f"{tag} {v['connectome']} "
-                  f"action={v['action']} digest={v['spike_digest'][:16]}…")
+                  f"action={act} digest={dg[:16]}…")
             ok = ok and same
         sys.exit(0 if ok else 1)
 
     features = json.loads(a.features or "{}")
     names = list_packed() if a.all else [a.connectome or "celegans"]
+    run = run_task if a.task else run_connectome
     for name in names:
-        print(json.dumps(run_connectome(name, features)))
+        print(json.dumps(run(name, features)))
 
 
 if __name__ == "__main__":

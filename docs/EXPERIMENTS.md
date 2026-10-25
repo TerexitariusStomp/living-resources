@@ -44,6 +44,29 @@ criterion stated *before* it runs, and a refusal is a valid result.
   control; readout qualifies the `c4d` head for read lanes only —
   compute claims still wait for E4+.
 
+## E4 — connectome replay-verified compute
+
+- **What:** can a packed connectome provide *verifiable* compute? Task =
+  encoded input → LIF trace digest on a named wiring diagram; the proof
+  is replay — N independent verifiers recompute and the digests must be
+  bit-identical.
+- **Pass:** ≥3 independent replays reproduce the trace digest; and a
+  discrimination floor — distinct inputs yield distinct digests on every
+  connectome tested.
+- **On pass:** a connectome-compute evidence SAID can be proposed; the
+  refused `compute` lane is untouched (that lane is living-systems
+  compute — this is preserved wiring under simulation, a different
+  claim, gated separately).
+
+## E5 — signal relay through wiring (`hop` graduation path)
+
+- **What:** an encoded observation injected as input current propagates
+  along real synaptic paths; the spike train is the relayed output —
+  a receipted trace event.
+- **Honest bound:** the measured topology relays, not the organism.
+- **Pass:** relay traces replay deterministically across verifiers and
+  carry input→output provenance digests end to end.
+
 ## Emission protocol (applies to every emit act, E-gated or consented)
 
 1. Joint guardian + node-operator consent SAID — required, recorded.

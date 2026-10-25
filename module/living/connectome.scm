@@ -28,7 +28,13 @@
             connectome-verdict-spike-count connectome-verdict-spike-digest
             connectome-verdict-steps connectome-verdict-encoder
             verdict->leg distinct-connectomes connectome-quorum?
-            verdicts-digest *connectome-quorum-size*))
+            verdicts-digest *connectome-quorum-size*
+            ;; the compute task — replay as proof
+            <connectome-task> make-connectome-task connectome-task?
+            connectome-task-id connectome-task-connectome
+            connectome-task-input-said connectome-task-trace-digest
+            connectome-task-steps connectome-task-encoder
+            replays-agree? task-evidence-digest))
 
 
 ;;; ── the verdict ─────────────────────────────────────────────────────────
@@ -131,3 +137,61 @@
                              (lambda (a b)
                                (string<? (symbol->string (car a))
                                          (symbol->string (car b))))))))
+
+
+;;; ── the compute task — replay as proof ─────────────────────────────────
+;;; A connectome compute task is honest about its shape: an input committed
+;;; by input-said, a transform committed by trace-digest, and the wiring
+;;; that ran it named outright. The proof property is REPLAY: independent
+;;; verifiers recompute input→trace; identical digests mean the compute
+;;; demonstrably happened on that topology — no redundancy machinery, no
+;;; trusted execution. replays-agree? is the quorum of that: every replay
+;;; must land the same trace or the evidence bundle does not exist.
+;;;
+;;; What this is NOT: storage (LIF state fades — trace digests are
+;;; commitments, not persistence), throughput (topology not speed), or the
+;;; living organism computing (preserved wiring, simulated dynamics).
+;;; The refused `compute` lane — living systems computing — is untouched;
+;;; a task's replay bundle is the evidence material that could one day
+;;; graduate a connectome-compute lane of its own.
+
+(define-record-type <connectome-task>
+  (%make-connectome-task id connectome input-said trace-digest
+                         steps encoder)
+  connectome-task?
+  (id           connectome-task-id)
+  (connectome   connectome-task-connectome)    ; which wiring ran it
+  (input-said   connectome-task-input-said)    ; digest of the input
+  (trace-digest connectome-task-trace-digest)  ; digest of raster+v tail
+  (steps        connectome-task-steps)
+  (encoder      connectome-task-encoder))      ; e.g. lif-task-v1
+
+(define* (make-connectome-task #:key id connectome input-said
+                               trace-digest steps encoder)
+  (unless (symbol? connectome)
+    (error "connectome-task: connectome must be a symbol" connectome))
+  (unless (and input-said trace-digest)
+    (error "connectome-task: input-said and trace-digest are required"))
+  (%make-connectome-task id connectome input-said trace-digest
+                         steps encoder))
+
+(define (replays-agree? digests)
+  "DIGESTS is the list of trace digests independent replays produced.
+   #t iff there is at least one replay and every digest is identical —
+   agreement is unanimity, not majority: the same computation is
+   deterministic or the bundle is invalid."
+  (and (pair? digests)
+       (every (lambda (d) (equal? d (car digests))) digests)))
+
+(define (task-evidence-digest task replays)
+  "TASK + its agreeing REPLAY digests → one evidence digest | #f.
+   The replays must unanimously reproduce the task's claimed
+   trace-digest — replays that agree with each other but not with the
+   claim prove a different computation, so they mint nothing."
+  (and (replays-agree? replays)
+       (equal? (connectome-task-trace-digest task) (car replays))
+       (%digest-fields 'living-task/v1
+                       (connectome-task-connectome task)
+                       (connectome-task-input-said task)
+                       (connectome-task-trace-digest task)
+                       replays)))

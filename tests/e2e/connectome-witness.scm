@@ -165,6 +165,30 @@
               (not (receipt-connectome-said (cdr att-plain))))
          #t)
 
+  (scenario "compute tasks — replay is the proof")
+  (define task
+    (make-connectome-task #:id "task-1" #:connectome 'celegans
+                          #:input-said "blake2s:in-1"
+                          #:trace-digest "blake2s:trace-1"
+                          #:steps 10 #:encoder "lif-task-v1"))
+  (check "a task record validates" (connectome-task? task) #t)
+  (check-error "a task without both digests refuses"
+               (lambda () (make-connectome-task
+                           #:id "task-x" #:connectome 'rat
+                           #:input-said #f #:trace-digest "x"
+                           #:steps 1 #:encoder "x")))
+  (check "three identical replay digests agree"
+         (replays-agree? '("blake2s:t" "blake2s:t" "blake2s:t")) #t)
+  (check "one divergent replay voids the proof"
+         (replays-agree? '("blake2s:t" "blake2s:other" "blake2s:t")) #f)
+  (check "no replays → no agreement"
+         (replays-agree? '()) #f)
+  (check "task + agreeing replays mint one evidence digest"
+         (string? (task-evidence-digest task '("blake2s:trace-1"
+                                              "blake2s:trace-1"))) #t)
+  (check "disagreeing replays mint nothing"
+         (task-evidence-digest task '("blake2s:trace-1" "blake2s:other")) #f)
+
   (scenario "settlement — credit flows regardless of connectome legs")
   (define-values (book* event)
     (settle-receipt '() receipt ($ eco 'who)))
