@@ -54,8 +54,8 @@ routine if an equity raise requires it.
 | NSF SBIR Phase I — full proposal | $275k | ~3 windows/yr | drafted | `applications/nsf-sbir.md` — only after pitch invite |
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |
 | Elemental Impact — Project Track | $500k ask | Rolling | **SUBMITTED** | Intake form submitted 2026-10-25 (portal confirmed) — full app + deck; awaits screening |
-| SOSV HAX (Newark) | up to $550k | Rolling | **QUEUED** | Form filled + deck hosted (workers.dev link) — **needs LinkedIn URL + captcha solve, then submit** (tab open) |
-| Carbon13 Venture Accelerator | €150–250k | Cohort (open) | **QUEUED** | Account created (creds in `~/.local/share/carbon13-account.txt`, verify email) — **needs LinkedIn URL + UK/EU work-right answer to finish sec. 1** |
+| SOSV HAX (Newark) | up to $550k | Rolling | **READY TO SUBMIT** | Form 100% filled incl. LinkedIn + deck link — **user: solve reCAPTCHA → click Submit Application** (tab open) |
+| Carbon13 Venture Accelerator | €150–250k | Cohort (open) | **READY TO SUBMIT** | All 7 sections complete; deck + cap table + tech one-pager uploaded — **user: record+upload founder intro video (required), then submit** (tab open) |
 | Canadian Space Agency AO | up to $250k | Periodic | watching | Needs Canadian partner — consortium option |
 
 ## Staging
