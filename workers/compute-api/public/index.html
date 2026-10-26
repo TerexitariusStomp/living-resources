@@ -196,6 +196,7 @@
   }
   .ledger a:last-child { border-bottom: none; }
   .ledger a:hover { color: var(--signal); }
+  .ledger a span:first-child { min-width: 0; overflow-wrap: anywhere; }
   .ledger a .ago { color: var(--slate); flex: none; }
 
   .eps { font-family: var(--mono); font-size: .79rem; }
@@ -222,8 +223,12 @@
     .eps .ep { grid-template-columns: 3.2rem 1fr; }
     .eps .d { grid-column: 2; }
     .lane { grid-template-columns: 1fr; gap: .35rem; }
-    nav a { margin-left: 1rem; }
-    nav span:last-child { display: flex; flex-wrap: wrap; justify-content: flex-end; }
+    nav { flex-wrap: wrap; row-gap: .6rem; }
+    nav a { margin-left: 0; margin-right: 1.1rem; }
+    nav span:last-child { display: flex; flex-wrap: wrap; }
+    .ledger a { flex-wrap: wrap; row-gap: .15rem; }
+    .quorum { grid-template-columns: 1fr; }
+    .evgrid { gap: 2rem; }
   }
   @media (prefers-reduced-motion: reduce) {
     #net { display: none; }
