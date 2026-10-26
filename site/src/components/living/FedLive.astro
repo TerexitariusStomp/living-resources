@@ -1,0 +1,59 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// FedLive — the federation, live. Fetches GET /federation (the worker's
+// 5-min-cached BirdWeather pull + source catalogue) and renders real
+// station counts and the latest detections — their devices, their names
+// on the numbers. Falls back to honest static text when the API is
+// unreachable (e.g. a purely static preview).
+---
+
+<div class="fedlive not-prose rounded-xl border border-white/10 bg-black/30 p-5">
+  <div class="flex flex-wrap items-baseline justify-between gap-2">
+    <h3 class="text-heading font-mono text-xs uppercase tracking-wide">Live right now — one network, for real</h3>
+    <span id="fedlive-when" class="text-muted font-mono text-[10px]"></span>
+  </div>
+  <p class="text-muted mt-2 text-sm">
+    <b id="fedlive-count" class="text-cyan-300">—</b> BirdWeather stations are listening for birds and insects. These are
+    <b class="text-heading">their</b> devices and <b class="text-heading">their</b> detections — we carry the notes, labeled.
+  </p>
+  <ul id="fedlive-dets" class="mt-3 space-y-1.5 font-mono text-xs">
+    <li class="text-muted">asking the network…</li>
+  </ul>
+</div>
+
+<script>
+  const countEl = document.getElementById('fedlive-count') as HTMLElement;
+  const whenEl = document.getElementById('fedlive-when') as HTMLElement;
+  const listEl = document.getElementById('fedlive-dets') as HTMLElement;
+
+  fetch('/federation')
+    .then((r) => r.json())
+    .then((d) => {
+      const bw = (d.sources ?? []).find((s: any) => s.name === 'birdweather');
+      if (bw?.devices) countEl.textContent = Number(bw.devices).toLocaleString();
+      else countEl.textContent = '26,000+';
+      if (d.generated_at) {
+        const t = new Date(d.generated_at);
+        whenEl.textContent = 'pulled ' + t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      const dets = (d.latest_detections ?? []).slice(0, 6);
+      if (!dets.length) {
+        listEl.innerHTML = '<li class="text-muted">the network answered but sent no fresh detections</li>';
+        return;
+      }
+      listEl.innerHTML = dets
+        .map(
+          (x: any) => `<li class="flex items-center justify-between gap-3">
+            <span><b class="text-heading">${x.species ?? 'unknown bird'}</b>
+            <span class="text-muted"> heard by station ${x.station ?? '?'}</span></span>
+            <span class="text-muted shrink-0">${x.at ? new Date(x.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+          </li>`
+        )
+        .join('');
+    })
+    .catch(() => {
+      countEl.textContent = '26,000+';
+      listEl.innerHTML =
+        '<li class="text-muted">live feed unreachable here — the static catalogue below is the honest fallback</li>';
+    });
+</script>

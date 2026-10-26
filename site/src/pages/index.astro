@@ -13,6 +13,7 @@ import PlantListen from '~/components/living/PlantListen.astro';
 import Board3D from '~/components/living/Board3D.astro';
 import Globe from '~/components/living/Globe.astro';
 import WebNode from '~/components/living/WebNode.astro';
+import FedLive from '~/components/living/FedLive.astro';
 import ValueLoop from '~/components/living/ValueLoop.astro';
 import OrganismMap from '~/components/living/OrganismMap.astro';
 import LaneTable from '~/components/living/LaneTable.astro';
@@ -570,6 +571,27 @@ const field: Row[] = [
             Every write still needs the guardian's yes too — and the device owner's key. Nothing here is reachable
             without it.
           </p>
+        </div>
+      </div>
+      <div class="mx-auto mt-6 max-w-3xl">
+        <FedLive />
+      </div>
+      <div class="mx-auto mt-8 grid max-w-4xl gap-3 text-center sm:grid-cols-4">
+        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
+          <p class="text-heading text-sm font-semibold">1 · the owner's key</p>
+          <p class="text-muted mt-1 text-xs">Every device answers to its owner first. No key, no touch.</p>
+        </div>
+        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
+          <p class="text-heading text-sm font-semibold">2 · the guardian's yes</p>
+          <p class="text-muted mt-1 text-xs">The place's guardian agrees too. Both, or nothing happens.</p>
+        </div>
+        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
+          <p class="text-heading text-sm font-semibold">3 · only what it says it does</p>
+          <p class="text-muted mt-1 text-xs">A watering box waters. It cannot be asked to play sound.</p>
+        </div>
+        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
+          <p class="text-heading text-sm font-semibold">4 · a receipt, always</p>
+          <p class="text-muted mt-1 text-xs">Every ask and every act is sealed so anyone can re-check it.</p>
         </div>
       </div>
       <p class="text-muted mt-4 text-center font-mono text-xs">
