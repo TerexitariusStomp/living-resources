@@ -72,7 +72,7 @@ routine if an equity raise requires it.
 | Sovereign Tech Fund (DE) | €75k | Rolling portal | **SUBMITTED** (apply.sovereign.tech, application `mQqmJlmE`) | Scoped to the open commons layer only: spec v1.0, conformance corpus, external audit of consent/quorum gates, versioned receipt schema, standalone replay verifier, maintainer capacity. 2400h / 15mo. Account hello@templeearth.cc (creds local, not in repo). Status via broadcast emails |
 | Keeling Curve Prize | $50k+ | Annual (2026 closed Jan) | watching | GHG-quantification questions are a stretch — watch 2027 with real deployment data |
 | Breakthrough Energy Fellows | varies | Cohort | watching | Hard-tech climate fellowship — verify next cohort window |
-| Z Fellows | $10k | Rolling, ~1wk | in progress — form 19/25 filled in Brave | Fast founder residency grant. Remaining fields are personal (birthday, phone confirm, drivers/childhood/risk story, intro video, co-founder) — must come from founder, not fabricated |
+| Z Fellows | $10k | Rolling, ~1wk | **SUBMITTED** (Google Form, "Thanks for applying") | Fast founder residency grant — all required fields complete. Optional 1-min founder video left blank (must be founder on camera — same video can serve Carbon13) |
 | NVIDIA Inception | credits+tools (in-kind) | Rolling | watching | Free program; GPU/AI credits if ML detection scales up |
 | AWS Activate / Google for Startups | $1k–100k credits (in-kind) | Rolling | watching | Backup cloud credits; Activate self-serve tier is quick |
 | Elemental Impact — Project Track | $500k ask | Rolling | **SUBMITTED** | Intake form submitted 2026-10-25 (portal confirmed) — full app + deck; awaits screening |
