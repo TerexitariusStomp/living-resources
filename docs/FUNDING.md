@@ -69,17 +69,17 @@ routine if an equity raise requires it.
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |
 | EPA SBIR Phase I | ~$100k | Annual (FY26 open→Nov 8) | **NOT A FIT this cycle** | FY26 topics are PFAS/CO/water-reuse/food-waste/battery — nothing matches; watch FY27 (topics rotate) |
 | Colorado OEDIT Advanced Industries Early-Stage | up to $250k | Windows Jan+Jul (next ~Jan 4, 2027) | watching | CO LLC fits HQ rule, but needs **2:1 cash match** — only unlocks post-raise. Multi-industry cap $500k (electronics + energy/natural resources) |
-| Sovereign Tech Fund (DE) | €50k+ | Rolling portal | watching | Open digital base technologies — the receipt/verification/federation commons could qualify; **same caveat as NLnet: funds the FOSS layer, not field deployment**. Min €50k of work; no double-dipping with other public funds on same scope |
+| Sovereign Tech Fund (DE) | €75k | Rolling portal | **SUBMITTED** (apply.sovereign.tech, application `mQqmJlmE`) | Scoped to the open commons layer only: spec v1.0, conformance corpus, external audit of consent/quorum gates, versioned receipt schema, standalone replay verifier, maintainer capacity. 2400h / 15mo. Account hello@templeearth.cc (creds local, not in repo). Status via broadcast emails |
 | Keeling Curve Prize | $50k+ | Annual (2026 closed Jan) | watching | GHG-quantification questions are a stretch — watch 2027 with real deployment data |
 | Breakthrough Energy Fellows | varies | Cohort | watching | Hard-tech climate fellowship — verify next cohort window |
-| Z Fellows | $10k | Rolling, ~1wk | watching | Fast founder residency grant — low effort, small check |
+| Z Fellows | $10k | Rolling, ~1wk | in progress — form 19/25 filled in Brave | Fast founder residency grant. Remaining fields are personal (birthday, phone confirm, drivers/childhood/risk story, intro video, co-founder) — must come from founder, not fabricated |
 | NVIDIA Inception | credits+tools (in-kind) | Rolling | watching | Free program; GPU/AI credits if ML detection scales up |
 | AWS Activate / Google for Startups | $1k–100k credits (in-kind) | Rolling | watching | Backup cloud credits; Activate self-serve tier is quick |
 | Elemental Impact — Project Track | $500k ask | Rolling | **SUBMITTED** | Intake form submitted 2026-10-25 (portal confirmed) — full app + deck; awaits screening |
 | SOSV HAX (Newark) | up to $550k | Rolling | **SUBMITTED** | Confirmation email received 2026-10-25 — review ~2 weeks; silence by month-end = pass |
 | Carbon13 Venture Accelerator | €150–250k | Cohort (open) | **READY TO SUBMIT** | Email confirmed; all 7 sections complete; deck + cap table + tech one-pager uploaded — **user: record+upload founder intro video (required), then submit** (tab open) |
 | Canadian Space Agency AO | up to $250k | Periodic | watching | Needs Canadian partner — consortium option |
-| DePIN-native funds (EV3, Borderless) | varies | Rolling | watching | The network is literally DePIN-shaped (physical nodes + per-contribution credit) — viable only if we choose to reintroduce crypto framing; deliberately off in conventional apps |
+| DePIN-native funds (EV3, Borderless) | varies | Rolling | outreach drafted — no founder channel found | The network is literally DePIN-shaped. EV3 pitches require a mutual connection (no form); Borderless public form is LP inquiry, not founder pitch — direct email hello@borderlesscapital.io is the honest channel. Draft: `docs/funding/applications/depin-pitch.md` |
 
 ## Staging
 
