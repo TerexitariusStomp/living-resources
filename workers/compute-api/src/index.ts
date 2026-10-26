@@ -167,7 +167,7 @@ export default {
         endpoints: {
           "GET /connectomes": "list wired substrates",
           "POST /task": "{connectome, features|input} → receipt with trace_digest + task_said",
-          "POST /verdict": "{connectome|all, features:{confidence,event_rate,env_anomaly,fleet_agreement}} → verdicts",
+          "POST /verdict": "{connectome, features:{confidence,event_rate,env_anomaly,fleet_agreement}} → verdict — one substrate per call",
           "POST /verify": "a receipt → recompute → {verified}",
           "GET /receipts": "content-addressed ledger of issued task_said receipts",
           "GET /receipts/{task_said}": "fetch a stored receipt for replay",
@@ -313,14 +313,15 @@ export default {
         (obj.input ? { k: "o", obj: [["input", obj.input]] } : obj);
       try {
         if (url.pathname === "/verdict" && cx === "all") {
-          // All 15 sims in one invocation — needs the raised cpu_ms limit
-          // in wrangler.toml; the fan-out over HTTP or a self service
-          // binding both failed (522 loop / shared CPU budget → 1102).
-          const names = (await listConnectomes(env)).map((m: any) => m.name);
-          const out = [];
-          for (const name of names)
-            out.push(runVerdict(await loadConnectome(env, name), feats));
-          return json({ verdicts: out });
+          // Free-plan honesty: 15 sims can't fit one ~10ms invocation and
+          // every fan-out shape fails (SELF shares the budget, HTTP loops
+          // 522). Answer with a readable error instead of an opaque 1102.
+          return json({
+            error: "connectome:'all' exceeds this plan's per-invocation " +
+                   "compute budget",
+            hint: "call /verdict once per connectome — each call is a " +
+                  "separate invocation; GET /connectomes lists the fifteen",
+          }, 503);
         }
         const c = await loadConnectome(env, cx);
         if (url.pathname === "/verdict")

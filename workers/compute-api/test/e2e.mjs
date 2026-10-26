@@ -222,14 +222,14 @@ if (receipt) {
      !!j.verdict?.action && !!j.verdict?.spike_digest);
 }
 {
-  // Free-plan CPU cap (~10ms/invocation) can't run 15 sims — the two
-  // largest substrates exceed it even warm. Soft check until the account
-  // upgrades to Workers Paid (cpu_ms) or the endpoint is restructured.
+  // Free-plan contract: 'all' can't fit one invocation's ~10ms budget,
+  // so the endpoint must answer with a readable JSON error — not die as
+  // an opaque Cloudflare 1102 HTML page. Pinned as a hard check.
   const r = await post("/verdict", { connectome: "all", features: FEATS });
   const j = await r.json().catch(() => null);
-  soft("POST /verdict all → 15 verdicts (needs Workers Paid cpu_ms)",
-     (j?.verdicts ?? []).length === 15,
-     `status ${r.status} — free-plan CPU limit`);
+  ok("POST /verdict all → honest JSON 503 (free-plan CPU)",
+     r.status === 503 && /once per connectome/i.test(j?.error + (j?.hint ?? "")),
+     `status ${r.status}`);
 }
 {
   const j = await postJson("/task",

@@ -11,8 +11,8 @@ modes and asserts every `input_said`, `trace_digest`, `spike_digest`,
 `action`, `confidence`, `spike_count`, and `tail_v` matches (930/930).
 
 The packed int4 CSR blobs ship as one static asset (`public/packed/all.bin`,
-2.2 MB) + `manifest.json` — two subrequests per cold isolate keeps
-`/verdict {"connectome":"all"}` under the fetch cap.
+2.2 MB) + `manifest.json` — two subrequests per cold isolate keeps every
+endpoint under the fetch cap.
 
 ## API
 
@@ -28,8 +28,10 @@ POST /task     {"connectome":"celegans",
            → {receipt:{task_said, input_said, trace_digest,
                        spike_count, tail_v, steps, encoder, replay}}
 
-POST /verdict  {"connectome":"celegans"|"all", "features":{...}}
-           → {verdict|verdicts: action, confidence, spike_digest, ...}
+POST /verdict  {"connectome":"celegans", "features":{...}}
+           → {verdict: action, confidence, spike_digest, ...}
+           one substrate per call — "all" answers an honest 503:
+           the free plan's ~10ms/invocation CPU can't run 15 sims
 
 POST /verify   <a receipt verbatim>
            → {verified, claimed_digest, computed_digest,

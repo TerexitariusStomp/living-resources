@@ -42,7 +42,7 @@ const curl = `curl -X POST https://templeearth.cc/task -H 'content-type: applica
           ['GET', '/info', 'service description'],
           ['GET', '/connectomes', '15 wired substrates'],
           ['POST', '/task', '{connectome, features|input} → receipt'],
-          ['POST', '/verdict', '{connectome|all, features} → verdicts'],
+          ['POST', '/verdict', '{connectome, features} → verdict — one substrate per call'],
           ['POST', '/verify', 'receipt → {verified}'],
           ['GET', '/receipts', 'issued task_said ledger'],
           ['GET', '/receipts/{said}', 'stored receipt, replayable forever'],
