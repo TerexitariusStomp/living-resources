@@ -7,6 +7,7 @@
 import lanes from '~/data/lanes.json';
 import tiers from '~/data/tiers.json';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
 import type { TierKey } from '~/utils/tiers';
 
 interface Props {
@@ -16,10 +17,11 @@ interface Props {
   tagline?: string;
   subtitle?: string;
 }
-const { id, mode = 'plain' } = Astro.props;
+const { id, mode = 'plain', title, tagline, subtitle } = Astro.props;
 ---
 
 <WidgetWrapper id={id} containerClass="max-w-5xl">
+  {title && <Headline title={title} tagline={tagline} subtitle={subtitle} />}
   <div class="font-mono text-sm">
     {
       lanes.map((l) => (

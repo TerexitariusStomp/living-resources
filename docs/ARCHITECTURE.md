@@ -109,8 +109,8 @@ provenance. Custom code budget: **<5% of everything shipped**
 | `src/data/tiers.json` + `src/utils/tiers.ts` | single source of truth for plain-language claim tiers ("Works today" · "Built — field test next" · …); `tierChip` emits chip markup |
 | `src/data/cloud.json` | living-cloud-vs-conventional comparison rows, trajectory items, per-axis evidence, AI-organism anatomy/evolution copy (content, not code) |
 | `src/components/living/` | the custom seam: `LaneTable` `TierLink` `PlantListen` `Board3D` `Globe` `ValueLoop` `OrganismMap` `JoinForm` `Console` |
-| `src/pages/` | `/` story homepage · `/how-it-works` signal journey + plain-English glossary · `/science` claim tiers · `/developers` API + live console · `/privacy` · `/credits` |
-| `tools/site/readability.py` | Flesch-Kincaid gate: `/` and `/how-it-works` must stay ≤ grade 7 (`make check-readability`) |
+| `src/pages/` | `/` the whole story — how it works, live demos, AI organism, cloud comparison, claim tiers + evidence · `/developers` API + live console · `/privacy` · `/credits` |
+| `tools/site/readability.py` | Flesch-Kincaid gate: `/` must stay ≤ grade 7 (`make check-readability`); `/developers` gates only its plain intro |
 | `public/packed/` `public/audio/` `public/img/` | connectome blobs · CC0 plant-sound clips (Dryad 10.5061/dryad.jwstqjqf7 via `tools/site/plant_audio.py`) · PD/CC0 imagery |
 
 ## Hardware tooling — `tools/pcb/`

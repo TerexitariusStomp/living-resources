@@ -6,11 +6,11 @@
 # `npm run build` first).
 #
 # Pass rules:
-#   - index.html and how-it-works/index.html: whole-page Flesch-Kincaid grade
-#     <= 7.0 (all collected blocks joined, each terminated with a period).
-#   - every block of 15+ words on those pages must be <= 9.0.
-#   - science/ and developers/ are technical pages: only blocks inside
-#     data-reading="plain" elements are gated (same <= 9.0 rule).
+#   - index.html: whole-page Flesch-Kincaid grade <= 7.0 (all collected
+#     blocks joined, each terminated with a period).
+#   - every block of 15+ words must be <= 9.0.
+#   - developers/ is a technical page: only blocks inside data-reading="plain"
+#     elements are gated (same <= 9.0 rule).
 #   - elements with data-reading="skip" (citations, mono footnotes) are
 #     exempt — but they are for metadata, not explanations.
 #
@@ -39,8 +39,6 @@ BLOCK_TAGS = {"p", "li", "h1", "h2", "h3", "dd", "td", "figcaption"}
 # (file, scope): scope "plain" = only data-reading="plain" subtrees
 PAGES = [
     ("index.html", "all"),
-    ("how-it-works/index.html", "all"),
-    ("science/index.html", "plain"),
     ("developers/index.html", "plain"),
 ]
 

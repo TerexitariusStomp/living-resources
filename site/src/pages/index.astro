@@ -6,7 +6,6 @@ import Hero from '~/components/widgets/Hero.astro';
 import Features from '~/components/widgets/Features.astro';
 import Features2 from '~/components/widgets/Features2.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import Steps from '~/components/widgets/Steps.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
@@ -15,11 +14,13 @@ import Board3D from '~/components/living/Board3D.astro';
 import Globe from '~/components/living/Globe.astro';
 import ValueLoop from '~/components/living/ValueLoop.astro';
 import OrganismMap from '~/components/living/OrganismMap.astro';
+import LaneTable from '~/components/living/LaneTable.astro';
 import JoinForm from '~/components/living/JoinForm.astro';
 import TierLink from '~/components/living/TierLink.astro';
 import Comparison from '~/components/widgets/Comparison.astro';
 import Timeline from '~/components/widgets/Timeline.astro';
 import cloud from '~/data/cloud.json';
+import tiers from '~/data/tiers.json';
 import { tierChip, type TierKey } from '~/utils/tiers';
 import { SITE, METADATA, I18N } from 'astrowind:config';
 import favIconSvg from '~/assets/favicons/favicon.svg';
@@ -75,6 +76,289 @@ const jobs = [
     description: `Today we keep receipts. Someday, data could live in DNA, nature's own storage, using a gentle method nobody has invented yet.<br/>${chips(['live', 'vision'])}`,
   },
 ];
+
+const journey = [
+  {
+    date: 'Proven by scientists',
+    title: 'A plant makes a signal',
+    description:
+      'A tomato plant runs low on water and starts clicking. Scientists recorded this in 2023. Nobody touches the plant. It is just being itself.',
+    icon: 'tabler:plant',
+  },
+  {
+    date: 'Built — field test next',
+    title: 'A listener hears it',
+    description:
+      'A small box sits nearby, not on the plant. Its microphone picks up the click. The box never touches the plant or the soil.',
+    icon: 'tabler:ear',
+  },
+  {
+    date: 'Built — field test next',
+    title: 'Several listeners agree',
+    description:
+      'One box could be wrong. So the cloud waits until several boxes agree, like three friends who all saw the same goal. Scientists call this a quorum.',
+    icon: 'tabler:users-group',
+  },
+  {
+    date: 'Works today',
+    title: 'A receipt is made',
+    description:
+      "The cloud writes down what happened and seals it with a code. Anyone can redo the work and get the same code. If anything was changed, the code won't match.",
+    icon: 'tabler:receipt',
+    highlight: true,
+  },
+  {
+    date: 'Works today',
+    title: 'The cloud thinks it over',
+    description:
+      'The signal runs through maps of real animal nerves, called connectomes. They are like subway maps of tiny brains. Today a regular computer runs these maps. No animal is involved.',
+    icon: 'tabler:route',
+    highlight: true,
+  },
+  {
+    date: 'Built — field test next',
+    title: 'Nature earns credit',
+    description:
+      "The plant's patch of nature earns credit for what it shared. Its AI companion keeps the record, and a human guardian looks after the credit, like a grown-up managing a kid's savings.",
+    icon: 'tabler:coin',
+  },
+  {
+    date: 'Someday',
+    title: 'People protect what pays',
+    description:
+      'When a living forest earns more than a cut-down one, people have a reason to keep it. That is the idea we are testing.',
+    icon: 'tabler:leaf',
+    ghost: true,
+  },
+  {
+    date: 'Someday',
+    title: 'The organism gets better',
+    description:
+      'Every new version of the living cloud must prove with receipts that it uses less power, space and time. Over time, more work moves to nature — with proof and permission.',
+    icon: 'tabler:trending-down',
+    ghost: true,
+  },
+];
+
+const concepts = [
+  {
+    title: 'The living cloud',
+    icon: 'tabler:cloud',
+    description:
+      'A cloud is a network that listens, checks, thinks and remembers. Ours uses nature and small boxes instead of giant buildings.',
+  },
+  {
+    title: 'The AI organism',
+    icon: 'tabler:atom-2',
+    description: `All the AI companions, boxes, receipts and brain maps working together like one living thing. It grows by using less.<br/>${chips(['vision'])}`,
+  },
+  {
+    title: 'AI companion',
+    icon: 'tabler:robot',
+    description: `Each forest, reef or field gets its own helper that keeps its records, follows its guardian's choices and speaks up for it. Today it is a simple rule-following program.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Listener',
+    icon: 'tabler:ear',
+    description: `Like a weather station with ears. About $40, sun-powered, never touches anything.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Signal',
+    icon: 'tabler:wave-sine',
+    description: `Anything nature gives off that we can sense from far away: a click, a bird song, a change in the water.<br/>${chips(['science'])}`,
+  },
+  {
+    title: 'Quorum',
+    icon: 'tabler:users-group',
+    description: `Like a video review in sports: one camera angle isn't enough, several have to agree.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Receipt',
+    icon: 'tabler:receipt',
+    description: `Like a sealed envelope with a fingerprint. Open it, redo the work, and the fingerprint must match.<br/>${chips(['live'])}`,
+  },
+  {
+    title: 'Connectome',
+    icon: 'tabler:route',
+    description: `A map of every nerve in a small animal's brain, like a subway map. We run these maps on computers.<br/>${chips(['live'])}`,
+  },
+  {
+    title: 'Guardian',
+    icon: 'tabler:user-shield',
+    description: `A person who looks after a plant, animal group or place, like a coach or a parent. They hold its credit and its choices.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Voice 0',
+    icon: 'tabler:hand-stop',
+    description: `Nature always speaks first and can say no. If it says no, nothing happens, and the 'no' is written down.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Credit',
+    icon: 'tabler:coin',
+    description: `Points nature earns for what it shares, kept like a savings account.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Relay',
+    icon: 'tabler:mail-forward',
+    description: `Boxes pass sealed notes to each other, like passing a note down a row of desks. Only sealed notes can be passed.<br/>${chips(['built'])}`,
+  },
+  {
+    title: 'Only with permission',
+    icon: 'tabler:key',
+    description: `Sending sound into nature, or saving data with it, needs two yeses: the guardian's and the box owner's.<br/>${chips(['consent'])}`,
+  },
+  {
+    title: 'The brakes',
+    icon: 'tabler:ban',
+    description: `Some things stay blocked on purpose. Making living things compute. Sending signals through them. Changing them.<br/>${chips(['refused'])}`,
+  },
+];
+
+// each section's claim, honestly — technical footnotes, skipped by the readability gate
+const honesty = [
+  {
+    id: 'truth-jobs',
+    tier: 'mixed — the four jobs wear different labels',
+    color: 'text-[#00d992]',
+    title: '"Every cloud has four jobs"',
+    body: `Listen — <b>built</b>, field test E0 next. Check — <b>works today</b> via the live receipt API
+      (<code>/verify</code>). Think — <b>works today</b> on silicon over real connectomes; organism compute itself is
+      refused. Remember — receipts <b>today</b>; organism-bound store is <b>consent-gated</b>; DNA storage is
+      <b>someday</b>. The split is the point.`,
+  },
+  {
+    id: 'truth-plant-sound',
+    tier: 'real — published field science',
+    color: 'text-[#00d992]',
+    title: '"A thirsty plant makes a sound"',
+    body: `The clicks are real — recorded by Khait et al., published in <em>Cell</em> 2023, released CC0 on Dryad. What you
+      hear is a ~11× slowdown of actual 500&nbsp;kHz recordings; the plant's own signal, transposed into human hearing.
+      Our hardware can't yet record those — field validation (E0) is pending.
+      <a class="underline" href="https://doi.org/10.1016/j.cell.2023.03.009">paper</a> ·
+      <a class="underline" href="https://doi.org/10.5061/dryad.jwstqjqf7">data</a>`,
+  },
+  {
+    id: 'truth-listener',
+    tier: 'built — field validation pending',
+    color: 'text-sky-300',
+    title: '"A $40 box that listens without touching"',
+    body: `EcoCell One exists as a manufacturable KiCad board (real Gerbers, pick-and-place files) plus MicroPython
+      firmware that passes its e2e suites. It has not yet been deployed in a field pilot — that is what E0 tests.`,
+  },
+  {
+    id: 'truth-loop',
+    tier: 'the vision — mechanics built',
+    color: 'text-amber-300',
+    title: '"When nature earns, people protect it"',
+    body: `The mechanism is implemented and e2e-tested — quorum witnessing (<code>attest.scm</code>), per-contribution
+      mutual credit (<code>settlement.scm</code>), guardian custody (<code>agents.scm</code>). Whether that changes
+      real-world protection economics is the hypothesis this project exists to test — not a measured result.`,
+  },
+  {
+    id: 'truth-network',
+    tier: 'real — one lane live',
+    color: 'text-[#00d992]',
+    title: '"15 real brain maps answer you"',
+    body: `Live today: deterministic LIF tasks over 15 EM-derived connectome wirings, every receipt replayable — TS port
+      verified bit-identical to the Python engine (930/930 checks). The globe markers are places the living cloud
+      <em>could</em> listen; no field nodes are deployed yet.`,
+  },
+  {
+    id: 'truth-promises',
+    tier: 'enforced in code',
+    color: 'text-[#00d992]',
+    title: '"Four rules the whole cloud follows"',
+    body: `Not aspirations — code. The lane gate (<code>lane-gate.rego</code> / <code>offers.scm</code>) admits evidence
+      lanes only with an evidence fingerprint, consent lanes only with a joint guardian+operator credential, and
+      refuses <code>hop</code>, <code>compute</code>, and <code>engineered</code> outright. 93/93 e2e checks pass.`,
+  },
+  {
+    id: 'truth-cloud-map',
+    tier: 'the vision — trajectory, honestly split',
+    color: 'text-amber-300',
+    title: '"The cloud is going living"',
+    body: `The next-cloud thesis, on the record: one step at a time, silicon wins <em>today</em> — measured and we
+      say so. Per watt and at scale, published evidence already favors living systems; turning that into useful work
+      is the roadmap above.`,
+  },
+  {
+    id: 'truth-organism',
+    tier: 'the vision — a metaphor over real parts',
+    color: 'text-violet-300',
+    title: '"An AI organism that grows with nature"',
+    body: `The nested organism is a metaphor over real parts. Each ecosystem's companion is an <code>^eco-agent</code>
+      actor (<code>agents.scm</code>, e2e-tested): a capability-secure record with guardian custody and voice 0 —
+      <b>not a learning model</b>. The ears already use AI: OpenSoundscape/BirdNET models via
+      <code>classify.py</code>, with an energy-gate fallback. Duty-cycling runs on fixed dawn/dusk windows, re-tunable
+      by a consent-gated <code>duty</code> downlink; autonomous tuning is not built. The sparse-wiring footprint is
+      measured (46×–5,900× smaller, ~70× J at medulla) — and the degree-matched shuffle control shows the gain is
+      <b>sparsity</b>, not biological topology. Generational replace-only-if-receipts-show-less is a proposed rule,
+      measurable today with E6 replay bundles, not yet enforced. Moving work into living systems stays behind the
+      consent and refused lanes.`,
+  },
+];
+
+type Row = { claim: string; note: string; bad?: boolean };
+const measured: Row[] = [
+  {
+    claim: 'Packed int4 CSR wiring is <b>46×–5,900× smaller</b> than fp32 dense weights',
+    note: 'measured bytes · celegans → medulla · <a class="underline" href="https://github.com/treetable/living-resources/blob/main/docs/EFFICIENCY.md">EFFICIENCY.md</a>',
+  },
+  {
+    claim: 'At ≥10⁴ neurons, connectome legs use <b>~70× fewer joules</b> than dense fp32 on the same silicon',
+    note: 'measured RAPL · medulla 0.117 J vs 8.30 J · 3.3 ms vs 104 ms',
+  },
+  {
+    claim: 'Deterministic traces replay <b>bit-for-bit</b> — TS port identical to the Python engine',
+    note: '930/930 checks · workers/compute-api/test/diff.mjs',
+  },
+  {
+    claim: 'At 302 neurons the interpreter is <b>~20× slower</b> than SIMD — reported, not hidden',
+    note: 'measured — unfavorable cells are part of the evidence',
+    bad: true,
+  },
+  {
+    claim: 'Shuffled wiring with identical degree statistics performs <b>identically</b>',
+    note: 'measured control — the win is sparsity; biology contributes the signature, not the speed',
+    bad: true,
+  },
+];
+
+const field: Row[] = [
+  {
+    claim: 'Stressed plants emit <b>remotely detectable, informative ultrasound</b> — tomato ~35 clicks/h, 20–100 kHz',
+    note: '<a class="underline" href="https://doi.org/10.1016/j.cell.2023.03.009">Khait et al., Cell 2023</a> — one replication attempt (Göttingen 2025, doi:10.25625/13agyl) found no peaks; we cite the original and welcome adversarial checks',
+  },
+  {
+    claim: 'Biofilms broadcast <b>K⁺ electrical waves</b> that attract distant cells across species',
+    note: '<a class="underline" href="https://doi.org/10.1038/nature15709">Prindle et al., Nature 2015</a> · <a class="underline" href="https://doi.org/10.1016/j.cell.2016.12.012">Humphries et al., Cell 2017</a> · <a class="underline" href="https://doi.org/10.1126/science.aah4204">Liu et al., Science 2017</a>',
+  },
+  {
+    claim: 'Reef acoustic complexity <b>tracks biodiversity and recovery</b>',
+    note: '<a class="underline" href="https://doi.org/10.1111/1365-2664.14274">J Appl Ecol 2022</a>',
+  },
+  {
+    claim: 'DNA archival storage reaches <b>215 petabytes per gram</b>',
+    note: '<a class="underline" href="https://doi.org/10.1126/science.aaj2038">Erlich &amp; Zielinski, Science 2017</a> · <a class="underline" href="https://doi.org/10.1126/science.1226355">Church et al., Science 2012</a> — field evidence for biological density, <b>not our lane</b>',
+  },
+  {
+    claim: 'Neuromorphic silicon runs at <b>~24–26 pJ per synaptic event</b>; a biological synapse ~1–100 pJ',
+    note: '<a class="underline" href="https://doi.org/10.1126/science.1254642">Merolla et al., Science 2014</a> · <a class="underline" href="https://doi.org/10.1109/MM.2018.112130359">Davies et al., IEEE Micro 2018</a> — cited, unverified by us',
+  },
+  {
+    claim:
+      'A brain does an estimated <b>10¹³–10¹⁶ ops/s on ~20 W</b> — ~10×–10,000× more per watt than El Capitan (1.8 EFLOP/s @ 29.7 MW)',
+    note: '<a class="underline" href="https://arxiv.org/abs/1602.04019">Sandberg 2016</a> · <a class="underline" href="https://doi.org/10.1073/pnas.2107022118">Levy & Calvert, PNAS 2021</a> · <a class="underline" href="https://www.top500.org/system/180307/">TOP500</a> — cited; synaptic events are not FLOPs',
+  },
+  {
+    claim: 'Commercial wetware already reads and writes living neurons in <b>sub-millisecond cycles</b>',
+    note: 'Cortical Labs CL1, 800k neurons, shipping 2025 — <a class="underline" href="https://www.abc.net.au/news/science/2025-03-05/cortical-labs-neuron-brain-chip/104996484">ABC</a> · <a class="underline" href="https://www.forbes.com/sites/johnkoetsier/2025/06/04/hardware-software-meet-wetware-a-computer-with-800000-human-neurons/">Forbes</a> — vendor-reported, unverified by us; lab-grown cells, not our substrate',
+  },
+  {
+    claim: 'DNA data retrieval got <b>3,200× faster</b> with 40% higher accuracy',
+    note: '<a class="underline" href="https://doi.org/10.1038/s42256-025-01003-z">Bar-Lev et al., Nature Machine Intelligence 2025</a> — in-vitro pipeline; the non-invasive in-vivo interface remains unknown',
+  },
+];
 ---
 
 <Layout metadata={metadata}>
@@ -84,8 +368,8 @@ const jobs = [
   <Hero
     badge="The living cloud"
     actions={[
-      { variant: 'primary', text: 'See how it works', href: '/how-it-works', icon: 'tabler:route' },
-      { text: 'Hear a plant', href: '#hear', icon: 'tabler:ear' },
+      { variant: 'primary', text: 'See how it works', href: '#how', icon: 'tabler:route' },
+      { text: 'Hear a plant', href: '#live', icon: 'tabler:ear' },
     ]}
   >
     <Fragment slot="bg">
@@ -101,67 +385,82 @@ const jobs = [
     </Fragment>
   </Hero>
 
-  <!-- 2 — the four jobs -->
-  <Features2
-    id="jobs"
-    tagline="What a cloud does"
-    title="Every cloud has four jobs"
-    subtitle="A cloud listens, checks, thinks and remembers. Here is how the living cloud does each one — and how much works today."
-    columns={2}
-    items={jobs}
-  />
+  <!-- 2 — how it works: jobs + journey + words -->
+  <WidgetWrapper id="how" containerClass="max-w-6xl">
+    <Headline
+      tagline="How it works"
+      title="Every cloud has four jobs"
+      subtitle="A cloud listens, checks, thinks and remembers. Here is how the living cloud does each one — and how much works today."
+      classes={{ container: 'max-w-4xl' }}
+    />
+    <Features2 columns={2} classes={{ container: 'pb-0 md:pb-0 lg:pb-0' }} items={jobs} />
+    <div class="mx-auto mt-4 max-w-3xl">
+      <Headline
+        tagline="One signal's journey"
+        title="Follow a plant's click through the living cloud"
+        subtitle="Step by step, from a thirsty tomato plant to a forest worth protecting. Each step says how much of it works today."
+        classes={{ title: 'text-2xl md:text-3xl' }}
+      />
+      <Timeline items={journey} layout="vertical" />
+    </div>
+    <Features2
+      tagline="The glossary"
+      title="The words, in plain English"
+      subtitle="Every word on this page, explained once — and labeled with how real it is."
+      columns={3}
+      items={concepts}
+    />
+  </WidgetWrapper>
 
-  <!-- 3 — job 1: hear it -->
-  <WidgetWrapper id="hear" containerClass="max-w-4xl">
+  <!-- 3 — live: hear it, see it, try it -->
+  <WidgetWrapper id="live" isDark containerClass="max-w-6xl">
     <Headline
       tagline="Job 1 · Listen"
       title="A thirsty plant makes a sound"
       subtitle="In 2023, scientists put tiny microphones next to tomato plants. When the soil dried out, the plants clicked — about 35 times an hour. The sound is too high for human ears. Here it is, slowed down so you can hear it:"
-      classes={{ container: 'mb-6 md:mb-8' }}
+      classes={{ container: 'max-w-4xl' }}
     />
-    <PlantListen />
-    <TierLink anchor="plant-sound" tier="science" />
-  </WidgetWrapper>
-
-  <!-- 4 — job 1: the ears -->
-  <WidgetWrapper id="listener" containerClass="max-w-6xl">
-    <div class="grid items-center gap-10 md:grid-cols-2">
+    <div class="mx-auto max-w-4xl">
+      <PlantListen />
+      <TierLink anchor="truth-plant-sound" tier="science" />
+    </div>
+    <div class="mt-14 grid items-center gap-10 md:grid-cols-2">
       <div>
         <Headline
           tagline="Job 1 · Listen — the ears"
           title="A $40 box that listens without touching"
           subtitle="It sits near living things, never on them. Nothing sticks to a plant or animal. Nothing goes into the soil. It listens, and sends what it hears to the cloud."
-          classes={{ container: 'md:mx-0 md:text-left mb-6' }}
+          classes={{ container: 'md:mx-0 md:text-left mb-6', title: 'text-2xl md:text-3xl' }}
         />
         <ul class="text-muted space-y-2 text-base">
           <li><b class="text-heading">Hears</b> — birds, insects, plant clicks</li>
           <li><b class="text-heading">Sees</b> — a camera, the weather, the soil nearby</li>
           <li><b class="text-heading">Never touches</b> — built into the design</li>
-          <li><b class="text-heading">Talks back</b> — only when nature's guardian and the box's owner both say yes</li>
+          <li>
+            <b class="text-heading">Talks back</b> — only when nature's guardian and the box's owner both say yes
+          </li>
         </ul>
-        <TierLink anchor="listener" tier="built" />
+        <TierLink anchor="truth-listener" tier="built" />
       </div>
       <Board3D />
     </div>
+    <div class="mt-14">
+      <Headline
+        tagline="Jobs 2 and 3 · Check and think"
+        title="Try it: 15 real brain maps answer you"
+        subtitle="Scientists have mapped every nerve in some tiny animals, like a worm and a fruit fly. Think of it as a subway map of a brain. Press the button: our computers send your signal through 15 of these maps. Each one gives its own answer, plus a receipt you can re-check."
+        classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
+      />
+      <Globe />
+      <p class="text-muted mt-4 text-center font-mono text-xs">
+        Today a regular computer runs the maps. No animal is involved.
+      </p>
+      <div class="mt-2 text-center"><TierLink anchor="truth-network" tier="live" /></div>
+    </div>
   </WidgetWrapper>
 
-  <!-- 5 — jobs 2 and 3: check and think -->
-  <WidgetWrapper id="network" containerClass="max-w-6xl">
-    <Headline
-      tagline="Jobs 2 and 3 · Check and think"
-      title="Try it: 15 real brain maps answer you"
-      subtitle="Scientists have mapped every nerve in some tiny animals, like a worm and a fruit fly. Think of it as a subway map of a brain. Press the button: our computers send your signal through 15 of these maps. Each one gives its own answer, plus a receipt you can re-check."
-      classes={{ container: 'max-w-4xl' }}
-    />
-    <Globe />
-    <p class="text-muted mt-4 text-center font-mono text-xs">
-      Today a regular computer runs the maps. No animal is involved.
-    </p>
-    <div class="mt-2 text-center"><TierLink anchor="network" tier="live" /></div>
-  </WidgetWrapper>
-
-  <!-- 6 — why it matters -->
-  <WidgetWrapper id="loop" isDark containerClass="max-w-6xl">
+  <!-- 4 — why it matters -->
+  <WidgetWrapper id="why" containerClass="max-w-6xl">
     <Headline
       tagline="Why it matters"
       title="When nature earns, people protect it"
@@ -169,11 +468,50 @@ const jobs = [
       classes={{ container: 'max-w-4xl' }}
     />
     <ValueLoop />
-    <div class="mt-6 text-center"><TierLink anchor="loop" tier="vision" /></div>
+    <Features
+      tagline="Why it matters to you"
+      title="If this works, nature stops being invisible"
+      subtitle="The same signals that credit nature are useful to every human:"
+      columns={3}
+      classes={{ container: 'pb-0 md:pb-0 lg:pb-0 pt-8 md:pt-8' }}
+      items={[
+        {
+          title: 'Water & food',
+          description: 'A thirsty field clicks before it wilts. Hearing it early costs less than losing a crop.',
+          icon: 'tabler:droplet',
+        },
+        {
+          title: 'Early warning',
+          description: 'Sick crops, stressed reefs, a wetland gone quiet — heard days before anyone can see it.',
+          icon: 'tabler:alert-triangle',
+        },
+        {
+          title: 'Proof, not promises',
+          description: 'Every claim comes with a receipt. Anyone can check the same number.',
+          icon: 'tabler:file-check',
+        },
+        {
+          title: 'A paycheck for nature',
+          description: 'Nature earns credit for what it gives. That helps a forest pay for its own protection.',
+          icon: 'tabler:coin',
+        },
+        {
+          title: 'Nature can say no',
+          description: "If a living system should not be listened to, it stays unread. Even the 'no' is written down.",
+          icon: 'tabler:shield-lock',
+        },
+        {
+          title: 'Living together',
+          description: 'Not taking from nature, not ignoring it. Listening, paying it back, and letting it say no.',
+          icon: 'tabler:leaf',
+        },
+      ]}
+    />
+    <div class="mt-6 text-center"><TierLink anchor="truth-loop" tier="vision" /></div>
   </WidgetWrapper>
 
-  <!-- 7 — the AI organism -->
-  <WidgetWrapper id="organism" containerClass="max-w-6xl">
+  <!-- 5 — the AI organism -->
+  <WidgetWrapper id="organism" isDark containerClass="max-w-6xl">
     <Headline
       tagline="One organism, many parts"
       title="An AI organism that grows with nature"
@@ -203,11 +541,11 @@ const jobs = [
         grows only as fast as the receipts allow.
       </p>
     </div>
-    <div class="mt-6 text-center"><TierLink anchor="organism" tier="vision" /></div>
+    <div class="mt-6 text-center"><TierLink anchor="truth-organism" tier="vision" /></div>
   </WidgetWrapper>
 
-  <!-- 8 — job 4: remember, and where we're going -->
-  <WidgetWrapper id="cloud" isDark containerClass="max-w-6xl">
+  <!-- 6 — the cloud: where we stand -->
+  <WidgetWrapper id="cloud" containerClass="max-w-6xl">
     <Headline
       tagline="Job 4 · Remember — and where we're going"
       title="The cloud is going living"
@@ -235,86 +573,165 @@ const jobs = [
     />
     <div class="mx-auto mt-16 max-w-3xl">
       <Timeline items={cloud.trajectory} layout="vertical" />
-      <p class="text-muted mt-8 border-l-2 border-[#00d992]/40 pl-4 text-sm italic">{cloud.thesis}</p>
     </div>
-    <div class="mt-6 text-center"><TierLink anchor="cloud" tier="vision" /></div>
+    <div class="mt-16 space-y-3" data-reading="skip">
+      <Headline
+        tagline="The honest scorecard"
+        title="Where the living cloud stands against the conventional one"
+        classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
+      />
+      {
+        cloud.axes.map((a) => (
+          <div class="rounded-lg border border-white/10 bg-black/30 p-5">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 class="font-semibold text-heading">{a.axis}</h3>
+              <span
+                class:list={[
+                  'font-mono text-xs uppercase tracking-wide',
+                  a.good ? 'text-[#00d992]' : 'text-red-400/80',
+                ]}
+              >
+                {a.status}
+              </span>
+            </div>
+            <div class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+              <p class="text-muted">
+                <span class="text-default font-mono text-xs uppercase tracking-wide">today — </span>
+                {a.today}
+              </p>
+              <p class="text-muted">
+                <span class="text-default font-mono text-xs uppercase tracking-wide">field — </span>
+                <span set:html={a.field} />
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="mx-auto mt-8 max-w-3xl">
+      <p class="text-muted border-l-2 border-[#00d992]/40 pl-4 text-sm italic">{cloud.thesis}</p>
+    </div>
+    <div class="mt-6 text-center"><TierLink anchor="truth-cloud-map" tier="vision" /></div>
   </WidgetWrapper>
 
-  <!-- 9 — why you'd want more of it -->
-  <Features
-    id="why"
-    tagline="Why it matters to you"
-    title="If this works, nature stops being invisible"
-    subtitle="The same signals that credit nature are useful to every human:"
-    columns={3}
-    items={[
+  <!-- 7 — proof: rules, labels, honesty map -->
+  <WidgetWrapper id="proof" isDark containerClass="max-w-5xl">
+    <Headline
+      tagline="Is it real?"
+      title="How much of this works today?"
+      subtitle="Every claim on this page wears a label. Here is what each label means, and the proof behind each one. If something has no label, we don't claim it."
+      classes={{ container: 'max-w-4xl' }}
+    />
+    <Features2
+      tagline="What we promise, in writing"
+      title="Four rules the whole cloud follows"
+      columns={2}
+      items={[
+        {
+          title: 'We never attach to living things',
+          description:
+            'No sensors on plants or animals. Nothing in the soil. Listening from a distance is always the default.',
+          icon: 'tabler:hand-off',
+        },
+        {
+          title: 'Nothing is hidden',
+          description: 'Every reading and every answer gets a receipt anyone can re-check.',
+          icon: 'tabler:eye',
+        },
+        {
+          title: 'Nature has a voice',
+          description:
+            'Each plant, animal group or place has a human guardian who looks after its share. Nature speaks first, and it can say no.',
+          icon: 'tabler:users',
+        },
+        {
+          title: 'The brakes stay on',
+          description:
+            'Sending signals into nature needs two yeses. Asking living things to compute stays blocked until there is proof.',
+          icon: 'tabler:lock',
+        },
+      ]}
+    />
+    <img
+      src="/img/forest-floor.jpg"
+      alt="Forest floor with fungi and moss — public domain, Bernard Spragg"
+      class="mx-auto mb-10 max-h-64 w-full max-w-3xl rounded-lg border border-white/10 object-cover"
+      loading="lazy"
+    />
+    <Headline tagline="The labels" title="What each label means" classes={{ title: 'text-2xl md:text-3xl' }} />
+    <div class="mb-14 space-y-3">
       {
-        title: 'Water & food',
-        description: 'A thirsty field clicks before it wilts. Hearing it early costs less than losing a crop.',
-        icon: 'tabler:droplet',
-      },
+        (Object.keys(tiers) as TierKey[]).map((k) => (
+          <div class="flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-black/30 p-4">
+            <Fragment set:html={tierChip(k)} />
+            <span class="text-muted text-sm">{tiers[k].short}</span>
+          </div>
+        ))
+      }
+    </div>
+    <Headline
+      tagline="The honesty map"
+      title="Each claim above, with its real status"
+      classes={{ title: 'text-2xl md:text-3xl' }}
+    />
+    <div class="space-y-6 text-default">
       {
-        title: 'Early warning',
-        description: 'Sick crops, stressed reefs, a wetland gone quiet — heard days before anyone can see it.',
-        icon: 'tabler:alert-triangle',
-      },
-      {
-        title: 'Proof, not promises',
-        description: 'Every claim comes with a receipt. Anyone can check the same number.',
-        icon: 'tabler:file-check',
-      },
-      {
-        title: 'A paycheck for nature',
-        description: 'Nature earns credit for what it gives. That helps a forest pay for its own protection.',
-        icon: 'tabler:coin',
-      },
-      {
-        title: 'Nature can say no',
-        description: "If a living system should not be listened to, it stays unread. Even the 'no' is written down.",
-        icon: 'tabler:shield-lock',
-      },
-      {
-        title: 'Living together',
-        description: 'Not taking from nature, not ignoring it. Listening, paying it back, and letting it say no.',
-        icon: 'tabler:leaf',
-      },
-    ]}
-  />
+        honesty.map((s) => (
+          <div id={s.id} class="scroll-mt-24 rounded-lg border border-white/10 bg-black/30 p-5">
+            <div class={`mb-1 font-mono text-xs uppercase tracking-wide ${s.color}`}>{s.tier}</div>
+            <h3 class="mb-1 font-semibold text-heading">{s.title}</h3>
+            <p class="text-muted text-sm leading-relaxed" data-reading="skip" set:html={s.body} />
+          </div>
+        ))
+      }
+    </div>
+  </WidgetWrapper>
 
-  <!-- 10 — promises -->
-  <Steps
-    id="promises"
-    tagline="What we promise, in writing"
-    title="Four rules the whole cloud follows"
-    items={[
-      {
-        title: 'We never attach to living things',
-        description:
-          'No sensors on plants or animals. Nothing in the soil. Listening from a distance is always the default.',
-        icon: 'tabler:hand-off',
-      },
-      {
-        title: 'Nothing is hidden',
-        description: 'Every reading and every answer gets a receipt anyone can re-check.',
-        icon: 'tabler:eye',
-      },
-      {
-        title: 'Nature has a voice',
-        description:
-          'Each plant, animal group or place has a human guardian who looks after its share. Nature speaks first, and it can say no.',
-        icon: 'tabler:users',
-      },
-      {
-        title: 'The brakes stay on',
-        description:
-          'Sending signals into nature needs two yeses. Asking living things to compute stays blocked until there is proof.',
-        icon: 'tabler:lock',
-      },
-    ]}
-    image={{ src: '/img/forest-floor.jpg', alt: 'Forest floor with fungi and moss — public domain, Bernard Spragg' }}
-  />
+  <!-- 8 — the lanes + the evidence -->
+  <LaneTable id="lanes" mode="plain" tagline="The lanes" title="What the cloud is allowed to do" />
 
-  <!-- 11 — FAQ -->
+  <WidgetWrapper id="evidence" isDark containerClass="max-w-6xl">
+    <Headline
+      tagline="The evidence"
+      title="Measured by us · demonstrated by the field"
+      subtitle="Our numbers are replay-verifiable from the repo. Field numbers are cited to their papers — and we say which lanes they do and do not support."
+      classes={{ container: 'max-w-4xl' }}
+    />
+    <div class="grid gap-6 md:grid-cols-2" data-reading="skip">
+      {
+        [
+          { title: 'measured — replay-verifiable', color: 'text-[#00d992]', rows: measured },
+          { title: 'demonstrated by the field', color: 'text-amber-300', rows: field },
+        ].map((col) => (
+          <div>
+            <h3 class={`mb-3 font-mono text-sm uppercase tracking-wide ${col.color}`}>{col.title}</h3>
+            <div class="space-y-3">
+              {col.rows.map((r) => (
+                <div
+                  class:list={[
+                    'rounded-lg border p-4',
+                    r.bad ? 'border-red-500/20 bg-red-500/5' : 'border-white/10 bg-black/30',
+                  ]}
+                >
+                  <p class="text-sm text-default" set:html={r.claim} />
+                  <p class="text-muted mt-1 text-xs" set:html={r.note} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="text-muted mt-8 font-mono text-xs" data-reading="skip">
+      // the field has shown what is physically possible. our contribution is narrower and checkable: the receipts. full
+      claim table → <a
+        class="text-[#00d992] underline"
+        href="https://github.com/treetable/living-resources/blob/main/docs/SCIENCE.md">docs/SCIENCE.md</a
+      >
+    </p>
+  </WidgetWrapper>
+
+  <!-- 9 — FAQ -->
   <FAQs
     id="faq"
     tagline="Fair questions"
@@ -364,7 +781,7 @@ const jobs = [
     ]}
   />
 
-  <!-- 12 — join -->
+  <!-- 10 — join -->
   <WidgetWrapper id="join" isDark containerClass="max-w-3xl">
     <Headline
       tagline="Be part of it"
