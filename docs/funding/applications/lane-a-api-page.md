@@ -40,8 +40,12 @@ replay it — the computation is the proof.
       `test/diff.mjs`)
 - [x] `/verify` endpoint re-runs the task and compares digests
 - [x] LIVE: `https://connectome-compute-api.terexmaps.workers.dev`
-- [ ] API keys + per-task logging (needed before paid tiers)
-- [ ] Landing page with a live "verify this task" button
+- [x] Landing page with live "verify this task" button (`GET /` serves
+      index.html; `/info` keeps the JSON descriptor)
+- [x] Content-addressed receipt ledger (Workers KV): `/task` persists
+      each receipt under its `task_said`; `GET /receipts` lists,
+      `GET /receipts/{said}` fetches for replay
+- [ ] API keys / paid tiers (the only remaining gap to charging)
 
 ## Positioning line
 

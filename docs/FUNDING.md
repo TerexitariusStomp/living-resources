@@ -27,7 +27,7 @@ routine if an equity raise requires it.
 | WILDLABS Awards | $10k / $50k | Annual (Feb — 2025 closed) | watching | `applications/wildlabs-awards.md` ready — submit at next cycle open |
 | The Boring Fund | up to $12.5k | ~Aug, annual (2024 closed) | watching | `applications/boring-fund.md` ready — receipt plumbing is squarely "boring but essential" |
 | Con X Tech prizes | varies | Rolling challenges | watching | Monitor challenge board, apply when sensing/MRV challenge posts |
-| GBIF BID (via fiscal host) | €30–60k | Regional calls | **READY TO SEND** | `applications/gbif-bid.md` + Gmail draft addressed to **sib@humboldt.org.co** (SiB Colombia / Instituto Humboldt — GBIF voting-participant node, already publishes AudioMoth→Arbimon→GBIF acoustic datasets) — user reviews + sends |
+| GBIF BID (via fiscal host) | €30–60k | Regional calls | **SENT** | Partner-outreach email sent to **sib@humboldt.org.co** (SiB Colombia / Instituto Humboldt — GBIF voting-participant node, publishes AudioMoth→Arbimon→GBIF acoustic datasets) — await reply, then scope BID window |
 | ~~Schmidt Futures AI-in-Science~~ | — | — | **NOT ELIGIBLE** | Postdoc-only + faculty-mentor required; AI2050 is closed-nomination. No non-academic Schmidt program exists |
 
 ## Lane C — ReFi / community (parallel)

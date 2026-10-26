@@ -5,84 +5,316 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Compute you can check — replay-verified connectome tasks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root { color-scheme: dark; }
-  * { box-sizing: border-box; }
+  :root {
+    --abyss: #050507;
+    --carbon: #101010;
+    --charcoal: #3d3a39;
+    --signal: #00d992;
+    --mint: #2fd6a1;
+    --snow: #f2f2f2;
+    --white: #ffffff;
+    --parchment: #b8b3b0;
+    --slate: #8b949e;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
   body {
-    margin: 0; padding: 0 1rem 4rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    background: #0b0e11; color: #d5dde3; line-height: 1.55;
+    font-family: var(--sans); background: var(--abyss); color: var(--snow);
+    font-feature-settings: "calt", "rlig"; overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
-  main { max-width: 52rem; margin: 0 auto; }
-  h1 { font-size: 1.7rem; margin: 3rem 0 .3rem; color: #fff; }
-  h1 .sub { display:block; font-size: 1rem; color:#7f8b93; font-weight:normal; margin-top:.5rem }
-  h2 { font-size: 1rem; color: #8fb7ff; margin: 2.5rem 0 .6rem; letter-spacing:.04em; text-transform: uppercase; }
-  p { color:#aab6be; }
-  code, pre { background:#131a20; border-radius:4px; }
-  code { padding:.1em .35em; }
-  pre { padding:1rem; overflow-x:auto; font-size:.8rem; border:1px solid #1e2830; }
-  select, input, button {
-    font: inherit; background:#131a20; color:#d5dde3;
-    border:1px solid #2a3640; border-radius:4px; padding:.45rem .7rem;
+  #net { position: fixed; inset: 0; z-index: 0; opacity: .34; }
+  main { position: relative; z-index: 1; max-width: 64rem; margin: 0 auto; padding: 0 1.5rem 7rem; }
+
+  /* ── nav ── */
+  nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 0; border-bottom: 1px solid var(--charcoal);
+    font-family: var(--mono); font-size: .82rem;
   }
-  button { cursor:pointer; background:#17304a; border-color:#2f5a80; }
-  button:hover { background:#1d3d5e; }
-  button:disabled { opacity:.45; cursor:default; }
-  .row { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:.8rem 0; }
-  .ok { color:#6fdc8c; } .bad { color:#ff7b72; }
-  .dim { color:#6b7880; font-size:.85rem; }
-  a { color:#8fb7ff; }
-  .receipt { white-space:pre-wrap; word-break:break-all; }
-  table { border-collapse:collapse; font-size:.8rem; }
-  td,th { border:1px solid #1e2830; padding:.3rem .6rem; text-align:left; }
+  .logo { color: var(--snow); letter-spacing: .1em; font-weight: 700; display: flex; align-items: center; gap: .55rem; }
+  .logo .dot {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--signal);
+    animation: pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 2px var(--signal); }
+    50%     { box-shadow: 0 0 8px var(--signal); }
+  }
+  nav a { color: var(--parchment); text-decoration: none; margin-left: 1.5rem; transition: color .15s; }
+  nav a:hover { color: var(--signal); }
+
+  /* ── hero ── */
+  header { padding: 7.5rem 0 4rem; max-width: 46rem; }
+  .kicker {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .28em;
+    text-transform: uppercase; color: var(--signal);
+    border: 1px solid var(--charcoal); border-radius: 9999px;
+    padding: .4rem 1rem; display: inline-block; background: var(--carbon);
+  }
+  h1 {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: clamp(2.8rem, 6.5vw, 4.2rem); font-weight: 700;
+    letter-spacing: -0.035em; line-height: 1.04;
+    color: var(--white); margin: 1.6rem 0 1.4rem;
+  }
+  h1 .sig { color: var(--signal); }
+  header .lede { color: var(--parchment); font-size: 1.08rem; line-height: 1.65; max-width: 38rem; }
+  header .lede code { font-family: var(--mono); font-size: .88em; color: var(--mint); }
+  header .scope { color: var(--slate); font-size: .85rem; margin-top: 1.4rem; line-height: 1.6; max-width: 38rem; }
+
+  /* ── copyable command (install-first psychology → run-first) ── */
+  .cmd {
+    display: flex; align-items: center; gap: .8rem; margin-top: 2.2rem;
+    background: var(--carbon); border: 1px solid var(--charcoal);
+    border-radius: 6.4px; padding: .75rem 1rem; max-width: 46rem;
+    font-family: var(--mono); font-size: .8rem; color: var(--parchment);
+  }
+  .cmd code { flex: 1; color: var(--mint); overflow-x: auto; white-space: nowrap; padding: .15rem 0; }
+  .cmd .prompt { color: var(--slate); user-select: none; }
+  .cmd button {
+    flex: none; font: inherit; font-size: .72rem; color: var(--slate);
+    background: none; border: 1px solid var(--charcoal); border-radius: 6px;
+    padding: .3rem .7rem; cursor: pointer; transition: all .15s;
+  }
+  .cmd button:hover { color: var(--signal); border-color: var(--signal); }
+
+  /* ── surfaces ── */
+  section { margin-top: 5.5rem; }
+  .sec-head {
+    display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.4rem;
+  }
+  h2 {
+    font-family: system-ui, sans-serif; font-size: 1.35rem; font-weight: 600;
+    letter-spacing: -0.02em; color: var(--white);
+  }
+  .sec-head .idx { font-family: var(--mono); font-size: .75rem; color: var(--signal); }
+  .sec-head .hint { font-family: var(--mono); font-size: .72rem; color: var(--slate); margin-left: auto; }
+
+  .panel {
+    background: var(--carbon); border: 1px solid var(--charcoal);
+    border-radius: 8px; padding: 1.5rem;
+  }
+  .panel.accent { border: 2px solid var(--signal); }
+
+  /* ── console ── */
+  .controls { display: flex; gap: .7rem; flex-wrap: wrap; align-items: center; }
+  .controls label { font-family: var(--mono); font-size: .78rem; color: var(--slate); }
+  select, button.act {
+    font-family: var(--mono); font-size: .82rem;
+    background: var(--abyss); color: var(--snow);
+    border: 1px solid var(--charcoal); border-radius: 6px;
+    padding: .6rem .9rem; min-height: 40px;
+  }
+  select:focus, button.act:focus { outline: none; border-color: var(--signal); }
+  button.act { cursor: pointer; transition: all .15s; font-weight: 500; }
+  button.act.primary { border: 2px solid var(--signal); color: var(--mint); }
+  button.act.primary:hover:not(:disabled) { background: rgba(0,217,146,.08); }
+  button.act.ghost:hover:not(:disabled) { border-color: var(--signal); color: var(--signal); }
+  button.act:disabled { opacity: .35; cursor: default; }
+
+  .statline {
+    font-family: var(--mono); font-size: .78rem; color: var(--slate);
+    margin: 1rem 0 .2rem; min-height: 1.3em;
+  }
+  .statline .ok { color: var(--signal); }
+  .statline .bad { color: #ff7b72; }
+
+  pre {
+    font-family: var(--mono); font-size: .76rem; line-height: 1.55;
+    background: var(--abyss); border: 1px solid var(--charcoal); border-radius: 6.4px;
+    padding: 1rem 1.1rem; margin-top: .9rem; color: var(--parchment);
+    overflow-x: auto; white-space: pre-wrap; word-break: break-all;
+    max-height: 24rem; overflow-y: auto;
+  }
+  pre .dim { color: var(--slate); }
+
+  /* ── ledger ── */
+  .ledger { font-family: var(--mono); font-size: .74rem; }
+  .ledger a {
+    display: flex; justify-content: space-between; gap: 1rem;
+    padding: .55rem .15rem; color: var(--parchment); text-decoration: none;
+    border-bottom: 1px solid rgba(61,58,57,.55); transition: color .15s;
+  }
+  .ledger a:last-child { border-bottom: none; }
+  .ledger a:hover { color: var(--signal); }
+  .ledger a .ago { color: var(--slate); flex: none; }
+
+  /* ── endpoints ── */
+  .eps { font-family: var(--mono); font-size: .79rem; }
+  .eps .ep {
+    display: grid; grid-template-columns: 3.4rem 15rem 1fr; gap: 1rem;
+    padding: .62rem .15rem; border-bottom: 1px solid rgba(61,58,57,.55); align-items: baseline;
+  }
+  .eps .ep:last-child { border-bottom: none; }
+  .eps .m { color: var(--signal); font-weight: 700; }
+  .eps .m.post { color: var(--mint); }
+  .eps .p { color: var(--snow); }
+  .eps .d { color: var(--slate); }
+
+  footer {
+    margin-top: 6rem; padding: 1.6rem 0 0; border-top: 1px solid var(--charcoal);
+    font-family: var(--mono); font-size: .73rem; color: var(--slate);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  footer a { color: var(--parchment); text-decoration: none; }
+  footer a:hover { color: var(--signal); }
+
+  @media (max-width: 640px) {
+    header { padding: 4.5rem 0 3rem; }
+    .eps .ep { grid-template-columns: 3.2rem 1fr; }
+    .eps .d { grid-column: 2; }
+    nav a { margin-left: 1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #net { display: none; }
+    .logo .dot { animation: none; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
+<canvas id="net" aria-hidden="true"></canvas>
+
 <main>
-  <h1>Compute you can check.<span class="sub">Every task ships its own proof.</span></h1>
-  <p>
-    This service runs deterministic leaky-integrate-and-fire simulation over
-    <b>real EM-derived connectomes</b> — preserved biological wiring, not a
-    learned model. Each task returns a receipt with a
-    <code>trace_digest</code> and a content address (<code>task_said</code>).
-    Anyone can replay the declared input through the declared wiring and get
-    the identical digest — <code>POST&nbsp;/verify</code> does exactly that.
-  </p>
-  <p class="dim">
-    Honest scope: this is deterministic simulation over published connectome
-    data. No organism computed this answer; the wiring is the artifact.
-  </p>
+  <nav>
+    <span class="logo"><span class="dot"></span>TREETABLE<span style="color:var(--slate)">/</span>LIVING&nbsp;RESOURCES</span>
+    <span>
+      <a href="/info">info</a>
+      <a href="/connectomes">connectomes</a>
+      <a href="/receipts">receipts</a>
+      <a href="https://github.com/treetable/living-resources">source</a>
+    </span>
+  </nav>
 
-  <h2>Live demo — run a task, then verify it</h2>
-  <div class="row">
-    <label>connectome <select id="cx"></select></label>
-    <button id="run">POST /task</button>
-    <button id="verify" disabled>POST /verify →</button>
-  </div>
-  <pre class="receipt" id="out">// pick a connectome and run a task — then replay-verify the receipt</pre>
-  <div id="verdict-line" class="dim"></div>
+  <header>
+    <span class="kicker">replay-verified compute</span>
+    <h1>Compute you<br>can <span class="sig">check</span>.</h1>
+    <p class="lede">
+      Deterministic LIF simulation over <b>15 real EM-derived connectomes</b> —
+      from 302-neuron <i>C. elegans</i> to a 40k-neuron fly medulla. Every task
+      returns a receipt carrying a <code>task_said</code> and
+      <code>trace_digest</code>; anyone can replay the declared input through the
+      declared wiring and land on the identical digest. The computation is the proof.
+    </p>
+    <p class="scope">
+      Honest scope: this is deterministic simulation over published connectome
+      data — preserved biological wiring, not a claim that an organism computed
+      your answer. Verified bit-identical to the reference engine: 930/930 checks.
+    </p>
+    <div class="cmd">
+      <span class="prompt">$</span>
+      <code>curl -X POST connectome-compute-api.terexmaps.workers.dev/task -d '{"connectome":"celegans","features":{"confidence":0.72}}' -H 'content-type: application/json'</code>
+      <button id="copy">copy</button>
+    </div>
+  </header>
 
-  <h2>Receipt ledger</h2>
-  <p class="dim">Every issued <code>task_said</code> is stored under its content address — replayable forever.</p>
-  <table><thead><tr><th>task_said</th></tr></thead><tbody id="ledger"><tr><td class="dim">loading…</td></tr></tbody></table>
+  <section>
+    <div class="sec-head">
+      <span class="idx">01</span><h2>Run it, then replay it</h2>
+      <span class="hint">live — this page calls the API</span>
+    </div>
+    <div class="panel">
+      <div class="controls">
+        <label>substrate <select id="cx"></select></label>
+        <button id="run" class="act primary">POST /task</button>
+        <button id="verify" class="act ghost" disabled>POST /verify →</button>
+      </div>
+      <div class="statline" id="statline"></div>
+      <pre id="out"><span class="dim">// pick a substrate — the receipt lands here, then replay-verify it</span></pre>
+    </div>
+  </section>
 
-  <h2>API</h2>
-  <pre>GET  /info                service description
-GET  /connectomes         list the 15 wired substrates
-POST /task                {connectome, features|input} → receipt
-POST /verdict             {connectome|all, features} → verdicts
-POST /verify              receipt → {verified}
-GET  /receipts            issued receipt addresses
-GET  /receipts/{said}     fetch a stored receipt</pre>
+  <section>
+    <div class="sec-head">
+      <span class="idx">02</span><h2>Receipt ledger</h2>
+      <span class="hint">every task_said, content-addressed</span>
+    </div>
+    <div class="panel">
+      <div class="ledger" id="ledger"><span class="statline">loading…</span></div>
+    </div>
+  </section>
 
-  <p>
-    Source: <a href="https://github.com/treetable/living-resources">github.com/treetable/living-resources</a> (AGPL-3.0) ·
-    Deck: <a href="/treetable-deck.pdf">treetable-deck.pdf</a> ·
-    Treetable LLC
-  </p>
+  <section>
+    <div class="sec-head">
+      <span class="idx">03</span><h2>API</h2>
+      <span class="hint">JSON in, receipts out</span>
+    </div>
+    <div class="panel">
+      <div class="eps">
+        <div class="ep"><span class="m">GET</span><span class="p">/info</span><span class="d">service description</span></div>
+        <div class="ep"><span class="m">GET</span><span class="p">/connectomes</span><span class="d">15 wired substrates</span></div>
+        <div class="ep"><span class="m post">POST</span><span class="p">/task</span><span class="d">{connectome, features|input} → receipt</span></div>
+        <div class="ep"><span class="m post">POST</span><span class="p">/verdict</span><span class="d">{connectome|all, features} → verdicts</span></div>
+        <div class="ep"><span class="m post">POST</span><span class="p">/verify</span><span class="d">receipt → {verified}</span></div>
+        <div class="ep"><span class="m">GET</span><span class="p">/receipts</span><span class="d">issued task_said ledger</span></div>
+        <div class="ep"><span class="m">GET</span><span class="p">/receipts/{said}</span><span class="d">stored receipt, replayable forever</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>TREETABLE LLC · AGPL-3.0-OR-LATER</span>
+    <span><a href="/treetable-deck.pdf">deck.pdf</a> · <a href="https://github.com/treetable/living-resources">github.com/treetable/living-resources</a></span>
+  </footer>
 </main>
+
 <script>
+// ── ambient connectome canvas: drifting somas + propagating spikes ──
+const cv = document.getElementById('net'), g = cv.getContext('2d');
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W, H, neurons = [];
+function resize() {
+  W = cv.width = innerWidth; H = cv.height = innerHeight;
+  const n = Math.min(80, Math.floor(W * H / 26000));
+  neurons = Array.from({length: n}, () => ({
+    x: Math.random()*W, y: Math.random()*H,
+    vx: (Math.random()-.5)*.18, vy: (Math.random()-.5)*.18,
+    r: 1 + Math.random()*1.5, spike: 0,
+  }));
+}
+resize(); addEventListener('resize', resize);
+function frame() {
+  g.clearRect(0,0,W,H);
+  for (const n of neurons) {
+    n.x += n.vx; n.y += n.vy;
+    if (n.x<0||n.x>W) n.vx*=-1; if (n.y<0||n.y>H) n.vy*=-1;
+    n.spike *= .96;
+  }
+  for (let i=0;i<neurons.length;i++) for (let j=i+1;j<neurons.length;j++) {
+    const a=neurons[i], b=neurons[j], dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+    if (d2 < 125*125) {
+      g.strokeStyle = `rgba(0,217,146,${.04 + .3*(a.spike+b.spike)/2})`;
+      g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+      if ((a.spike>.5||b.spike>.5) && Math.random()<.05)
+        (a.spike>.5?b:a).spike = Math.max(a.spike,b.spike)*.8;
+    }
+  }
+  if (Math.random()<.03) neurons[Math.floor(Math.random()*neurons.length)].spike = 1;
+  for (const n of neurons) {
+    g.fillStyle = `rgba(0,${180+37*n.spike|0},${140+10*n.spike|0},${.3+.65*n.spike})`;
+    g.beginPath(); g.arc(n.x,n.y,n.r+n.spike*2.2,0,7); g.fill();
+  }
+  requestAnimationFrame(frame);
+}
+if (!RM) frame();
+
+// ── copy command ──
+document.getElementById('copy').onclick = e => {
+  navigator.clipboard.writeText(
+    "curl -X POST https://connectome-compute-api.terexmaps.workers.dev/task -H 'content-type: application/json' -d '{\"connectome\":\"celegans\",\"features\":{\"confidence\":0.72}}'"
+  );
+  e.target.textContent = 'copied'; setTimeout(()=>e.target.textContent='copy', 1500);
+};
+
+// ── live API demo ──
 const out = document.getElementById('out');
+const stat = document.getElementById('statline');
 const cxSel = document.getElementById('cx');
 const verifyBtn = document.getElementById('verify');
 let lastReceipt = null;
@@ -98,34 +330,40 @@ async function j(method, path, body) {
   const {connectomes} = await j('GET','/connectomes');
   for (const c of connectomes) {
     const o = document.createElement('option');
-    o.value = c.name; o.textContent = c.name + ' (' + c.neurons + ' neurons)';
+    const n = c.nNeurons ?? c.neurons ?? '';
+    o.value = c.name;
+    o.textContent = `${c.name} — ${n.toLocaleString ? n.toLocaleString() : n} neurons`;
     cxSel.appendChild(o);
   }
   cxSel.value = 'celegans';
   const {receipts} = await j('GET','/receipts');
   document.getElementById('ledger').innerHTML = receipts.length
-    ? receipts.slice(0,20).map(s=>`<tr><td><a href="/receipts/${s}">${s}</a></td></tr>`).join('')
-    : '<tr><td class="dim">empty — run the demo to mint the first receipts</td></tr>';
-})().catch(e => out.textContent = 'init error: ' + e);
+    ? receipts.slice(0,25).map(s =>
+        `<a href="/receipts/${s}"><span>${s}</span><span class="ago">replay →</span></a>`).join('')
+    : '<span class="statline">empty — mint the first receipts above</span>';
+})().catch(e => out.innerHTML = '<span class="dim">init error: ' + e + '</span>');
 
 document.getElementById('run').onclick = async () => {
-  out.textContent = 'running…';
+  out.textContent = 'running…'; stat.textContent = '';
   const feats = { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 };
   const r = await j('POST','/task',{connectome: cxSel.value, features: feats});
   if (r.error) { out.textContent = JSON.stringify(r); return; }
   lastReceipt = r.receipt;
   out.textContent = JSON.stringify(lastReceipt, null, 2);
-  document.getElementById('verdict-line').textContent =
-    `trace_digest ${lastReceipt.trace_digest.slice(0,24)}… · ${lastReceipt.spike_count} spikes · task_said ${lastReceipt.task_said.slice(0,24)}…`;
+  stat.innerHTML =
+    `<span class="ok">receipt</span> · ${lastReceipt.spike_count.toLocaleString()} spikes · ` +
+    `trace ${lastReceipt.trace_digest.slice(8,26)}… · ` +
+    `said ${lastReceipt.task_said.slice(8,26)}…`;
   verifyBtn.disabled = false;
 };
 
 verifyBtn.onclick = async () => {
   out.textContent = 'replaying…';
   const r = await j('POST','/verify', lastReceipt);
-  out.textContent = JSON.stringify(r, null, 2) +
-    '\n\n' + (r.verified ? '✓ VERIFIED — replay produced the identical digest'
-                          : '✗ digest mismatch');
+  out.textContent = JSON.stringify(r, null, 2);
+  stat.innerHTML = r.verified
+    ? '<span class="ok">✓ verified — replay produced the identical digest</span>'
+    : '<span class="bad">✗ digest mismatch</span>';
 };
 </script>
 </body>
