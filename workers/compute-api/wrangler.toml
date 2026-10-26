@@ -2,10 +2,15 @@
 name = "connectome-compute-api"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
+account_id = "6c0140469651854b2e358517371a03d3"
 
 [assets]
 directory = "./public"
 binding = "ASSETS"
+
+[[kv_namespaces]]
+binding = "RECEIPTS"
+id = "d678c1569a8544439e2487d969727863"
 
 [observability]
 enabled = false

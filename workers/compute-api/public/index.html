@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compute you can check — replay-verified connectome tasks</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 1rem 4rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: #0b0e11; color: #d5dde3; line-height: 1.55;
+  }
+  main { max-width: 52rem; margin: 0 auto; }
+  h1 { font-size: 1.7rem; margin: 3rem 0 .3rem; color: #fff; }
+  h1 .sub { display:block; font-size: 1rem; color:#7f8b93; font-weight:normal; margin-top:.5rem }
+  h2 { font-size: 1rem; color: #8fb7ff; margin: 2.5rem 0 .6rem; letter-spacing:.04em; text-transform: uppercase; }
+  p { color:#aab6be; }
+  code, pre { background:#131a20; border-radius:4px; }
+  code { padding:.1em .35em; }
+  pre { padding:1rem; overflow-x:auto; font-size:.8rem; border:1px solid #1e2830; }
+  select, input, button {
+    font: inherit; background:#131a20; color:#d5dde3;
+    border:1px solid #2a3640; border-radius:4px; padding:.45rem .7rem;
+  }
+  button { cursor:pointer; background:#17304a; border-color:#2f5a80; }
+  button:hover { background:#1d3d5e; }
+  button:disabled { opacity:.45; cursor:default; }
+  .row { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin:.8rem 0; }
+  .ok { color:#6fdc8c; } .bad { color:#ff7b72; }
+  .dim { color:#6b7880; font-size:.85rem; }
+  a { color:#8fb7ff; }
+  .receipt { white-space:pre-wrap; word-break:break-all; }
+  table { border-collapse:collapse; font-size:.8rem; }
+  td,th { border:1px solid #1e2830; padding:.3rem .6rem; text-align:left; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Compute you can check.<span class="sub">Every task ships its own proof.</span></h1>
+  <p>
+    This service runs deterministic leaky-integrate-and-fire simulation over
+    <b>real EM-derived connectomes</b> — preserved biological wiring, not a
+    learned model. Each task returns a receipt with a
+    <code>trace_digest</code> and a content address (<code>task_said</code>).
+    Anyone can replay the declared input through the declared wiring and get
+    the identical digest — <code>POST&nbsp;/verify</code> does exactly that.
+  </p>
+  <p class="dim">
+    Honest scope: this is deterministic simulation over published connectome
+    data. No organism computed this answer; the wiring is the artifact.
+  </p>
+
+  <h2>Live demo — run a task, then verify it</h2>
+  <div class="row">
+    <label>connectome <select id="cx"></select></label>
+    <button id="run">POST /task</button>
+    <button id="verify" disabled>POST /verify →</button>
+  </div>
+  <pre class="receipt" id="out">// pick a connectome and run a task — then replay-verify the receipt</pre>
+  <div id="verdict-line" class="dim"></div>
+
+  <h2>Receipt ledger</h2>
+  <p class="dim">Every issued <code>task_said</code> is stored under its content address — replayable forever.</p>
+  <table><thead><tr><th>task_said</th></tr></thead><tbody id="ledger"><tr><td class="dim">loading…</td></tr></tbody></table>
+
+  <h2>API</h2>
+  <pre>GET  /info                service description
+GET  /connectomes         list the 15 wired substrates
+POST /task                {connectome, features|input} → receipt
+POST /verdict             {connectome|all, features} → verdicts
+POST /verify              receipt → {verified}
+GET  /receipts            issued receipt addresses
+GET  /receipts/{said}     fetch a stored receipt</pre>
+
+  <p>
+    Source: <a href="https://github.com/treetable/living-resources">github.com/treetable/living-resources</a> (AGPL-3.0) ·
+    Deck: <a href="/treetable-deck.pdf">treetable-deck.pdf</a> ·
+    Treetable LLC
+  </p>
+</main>
+<script>
+const out = document.getElementById('out');
+const cxSel = document.getElementById('cx');
+const verifyBtn = document.getElementById('verify');
+let lastReceipt = null;
+
+async function j(method, path, body) {
+  const r = await fetch(path, { method,
+    headers: body ? {'content-type':'application/json'} : {},
+    body: body ? JSON.stringify(body) : undefined });
+  return r.json();
+}
+
+(async () => {
+  const {connectomes} = await j('GET','/connectomes');
+  for (const c of connectomes) {
+    const o = document.createElement('option');
+    o.value = c.name; o.textContent = c.name + ' (' + c.neurons + ' neurons)';
+    cxSel.appendChild(o);
+  }
+  cxSel.value = 'celegans';
+  const {receipts} = await j('GET','/receipts');
+  document.getElementById('ledger').innerHTML = receipts.length
+    ? receipts.slice(0,20).map(s=>`<tr><td><a href="/receipts/${s}">${s}</a></td></tr>`).join('')
+    : '<tr><td class="dim">empty — run the demo to mint the first receipts</td></tr>';
+})().catch(e => out.textContent = 'init error: ' + e);
+
+document.getElementById('run').onclick = async () => {
+  out.textContent = 'running…';
+  const feats = { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 };
+  const r = await j('POST','/task',{connectome: cxSel.value, features: feats});
+  if (r.error) { out.textContent = JSON.stringify(r); return; }
+  lastReceipt = r.receipt;
+  out.textContent = JSON.stringify(lastReceipt, null, 2);
+  document.getElementById('verdict-line').textContent =
+    `trace_digest ${lastReceipt.trace_digest.slice(0,24)}… · ${lastReceipt.spike_count} spikes · task_said ${lastReceipt.task_said.slice(0,24)}…`;
+  verifyBtn.disabled = false;
+};
+
+verifyBtn.onclick = async () => {
+  out.textContent = 'replaying…';
+  const r = await j('POST','/verify', lastReceipt);
+  out.textContent = JSON.stringify(r, null, 2) +
+    '\n\n' + (r.verified ? '✓ VERIFIED — replay produced the identical digest'
+                          : '✗ digest mismatch');
+};
+</script>
+</body>
+</html>

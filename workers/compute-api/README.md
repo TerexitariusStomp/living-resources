@@ -17,7 +17,8 @@ The packed int4 CSR blobs ship as one static asset (`public/packed/all.bin`,
 ## API
 
 ```
-GET  /           service info
+GET  /           landing page (browsers) · JSON pointer otherwise
+GET  /info       service description + endpoint list
 GET  /connectomes    15 EM-derived substrates (302 → 40,000 neurons)
 
 POST /task     {"connectome":"celegans",
@@ -33,7 +34,14 @@ POST /verdict  {"connectome":"celegans"|"all", "features":{...}}
 POST /verify   <a receipt verbatim>
            → {verified, claimed_digest, computed_digest,
               input_said_match}
+
+GET  /receipts        issued task_said addresses (KV ledger)
+GET  /receipts/{said} fetch a stored receipt — replayable forever
 ```
+
+Every `/task` receipt is persisted in Workers KV under its own
+`task_said` — the ledger is itself content-addressed, so a stored entry
+is fetchable and re-verifiable by address alone.
 
 Receipts are emitted in canonical JSON (sorted keys, Python-style float
 formatting) — verbatim re-posting reproduces the input lexemes, which is

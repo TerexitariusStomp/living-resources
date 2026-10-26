@@ -1,10 +1,10 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 # GBIF BID — fiscal host / partner outreach email
 
-**To:** [bioacoustics or conservation-informatics lab PI — see targets below]
+**To:** sib@humboldt.org.co — SiB Colombia / Instituto Humboldt (GBIF voting-participant node; already publishes AudioMoth→Arbimon→GBIF acoustic datasets)
 **Subject:** GBIF BID partnership — receipted biodiversity data mobilization (€60k tier)
 
-Dear [Dr. Name],
+Dear SiB Colombia team (attn: Ricardo Ortiz Gallego, node manager),
 
 I'm writing about a GBIF BID proposal I'd like to build with your lab as
 the applying institution. BID grants require eligible institutional
