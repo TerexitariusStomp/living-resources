@@ -3,7 +3,7 @@
 // OrganismMap — the living cloud as one organism made of many ecosystems.
 // Static inline SVG: no JS, no external assets. Each ecosystem circle holds a
 // small AI-companion dot and a guardian glyph; thin links join them to the
-// shared receipts core.
+// shared receipts core. A legend below names the glyphs once.
 const cells = [
   { label: 'forest', cx: 150, cy: 96 },
   { label: 'reef', cx: 330, cy: 96 },
@@ -14,7 +14,7 @@ const core = { cx: 240, cy: 160 };
 ---
 
 <figure class="mx-auto max-w-3xl">
-  <svg viewBox="0 0 480 300" class="w-full h-auto" role="img" aria-labelledby="organism-title">
+  <svg viewBox="0 0 480 300" class="h-auto w-full" role="img" aria-labelledby="organism-title">
     <title id="organism-title">The living cloud as one organism</title>
     <defs>
       <radialGradient id="om-cell" cx="50%" cy="42%">
@@ -35,7 +35,7 @@ const core = { cx: 240, cy: 160 };
       stroke-opacity="0.35"
       stroke-width="1.5"
       stroke-dasharray="6 5"></rect>
-    <text x="34" y="44" fill="#00d992" fill-opacity="0.9" font-size="15" font-weight="600" font-family="inherit"
+    <text x="36" y="44" fill="#00d992" fill-opacity="0.9" font-size="15" font-weight="600" font-family="inherit"
       >the living cloud</text
     >
 
@@ -76,11 +76,11 @@ const core = { cx: 240, cy: 160 };
             stroke-opacity="0.55"
             stroke-width="1.2"
           />
-          <circle cx={c.cx - 18} cy={c.cy - 8} r="9" fill="#0a0f0d" stroke="#00d992" stroke-width="1.4" />
-          <circle cx={c.cx - 18} cy={c.cy - 8} r="2.4" fill="#00d992" />
-          <circle cx={c.cx + 18} cy={c.cy - 14} r="4" fill="none" stroke="#c9d4cf" stroke-width="1.2" />
+          <circle cx={c.cx - 18} cy={c.cy - 14} r="9" fill="#0a0f0d" stroke="#00d992" stroke-width="1.4" />
+          <circle cx={c.cx - 18} cy={c.cy - 14} r="2.4" fill="#00d992" />
+          <circle cx={c.cx + 18} cy={c.cy - 20} r="4" fill="none" stroke="#c9d4cf" stroke-width="1.2" />
           <path
-            d={`M ${c.cx + 18} ${c.cy - 10} l -6 12 h 12 z`}
+            d={`M ${c.cx + 18} ${c.cy - 16} l -6 12 h 12 z`}
             fill="none"
             stroke="#c9d4cf"
             stroke-width="1.2"
@@ -88,7 +88,7 @@ const core = { cx: 240, cy: 160 };
           />
           <text
             x={c.cx}
-            y={c.cy + 20}
+            y={c.cy + 24}
             text-anchor="middle"
             fill="#e8efec"
             font-size="14"
@@ -97,16 +97,33 @@ const core = { cx: 240, cy: 160 };
           >
             {c.label}
           </text>
-          <text x={c.cx} y={c.cy + 38} text-anchor="middle" fill="#9fb0ab" font-size="11" font-family="inherit">
-            AI companion + guardian
-          </text>
         </g>
       ))
     }
   </svg>
-  <figcaption class="text-muted sr-only">
-    One large outline holds four ecosystems — forest, reef, field and wetland. Each keeps its own AI companion and human
-    guardian, and a line links each one to the shared receipts memory at the center.
+  <figcaption class="text-muted mt-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 font-mono text-xs">
+    <span class="inline-flex items-center gap-2">
+      <svg viewBox="0 0 18 18" class="h-4 w-4" aria-hidden="true"
+        ><circle cx="9" cy="9" r="8" fill="#0a0f0d" stroke="#00d992" stroke-width="1.4"></circle><circle
+          cx="9"
+          cy="9"
+          r="2.4"
+          fill="#00d992"></circle></svg
+      >
+      AI companion
+    </span>
+    <span class="inline-flex items-center gap-2">
+      <svg viewBox="0 0 18 18" class="h-4 w-4" aria-hidden="true"
+        ><circle cx="9" cy="4.5" r="3.5" fill="none" stroke="#c9d4cf" stroke-width="1.2"></circle><path
+          d="M 9 8.5 l -5.5 11 h 11 z"
+          fill="none"
+          stroke="#c9d4cf"
+          stroke-width="1.2"
+          stroke-linejoin="round"></path></svg
+      >
+      guardian
+    </span>
+    <span>each ecosystem keeps its own pair — lines join to shared receipts</span>
   </figcaption>
 </figure>
 
