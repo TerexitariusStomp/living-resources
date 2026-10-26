@@ -1,0 +1,97 @@
+[
+  {
+    "id": "witness",
+    "tier": "live",
+    "badge": "live",
+    "baseLane": null,
+    "plain": "You can check our work",
+    "desc": "This API — deterministic tasks over 15 real connectome wirings (maps of living nervous systems captured by electron microscopy). Every answer comes with a receipt you can replay yourself and get the identical result.",
+    "src": "lif.py · lif.ts · connectome.scm"
+  },
+  {
+    "id": "store-receipts",
+    "tier": "live",
+    "badge": "live",
+    "baseLane": "store",
+    "plain": "Every result leaves a permanent fingerprint",
+    "desc": "As receipts: every reading and task is content-addressed and persisted — tamper-evident commitments, not bulk storage. What runs today is the evidence ledger; organism-bound store is consent-gated below.",
+    "src": "/receipts · KV ledger"
+  },
+  {
+    "id": "sense",
+    "tier": "built",
+    "badge": "built · E0 pending",
+    "baseLane": "sense",
+    "plain": "Listening without touching",
+    "desc": "Passive multimodal sensing — audio, ultrasonic, environmental, camera, hydrophone front-end on one ~$35–45 node. Nothing attaches, nothing enters soil. Firmware + actors e2e-tested; field-validation gate E0 not yet run.",
+    "src": "EcoCell One · firmware/node"
+  },
+  {
+    "id": "fleet",
+    "tier": "built",
+    "badge": "built · E0 pending",
+    "baseLane": "fleet",
+    "plain": "Many listeners, one picture",
+    "desc": "The second evidence lane — multi-node fleet readings folding into quorum. Same gate: admitted only when the lane's evidence SAID lands.",
+    "src": "offers.scm · attest.scm"
+  },
+  {
+    "id": "relay",
+    "tier": "built",
+    "badge": "built · transport",
+    "baseLane": "relay",
+    "plain": "Listeners pass sealed notes",
+    "desc": "Node→node mesh hops — Reticulum store-and-forward carrying only content-addressed bundles: an intent names the packet SAID it moves or it refuses. The network hop, not the biological one.",
+    "src": "rns_edge.py · lane-gate.rego"
+  },
+  {
+    "id": "emit",
+    "tier": "consent",
+    "badge": "consent-gated",
+    "plain": "Talking back — only with two keys",
+    "desc": "The write lane exists and is fully implemented — it rides only on joint guardian + operator consent, duty-cycled minimum power, every burst logged and receipted.",
+    "src": "EmitLane · consent.rego"
+  },
+  {
+    "id": "cast",
+    "tier": "consent",
+    "badge": "consent-gated",
+    "plain": "Broadcasting — same two-key rule",
+    "desc": "Broadcast lane — same joint-consent gate: guardian + operator, consent credential SAID, never a default.",
+    "src": "offers.scm · lane-gate.rego"
+  },
+  {
+    "id": "store-organism",
+    "tier": "consent",
+    "badge": "consent-gated",
+    "baseLane": "store",
+    "plain": "Writing into living systems",
+    "desc": "Organism-bound storage — writing into living systems. Consent-gated by policy; distinct from the evidence ledger running above.",
+    "src": "lane-gate.rego"
+  },
+  {
+    "id": "hop",
+    "tier": "refused",
+    "badge": "refused",
+    "plain": "Asking a plant to carry a message",
+    "desc": "Relay through living wiring — refused outright: consent is not evidence. E5 is the graduation path: its preserved-wiring harness already passes (15/15 relays replay bit-for-bit across two verifiers), the living half stays refused until evidence lands.",
+    "src": "lane-gate.rego · tools/e5"
+  },
+  {
+    "id": "compute-organism",
+    "tier": "refused",
+    "badge": "refused",
+    "baseLane": "compute",
+    "plain": "Asking a forest to do math",
+    "desc": "Living-systems compute — refused until an evidence SAID lands. What the field has published as possible is cited on /science — we claim the receipts, not the miracle.",
+    "src": "docs/SCIENCE.md"
+  },
+  {
+    "id": "engineered",
+    "tier": "refused",
+    "badge": "refused",
+    "plain": "Engineered organisms",
+    "desc": "Engineered-biology lanes — refused outright. Natural and wild systems only; no engineered substrate carries a lane here.",
+    "src": "lane-gate.rego"
+  }
+]

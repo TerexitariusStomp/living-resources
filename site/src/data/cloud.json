@@ -1,0 +1,113 @@
+{
+  "stats": [
+    {
+      "value": "415 → 945 TWh",
+      "label": "conventional-cloud electricity, 2024 → 2030",
+      "note": "IEA Energy & AI, base case"
+    },
+    {
+      "value": "$30–70B",
+      "label": "one hyperscale AI campus",
+      "note": "Meta Hyperion $72B / 2.26 GW — Epoch AI"
+    },
+    {
+      "value": "~2W · ~$40",
+      "label": "one living-cloud listener",
+      "note": "solar, duty-cycled, guardian-hosted"
+    }
+  ],
+  "comparison": {
+    "firstColumnLabel": "",
+    "columns": [
+      { "title": "The conventional cloud", "subtitle": "silicon, in buildings" },
+      { "title": "The living cloud", "subtitle": "the biosphere, in place", "highlight": true }
+    ],
+    "rows": [
+      {
+        "label": "A million units",
+        "values": ["one campus ≈ $30–70B", "≈ $40M total, dispersed"]
+      },
+      {
+        "label": "Power",
+        "values": ["415 TWh → ~945 TWh by 2030", "~2W per listener, solar"]
+      },
+      {
+        "label": "Trust",
+        "values": ["the operator's dashboard", "the receipt — replay it yourself"]
+      },
+      {
+        "label": "Where value flows",
+        "values": ["one operator", "guardians + ecosystems, per contribution"]
+      },
+      {
+        "label": "Latency · throughput · storage",
+        "description": "the honest column",
+        "values": ["world-class today", "behind today — trajectory below"]
+      },
+      {
+        "label": "Reach",
+        "values": ["whatever is uploaded to it", "the biosphere itself, in place"]
+      }
+    ]
+  },
+  "trajectory": [
+    {
+      "date": "today",
+      "title": "The witness layer",
+      "description": "15 real nervous-system wirings — mapped from actual organisms by electron microscopy — answer deterministic tasks, and every answer carries a receipt anyone can replay. Compute run <em>over</em> nature's wiring: the first living-cloud service.",
+      "icon": "tabler:certificate",
+      "highlight": true
+    },
+    {
+      "date": "next",
+      "title": "The sensing commons",
+      "description": "EcoCell One listeners near forests, reefs and farms — quorum-witnessed readings, guardian custody, per-contribution credit. Fully built and e2e-tested; the field-validation gate (E0) is what remains.",
+      "icon": "tabler:ear"
+    },
+    {
+      "date": "research",
+      "title": "Compute by living systems",
+      "description": "Hyper-efficient compute done by nature itself. The organism-compute lane graduates only when an evidence fingerprint lands — the preserved-wiring leg already passes (15/15 relays replay bit-for-bit); the living half stays refused until it earns it.",
+      "icon": "tabler:cpu",
+      "ghost": true
+    },
+    {
+      "date": "frontier",
+      "title": "Storage inside living systems",
+      "description": "Data embedded in DNA by non-invasive methods not yet known. The density is field-proven — 215 petabytes per gram; the read/write interface is the open problem, and it enters only with consent.",
+      "icon": "tabler:dna",
+      "ghost": true
+    }
+  ],
+  "thesis": "The thesis: biology already beats silicon on energy per synapse (~1–100 pJ) and storage density (215 PB/g). Whether the other axes follow is the question this project exists to answer — every step ships a receipt.",
+  "axes": [
+    {
+      "axis": "general compute",
+      "today": "simulation on silicon; organism compute refused",
+      "field": "biological synapse ~1–100 pJ/event vs TrueNorth ~26 pJ (<a class=\"underline\" href=\"https://doi.org/10.1126/science.1254642\">Science 2014</a>) and Loihi ~23.6 pJ (<a class=\"underline\" href=\"https://doi.org/10.1109/MM.2018.112130359\">IEEE Micro 2018</a>)",
+      "status": "thesis — evidence building",
+      "good": true
+    },
+    {
+      "axis": "latency",
+      "today": "biological dynamics slower than GHz silicon — reported, not hidden",
+      "field": "no published evidence supports a win here",
+      "status": "unproven — we say so",
+      "good": false
+    },
+    {
+      "axis": "throughput",
+      "today": "worse — measured, on the record",
+      "field": "biological parallelism exists (a brain runs ~86B neurons on ~20 W) but mapping it to useful throughput is unproven",
+      "status": "unproven",
+      "good": false
+    },
+    {
+      "axis": "storage",
+      "today": "the evidence ledger — receipts, not bulk data",
+      "field": "DNA reaches 215 PB/g (<a class=\"underline\" href=\"https://doi.org/10.1126/science.aaj2038\">Erlich, Science 2017</a>) vs conventional media; the non-invasive read/write interface is unknown — and enters only with consent",
+      "status": "density evidenced · interface unknown",
+      "good": true
+    }
+  ]
+}

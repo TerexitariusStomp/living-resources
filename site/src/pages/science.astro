@@ -5,6 +5,7 @@ import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import LaneTable from '~/components/living/LaneTable.astro';
 import Features2 from '~/components/widgets/Features2.astro';
+import cloud from '~/data/cloud.json';
 
 const metadata = { title: 'The science — every claim tiered' };
 
@@ -63,6 +64,14 @@ const sections = [
     body: `Not aspirations — code. The lane gate (<code>lane-gate.rego</code> / <code>offers.scm</code>) admits evidence
       lanes only with an evidence fingerprint, consent lanes only with a joint guardian+operator credential, and
       refuses <code>hop</code>, <code>compute</code>, and <code>engineered</code> outright. 93/93 e2e checks pass.`,
+  },
+  {
+    id: 'cloud-map',
+    tier: 'the vision — trajectory, honestly split',
+    color: 'text-amber-300',
+    title: '"The living cloud"',
+    body: `The next-cloud thesis, on the record: we lose on latency, throughput and bulk storage <em>today</em> and say
+      so. Energy per synapse and storage density carry field evidence. The rest is a roadmap, marked as such below.`,
   },
 ];
 
@@ -144,6 +153,46 @@ const field: Row[] = [
 
   <!-- lane table -->
   <LaneTable id="lanes" mode="plain" />
+
+  <!-- the living cloud vs conventional cloud — per-axis honesty -->
+  <WidgetWrapper id="cloud" containerClass="max-w-5xl scroll-mt-24">
+    <Headline
+      tagline="The next cloud, honestly"
+      title="Where the living cloud stands against the conventional one"
+      subtitle="The conventional cloud hosts our verification layer today. The living cloud supplies what no facility can manufacture — the biosphere's own testimony. On the four axes people ask about, here is exactly where we stand."
+      classes={{ container: 'max-w-4xl' }}
+    />
+    <div class="space-y-3">
+      {
+        cloud.axes.map((a) => (
+          <div class="rounded-lg border border-white/10 bg-black/30 p-5">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <h3 class="font-semibold text-heading">{a.axis}</h3>
+              <span
+                class:list={[
+                  'font-mono text-xs uppercase tracking-wide',
+                  a.good ? 'text-[#00d992]' : 'text-red-400/80',
+                ]}
+              >
+                {a.status}
+              </span>
+            </div>
+            <div class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+              <p class="text-muted">
+                <span class="text-default font-mono text-xs uppercase tracking-wide">today — </span>
+                {a.today}
+              </p>
+              <p class="text-muted">
+                <span class="text-default font-mono text-xs uppercase tracking-wide">field — </span>
+                <span set:html={a.field} />
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="text-muted mt-6 font-mono text-xs" set:html={cloud.thesis} />
+  </WidgetWrapper>
 
   <!-- measured vs cited -->
   <WidgetWrapper id="evidence" containerClass="max-w-6xl">

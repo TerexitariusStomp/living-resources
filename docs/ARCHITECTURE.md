@@ -106,6 +106,7 @@ provenance. Custom code budget: **<5% of everything shipped**
 | Path | Role |
 |---|---|
 | `src/data/lanes.json` | single source of truth for lane portrayal; `tools/site/lane_drift.py` fails CI if it diverges from `specs.scm`/`lane-gate.rego` |
+| `src/data/cloud.json` | living-cloud-vs-conventional comparison rows, trajectory items, per-axis evidence (content, not code) |
 | `src/components/living/` | the custom seam: `LaneTable` `TierLink` `PlantListen` `Board3D` `Globe` `ValueLoop` `JoinForm` `Console` |
 | `src/pages/` | `/` story homepage · `/science` claim tiers · `/developers` API + live console · `/privacy` · `/credits` |
 | `public/packed/` `public/audio/` `public/img/` | connectome blobs · CC0 plant-sound clips (Dryad 10.5061/dryad.jwstqjqf7 via `tools/site/plant_audio.py`) · PD/CC0 imagery |

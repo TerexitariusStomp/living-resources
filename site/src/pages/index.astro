@@ -15,6 +15,9 @@ import Globe from '~/components/living/Globe.astro';
 import ValueLoop from '~/components/living/ValueLoop.astro';
 import JoinForm from '~/components/living/JoinForm.astro';
 import TierLink from '~/components/living/TierLink.astro';
+import Comparison from '~/components/widgets/Comparison.astro';
+import Timeline from '~/components/widgets/Timeline.astro';
+import cloud from '~/data/cloud.json';
 import { SITE, METADATA, I18N } from 'astrowind:config';
 import favIconSvg from '~/assets/favicons/favicon.svg';
 
@@ -129,7 +132,39 @@ const structuredData = [
     <div class="mt-4 text-center"><TierLink anchor="network" /></div>
   </WidgetWrapper>
 
-  <!-- 6 — why you'd want more of it -->
+  <!-- 6 — the next cloud -->
+  <WidgetWrapper id="cloud" isDark containerClass="max-w-6xl">
+    <Headline
+      tagline="The next cloud"
+      title="The cloud is going living"
+      subtitle="The first clouds were buildings full of silicon. The next one is alive — the same job, compute and storage and answers you can trust, run on the biosphere itself. For the cost of one AI campus you could field ~750,000 listeners."
+      classes={{ container: 'max-w-4xl' }}
+    />
+    <div class="mx-auto mb-12 grid max-w-4xl gap-4 sm:grid-cols-3">
+      {
+        cloud.stats.map((s) => (
+          <div class="rounded-lg border border-white/10 bg-black/30 p-5 text-center">
+            <div class="font-heading text-2xl font-bold text-[#00d992]">{s.value}</div>
+            <div class="text-default mt-1 text-sm">{s.label}</div>
+            <div class="text-muted mt-1 font-mono text-xs">{s.note}</div>
+          </div>
+        ))
+      }
+    </div>
+    <Comparison
+      mode="versus"
+      firstColumnLabel={cloud.comparison.firstColumnLabel}
+      columns={cloud.comparison.columns}
+      rows={cloud.comparison.rows}
+    />
+    <div class="mx-auto mt-16 max-w-3xl">
+      <Timeline items={cloud.trajectory} layout="vertical" />
+      <p class="text-muted mt-8 border-l-2 border-[#00d992]/40 pl-4 text-sm italic">{cloud.thesis}</p>
+    </div>
+    <div class="mt-6 text-center"><TierLink anchor="cloud" /></div>
+  </WidgetWrapper>
+
+  <!-- 7 — why you'd want more of it -->
   <Features
     id="why"
     tagline="Why it matters to you"
@@ -176,7 +211,7 @@ const structuredData = [
     ]}
   />
 
-  <!-- 7 — promises -->
+  <!-- 8 — promises -->
   <Steps
     id="promises"
     tagline="What we promise, in writing"
@@ -210,7 +245,7 @@ const structuredData = [
     image={{ src: '/img/forest-floor.jpg', alt: 'Forest floor with fungi and moss — public domain, Bernard Spragg' }}
   />
 
-  <!-- 8 — FAQ -->
+  <!-- 9 — FAQ -->
   <FAQs
     id="faq"
     tagline="Fair questions"
@@ -250,7 +285,7 @@ const structuredData = [
     ]}
   />
 
-  <!-- 9 — join -->
+  <!-- 10 — join -->
   <WidgetWrapper id="join" isDark containerClass="max-w-3xl">
     <Headline
       tagline="Be part of it"
