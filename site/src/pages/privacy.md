@@ -19,8 +19,8 @@ the email itself is never used as a lookup key and is never listed or returned b
 
 ## What we do with it
 
-One email when field pilots open. That is the whole program. No marketing drip, no
-sharing, no sale, no analytics on this site.
+Occasional emails when things actually happen — field pilots opening, major
+milestones. No marketing drip, no sharing, no sale, no analytics on this site.
 
 ## What we don't do
 
