@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Compute you can check — replay-verified connectome tasks</title>
+<title>Living systems, on the record — the living cloud</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -18,6 +18,7 @@
     --white: #ffffff;
     --parchment: #b8b3b0;
     --slate: #8b949e;
+    --refuse: #ff7b72;
     --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
     --sans: 'Inter', system-ui, -apple-system, sans-serif;
   }
@@ -50,7 +51,7 @@
   nav a:hover { color: var(--signal); }
 
   /* ── hero ── */
-  header { padding: 7.5rem 0 4rem; max-width: 46rem; }
+  header { padding: 7.5rem 0 4rem; max-width: 50rem; }
   .kicker {
     font-family: var(--mono); font-size: .72rem; letter-spacing: .28em;
     text-transform: uppercase; color: var(--signal);
@@ -64,11 +65,11 @@
     color: var(--white); margin: 1.6rem 0 1.4rem;
   }
   h1 .sig { color: var(--signal); }
-  header .lede { color: var(--parchment); font-size: 1.08rem; line-height: 1.65; max-width: 38rem; }
+  header .lede { color: var(--parchment); font-size: 1.08rem; line-height: 1.65; max-width: 42rem; }
+  header .lede b { color: var(--snow); font-weight: 600; }
   header .lede code { font-family: var(--mono); font-size: .88em; color: var(--mint); }
-  header .scope { color: var(--slate); font-size: .85rem; margin-top: 1.4rem; line-height: 1.6; max-width: 38rem; }
+  header .scope { color: var(--slate); font-size: .85rem; margin-top: 1.4rem; line-height: 1.6; max-width: 42rem; }
 
-  /* ── copyable command (install-first psychology → run-first) ── */
   .cmd {
     display: flex; align-items: center; gap: .8rem; margin-top: 2.2rem;
     background: var(--carbon); border: 1px solid var(--charcoal);
@@ -84,11 +85,9 @@
   }
   .cmd button:hover { color: var(--signal); border-color: var(--signal); }
 
-  /* ── surfaces ── */
+  /* ── sections ── */
   section { margin-top: 5.5rem; }
-  .sec-head {
-    display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.4rem;
-  }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.4rem; }
   h2 {
     font-family: system-ui, sans-serif; font-size: 1.35rem; font-weight: 600;
     letter-spacing: -0.02em; color: var(--white);
@@ -100,7 +99,6 @@
     background: var(--carbon); border: 1px solid var(--charcoal);
     border-radius: 8px; padding: 1.5rem;
   }
-  .panel.accent { border: 2px solid var(--signal); }
 
   /* ── console ── */
   .controls { display: flex; gap: .7rem; flex-wrap: wrap; align-items: center; }
@@ -123,7 +121,7 @@
     margin: 1rem 0 .2rem; min-height: 1.3em;
   }
   .statline .ok { color: var(--signal); }
-  .statline .bad { color: #ff7b72; }
+  .statline .bad { color: var(--refuse); }
 
   pre {
     font-family: var(--mono); font-size: .76rem; line-height: 1.55;
@@ -134,7 +132,62 @@
   }
   pre .dim { color: var(--slate); }
 
-  /* ── ledger ── */
+  /* ── quorum chips ── */
+  .quorum {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: .6rem; margin-top: 1rem;
+  }
+  .qchip {
+    border: 1px solid var(--charcoal); border-radius: 6px; padding: .55rem .8rem;
+    font-family: var(--mono); font-size: .72rem; color: var(--parchment);
+    background: var(--abyss);
+  }
+  .qchip b { color: var(--snow); font-weight: 600; }
+  .qchip .act-tag { color: var(--signal); }
+  .qchip .dig { color: var(--slate); display: block; margin-top: .15rem; }
+  .qcap { font-family: var(--mono); font-size: .72rem; color: var(--slate); margin-top: .8rem; }
+
+  /* ── lane map ── */
+  .lane {
+    display: grid; grid-template-columns: 9rem 8.5rem 1fr; gap: 1rem;
+    padding: .85rem .15rem; border-bottom: 1px solid rgba(61,58,57,.55);
+    align-items: baseline;
+  }
+  .lane:last-child { border-bottom: none; }
+  .lane .name { font-family: var(--mono); font-size: .82rem; color: var(--snow); font-weight: 500; }
+  .lane .desc { color: var(--parchment); font-size: .88rem; line-height: 1.55; }
+  .lane .desc .src { font-family: var(--mono); font-size: .72rem; color: var(--slate); }
+  .badge {
+    font-family: var(--mono); font-size: .68rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase;
+    border-radius: 9999px; padding: .3rem .8rem; display: inline-block;
+    width: fit-content; white-space: nowrap;
+  }
+  .b-live     { color: var(--signal);  border: 1px solid var(--signal); }
+  .b-consent  { color: var(--mint);    border: 1px solid var(--charcoal); border-bottom-color: var(--mint); }
+  .b-research { color: var(--slate);   border: 1px solid var(--charcoal); }
+  .b-cited    { color: var(--parchment); border: 1px solid var(--charcoal); }
+  .b-refused  { color: var(--refuse);  border: 1px solid rgba(255,123,114,.4); }
+  .lanenote { font-family: var(--mono); font-size: .72rem; color: var(--slate); margin-top: .9rem; }
+
+  /* ── evidence split ── */
+  .evgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  @media (max-width: 760px) { .evgrid { grid-template-columns: 1fr; } }
+  .evcol h3 {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--signal); margin-bottom: 1rem;
+  }
+  .evcol.cited h3 { color: var(--parchment); }
+  .ev { padding: .55rem 0; border-bottom: 1px solid rgba(61,58,57,.55); }
+  .ev:last-child { border-bottom: none; }
+  .ev .t { color: var(--snow); font-size: .88rem; line-height: 1.5; }
+  .ev .t b { color: var(--signal); font-weight: 600; }
+  .ev .s { font-family: var(--mono); font-size: .7rem; color: var(--slate); margin-top: .2rem; }
+  .ev .s a { color: var(--mint); text-decoration: none; }
+  .ev .s a:hover { color: var(--signal); }
+  .ev.unfavorable .t b { color: var(--refuse); }
+
+  /* ── ledger / endpoints ── */
   .ledger { font-family: var(--mono); font-size: .74rem; }
   .ledger a {
     display: flex; justify-content: space-between; gap: 1rem;
@@ -145,7 +198,6 @@
   .ledger a:hover { color: var(--signal); }
   .ledger a .ago { color: var(--slate); flex: none; }
 
-  /* ── endpoints ── */
   .eps { font-family: var(--mono); font-size: .79rem; }
   .eps .ep {
     display: grid; grid-template-columns: 3.4rem 15rem 1fr; gap: 1rem;
@@ -169,7 +221,9 @@
     header { padding: 4.5rem 0 3rem; }
     .eps .ep { grid-template-columns: 3.2rem 1fr; }
     .eps .d { grid-column: 2; }
+    .lane { grid-template-columns: 1fr; gap: .35rem; }
     nav a { margin-left: 1rem; }
+    nav span:last-child { display: flex; flex-wrap: wrap; justify-content: flex-end; }
   }
   @media (prefers-reduced-motion: reduce) {
     #net { display: none; }
@@ -185,7 +239,8 @@
   <nav>
     <span class="logo"><span class="dot"></span>TREETABLE<span style="color:var(--slate)">/</span>LIVING&nbsp;RESOURCES</span>
     <span>
-      <a href="/info">info</a>
+      <a href="#lanes">lanes</a>
+      <a href="#evidence">evidence</a>
       <a href="/connectomes">connectomes</a>
       <a href="/receipts">receipts</a>
       <a href="https://github.com/treetable/living-resources">source</a>
@@ -193,19 +248,21 @@
   </nav>
 
   <header>
-    <span class="kicker">replay-verified compute</span>
-    <h1>Compute you<br>can <span class="sig">check</span>.</h1>
+    <span class="kicker">the living cloud</span>
+    <h1>Living systems,<br><span class="sig">on the record.</span></h1>
     <p class="lede">
-      Deterministic LIF simulation over <b>15 real EM-derived connectomes</b> —
-      from 302-neuron <i>C. elegans</i> to a 40k-neuron fly medulla. Every task
-      returns a receipt carrying a <code>task_said</code> and
-      <code>trace_digest</code>; anyone can replay the declared input through the
-      declared wiring and land on the identical digest. The computation is the proof.
+      A federation where plants, reefs and biofilms are <b>providers, not
+      resources</b> — sensed passively, witnessed by quorum, credited per
+      contribution. Nothing attaches to an organism, nothing enters the soil,
+      and every write lane rides on recorded consent. What flows out is
+      evidence: content-addressed readings, replayable compute, receipts
+      anyone can check.
     </p>
     <p class="scope">
-      Honest scope: this is deterministic simulation over published connectome
-      data — preserved biological wiring, not a claim that an organism computed
-      your answer. Verified bit-identical to the reference engine: 930/930 checks.
+      One lane of that cloud is already running — replay-verified compute
+      over 15 real EM-derived connectomes. Deterministic simulation over
+      preserved wiring: no organism computed your answer, and the honest
+      scope of every other lane is written on it below.
     </p>
     <div class="cmd">
       <span class="prompt">$</span>
@@ -214,9 +271,9 @@
     </div>
   </header>
 
-  <section>
+  <section id="live">
     <div class="sec-head">
-      <span class="idx">01</span><h2>Run it, then replay it</h2>
+      <span class="idx">01</span><h2>Now running — replay-verified compute</h2>
       <span class="hint">live — this page calls the API</span>
     </div>
     <div class="panel">
@@ -224,15 +281,82 @@
         <label>substrate <select id="cx"></select></label>
         <button id="run" class="act primary">POST /task</button>
         <button id="verify" class="act ghost" disabled>POST /verify →</button>
+        <button id="quorum" class="act ghost">POST /verdict — all 15</button>
       </div>
       <div class="statline" id="statline"></div>
-      <pre id="out"><span class="dim">// pick a substrate — the receipt lands here, then replay-verify it</span></pre>
+      <div class="quorum" id="quorumgrid" hidden></div>
+      <div class="qcap" id="qcap" hidden></div>
+      <pre id="out"><span class="dim">// run a task — the receipt lands here, then replay-verify it. Or fire one signal at all fifteen wirings.</span></pre>
     </div>
+  </section>
+
+  <section id="lanes">
+    <div class="sec-head">
+      <span class="idx">02</span><h2>The lane map</h2>
+      <span class="hint">every lane wears its evidence tier</span>
+    </div>
+    <div class="panel">
+      <div class="lane">
+        <span class="name">sense</span><span class="badge b-live">live</span>
+        <span class="desc">Passive multimodal sensing — audio, ultrasonic, environmental, camera, hydrophone front-end on one ~$35–45 node. Nothing attaches, nothing enters soil. <span class="src">EcoCell One · firmware/node</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">compute</span><span class="badge b-live">live</span>
+        <span class="desc">This API — deterministic LIF tasks over 15 real EM-derived connectomes, every receipt replayable to an identical digest. <span class="src">lif.py · FlyEngine.sol</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">store</span><span class="badge b-live">live</span>
+        <span class="desc">As receipts: every reading and task is content-addressed and persisted — tamper-evident commitments, not bulk storage. <span class="src">/receipts · KV ledger</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">emit</span><span class="badge b-consent">consent-gated</span>
+        <span class="desc">The write lane exists and is fully implemented — it rides only on joint guardian + operator consent, duty-cycled minimum power, every burst logged and receipted. <span class="src">EmitLane · consent.rego</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">relay</span><span class="badge b-research">research</span>
+        <span class="desc">Signal through preserved wiring — input current propagates along real synaptic paths, the receipted spike train is the relayed output. E5 is the graduation path. <span class="src">docs/EXPERIMENTS.md</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">into-organism</span><span class="badge b-refused">refused</span>
+        <span class="desc"><b>compute / store / hop into living systems — refused.</b> Not until an evidence SAID lands in the gate book; a refusal is a value, not silence. What the field has published as possible is cited below — we claim the receipts, not the miracle. <span class="src">docs/SCIENCE.md</span></span>
+      </div>
+      <div class="lanenote">// lanes graduate experiment → offer only when their evidence SAID lands. receipts are the product; the rest is a research program with the brakes on.</div>
+    </div>
+  </section>
+
+  <section id="evidence">
+    <div class="sec-head">
+      <span class="idx">03</span><h2>The evidence</h2>
+      <span class="hint">measured by us · demonstrated by the field</span>
+    </div>
+    <div class="evgrid">
+      <div class="evcol">
+        <h3>measured — replay-verifiable</h3>
+        <div class="panel">
+          <div class="ev"><div class="t">Packed int4 CSR wiring is <b>46×–5,900× smaller</b> than fp32 dense weights</div><div class="s">measured bytes · celegans → medulla · <a href="https://github.com/treetable/living-resources/blob/main/docs/EFFICIENCY.md">EFFICIENCY.md</a></div></div>
+          <div class="ev"><div class="t">At ≥10⁴ neurons, connectome legs use <b>~70× fewer joules</b> than dense fp32 on the same silicon</div><div class="s">measured RAPL · medulla 0.117 J vs 8.30 J · 3.3 ms vs 104 ms</div></div>
+          <div class="ev"><div class="t">Deterministic traces replay <b>bit-for-bit</b> — TS port identical to the Python engine</div><div class="s">930/930 checks · <a href="https://github.com/treetable/living-resources/tree/main/workers/compute-api">test/diff.mjs</a></div></div>
+          <div class="ev unfavorable"><div class="t">At 302 neurons the interpreter is <b>~20× slower</b> than SIMD — reported, not hidden</div><div class="s">measured — unfavorable cells are part of the evidence</div></div>
+          <div class="ev unfavorable"><div class="t">Shuffled wiring with identical degree statistics performs <b>identically</b></div><div class="s">measured control — the win is sparsity; biology contributes the signature, not the speed</div></div>
+        </div>
+      </div>
+      <div class="evcol cited">
+        <h3>demonstrated by the field</h3>
+        <div class="panel">
+          <div class="ev"><div class="t">Stressed plants emit <b>remotely detectable, informative ultrasound</b> — tomato ~35 clicks/h, 20–100 kHz</div><div class="s"><a href="https://doi.org/10.1016/j.cell.2023.03.009">Khait et al., Cell 2023</a></div></div>
+          <div class="ev"><div class="t">Biofilms broadcast <b>K⁺ electrical waves</b> that attract distant cells across species</div><div class="s"><a href="https://doi.org/10.1038/nature15709">Prindle et al., Nature 2015</a> · <a href="https://doi.org/10.1016/j.cell.2016.12.012">Humphries et al., Cell 2017</a> · <a href="https://doi.org/10.1126/science.aah4204">Liu et al., Science 2017</a></div></div>
+          <div class="ev"><div class="t">Reef acoustic complexity <b>tracks biodiversity and recovery</b></div><div class="s"><a href="https://doi.org/10.1111/1365-2664.14274">J Appl Ecol 2022</a></div></div>
+          <div class="ev"><div class="t">DNA archival storage reaches <b>215 petabytes per gram</b></div><div class="s"><a href="https://doi.org/10.1126/science.aaj2038">Erlich &amp; Zielinski, Science 2017</a> · <a href="https://doi.org/10.1126/science.1226355">Church et al., Science 2012</a> — field evidence for biological density, <b>not our lane</b></div></div>
+          <div class="ev"><div class="t">Neuromorphic silicon runs at <b>~24–26 pJ per synaptic event</b>; a biological synapse ~1–100 pJ</div><div class="s"><a href="https://doi.org/10.1126/science.1254642">Merolla et al., Science 2014</a> · <a href="https://doi.org/10.1109/MM.2018.112130359">Davies et al., IEEE Micro 2018</a> — cited, unverified by us</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="lanenote" style="margin-top:1rem">// the field has shown what is physically possible. our contribution is narrower and checkable: the receipts. full claim table → <a href="https://github.com/treetable/living-resources/blob/main/docs/SCIENCE.md" style="color:var(--mint)">docs/SCIENCE.md</a></div>
   </section>
 
   <section>
     <div class="sec-head">
-      <span class="idx">02</span><h2>Receipt ledger</h2>
+      <span class="idx">04</span><h2>Receipt ledger</h2>
       <span class="hint">every task_said, content-addressed</span>
     </div>
     <div class="panel">
@@ -242,7 +366,7 @@
 
   <section>
     <div class="sec-head">
-      <span class="idx">03</span><h2>API</h2>
+      <span class="idx">05</span><h2>API</h2>
       <span class="hint">JSON in, receipts out</span>
     </div>
     <div class="panel">
@@ -317,7 +441,10 @@ const out = document.getElementById('out');
 const stat = document.getElementById('statline');
 const cxSel = document.getElementById('cx');
 const verifyBtn = document.getElementById('verify');
+const qGrid = document.getElementById('quorumgrid');
+const qCap = document.getElementById('qcap');
 let lastReceipt = null;
+const FEATS = { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 };
 
 async function j(method, path, body) {
   const r = await fetch(path, { method,
@@ -330,7 +457,7 @@ async function j(method, path, body) {
   const {connectomes} = await j('GET','/connectomes');
   for (const c of connectomes) {
     const o = document.createElement('option');
-    const n = c.nNeurons ?? c.neurons ?? '';
+    const n = c.nNeurons ?? '';
     o.value = c.name;
     o.textContent = `${c.name} — ${n.toLocaleString ? n.toLocaleString() : n} neurons`;
     cxSel.appendChild(o);
@@ -344,9 +471,9 @@ async function j(method, path, body) {
 })().catch(e => out.innerHTML = '<span class="dim">init error: ' + e + '</span>');
 
 document.getElementById('run').onclick = async () => {
+  out.hidden = false; qGrid.hidden = true; qCap.hidden = true;
   out.textContent = 'running…'; stat.textContent = '';
-  const feats = { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 };
-  const r = await j('POST','/task',{connectome: cxSel.value, features: feats});
+  const r = await j('POST','/task',{connectome: cxSel.value, features: FEATS});
   if (r.error) { out.textContent = JSON.stringify(r); return; }
   lastReceipt = r.receipt;
   out.textContent = JSON.stringify(lastReceipt, null, 2);
@@ -364,6 +491,23 @@ verifyBtn.onclick = async () => {
   stat.innerHTML = r.verified
     ? '<span class="ok">✓ verified — replay produced the identical digest</span>'
     : '<span class="bad">✗ digest mismatch</span>';
+};
+
+// ── quorum run: one signal, fifteen wirings ──
+document.getElementById('quorum').onclick = async () => {
+  out.hidden = true; qGrid.hidden = false; qCap.hidden = false;
+  qGrid.innerHTML = ''; stat.textContent = ''; qCap.textContent = 'firing one encoded signal at all fifteen substrates…';
+  const r = await j('POST','/verdict',{connectome:'all', features: FEATS});
+  if (r.error) { qCap.textContent = JSON.stringify(r); return; }
+  const ACT = {1:'affirm', '-1':'refute', 0:'abstain'};
+  qGrid.innerHTML = r.verdicts.map(v => `
+    <div class="qchip"><b>${v.connectome}</b> · <span class="act-tag">${ACT[v.action] ?? v.action}</span>
+      <span class="dig">${(v.spike_digest||'').slice(8,30)}…</span>
+    </div>`).join('');
+  const uniq = new Set(r.verdicts.map(v=>v.spike_digest)).size;
+  qCap.textContent =
+    `// one signal → ${r.verdicts.length} wirings → ${uniq} distinct response signatures. ` +
+    `topology is the witness — replay any one and the digest must land bit-for-bit.`;
 };
 </script>
 </body>

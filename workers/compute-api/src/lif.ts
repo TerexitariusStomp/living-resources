@@ -25,6 +25,11 @@ export interface Connectome {
   indices: Int32Array;  // nSyn
   w4: Int8Array;        // nSyn signed nibbles
   src: Int32Array;      // nSyn — presynaptic neuron of each edge
+  // variation(i, side) is a pure function of (i, side) — constant across
+  // requests. Caching it per connectome cuts the dominant CPU cost
+  // (n blake2s calls per rasterize → once per isolate).
+  varAffirm?: Float64Array;
+  varRefute?: Float64Array;
 }
 
 export function parseConnectome(name: string, metaJson: any,
@@ -78,8 +83,21 @@ function variation(i: number, side: string): number {
   return (((d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3]) >>> 0) % VAR_MOD;
 }
 
+function variationArrays(c: Connectome): [Float64Array, Float64Array] {
+  if (!c.varAffirm) {
+    const n = c.meta.nNeurons;
+    c.varAffirm = new Float64Array(n);
+    c.varRefute = new Float64Array(n);
+    for (let i = 0; i < n; i++) {
+      c.varAffirm[i] = variation(i, "affirm");
+      c.varRefute[i] = variation(i, "refute");
+    }
+  }
+  return [c.varAffirm, c.varRefute!];
+}
+
 export function rasterize(features: Record<string, number>,
-                          n: number): Float64Array {
+                          c: Connectome): Float64Array {
   const conf = _norm(features.confidence);
   const rate = _norm(features.event_rate);
   const anom = _norm(features.env_anomaly);
@@ -97,10 +115,12 @@ export function rasterize(features: Record<string, number>,
   if (affirm < TONIC_Q24) affirm = TONIC_Q24;
   if (refute < TONIC_Q24) refute = TONIC_Q24;
 
+  const n = c.meta.nNeurons;
   const half = Math.floor(n / 2);
+  const [vAff, vRef] = variationArrays(c);
   const inp = new Float64Array(n);
-  for (let i = 0; i < half; i++) inp[i] = affirm + variation(i, "affirm");
-  for (let i = half; i < n; i++) inp[i] = refute + variation(i, "refute");
+  for (let i = 0; i < half; i++) inp[i] = affirm + vAff[i];
+  for (let i = half; i < n; i++) inp[i] = refute + vRef[i];
   return inp;
 }
 
@@ -280,7 +300,7 @@ export function toPlain(val: CanonVal | any): any {
 
 export function runVerdict(c: Connectome,
                            features: CanonVal | Record<string, number>) {
-  const inp = rasterize(toPlain(features), c.meta.nNeurons);
+  const inp = rasterize(toPlain(features), c);
   const { v, raster } = simulate(c, inp);
   const d = decode(inp, v, raster);
   return {
@@ -314,7 +334,7 @@ export function runTask(c: Connectome, features: CanonVal | any) {
       inp[i] = fdiv(rne(vec[i] * Q24 / mx) * EYE_GAIN_Q24, Q24);
     encoder = "lif-task-v1";
   } else {
-    inp = rasterize(toPlain(features), n);
+    inp = rasterize(toPlain(features), c);
     encoder = ENCODER;
   }
   const { v, raster } = simulate(c, inp);
