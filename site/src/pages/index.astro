@@ -61,9 +61,9 @@ const chips = (keys: TierKey[]) => keys.map(tierChip).join(' ');
 
 const jobs = [
   {
-    title: 'Listen',
+    title: 'Listen — and answer',
     icon: 'tabler:ear',
-    description: `Small boxes sit near plants, reefs and soil and hear what is going on. They never touch anything.<br/>${chips(['built'])}`,
+    description: `Small boxes sit near plants, reefs and soil. They hear what is going on — and when guardian and owner both say yes, they can answer back. Reads and writes, always gentle, never touching anything.<br/>${chips(['built'])}`,
   },
   {
     title: 'Check',
@@ -78,7 +78,7 @@ const jobs = [
   {
     title: 'Remember',
     icon: 'tabler:dna',
-    description: `Today we keep receipts. Someday, data could live in DNA, nature's own storage, using a gentle method nobody has invented yet.<br/>${chips(['live', 'vision'])}`,
+    description: `Today we keep receipts. DNA data storage already works in labs — nature's own medium. Doing it gently, inside living systems, is the open problem.<br/>${chips(['live', 'science', 'vision'])}`,
   },
 ];
 
@@ -116,7 +116,7 @@ const journey = [
     date: 'Works today',
     title: 'The cloud thinks it over',
     description:
-      'The signal runs through maps of real animal nerves, called connectomes. They are like subway maps of tiny brains. Today a regular computer runs these maps. No animal is involved.',
+      'The signal runs through maps of real animal nerves, called connectomes. They are like subway maps of tiny brains. Today a regular computer runs them — the goal is for the living cloud itself to take that job over.',
     icon: 'tabler:route',
     highlight: true,
   },
@@ -124,22 +124,22 @@ const journey = [
     date: 'Built — field test next',
     title: 'Nature earns credit',
     description:
-      "The plant's patch of nature earns credit for what it shared. Its AI companion keeps the record, and a human guardian looks after the credit, like a grown-up managing a kid's savings.",
+      "The plant's patch of nature earns credit for what it shared. Its AI companion keeps the record, and a human guardian looks after the credit on its behalf.",
     icon: 'tabler:coin',
   },
   {
     date: 'Someday',
-    title: 'People protect what pays',
+    title: 'Worth more alive — and aligned',
     description:
-      'When a living forest earns more than a cut-down one, people have a reason to keep it. That is the idea we are testing.',
+      'A living forest is already worth more than a felled one — air, water, soil. If ecosystems also help our search for knowledge, with sensing, compute and storage, the partnership deepens.',
     icon: 'tabler:leaf',
     ghost: true,
   },
   {
     date: 'Someday',
-    title: 'The organism gets better',
+    title: 'Green improves, grey decays',
     description:
-      'Every new version of the living cloud must prove with receipts that it uses less power, space and time. Over time, more work moves to nature — with proof and permission.',
+      'Human-made machines wear out — grey solutions degrade. Living systems heal and adapt — green solutions improve. Each generation of the living cloud must prove with receipts that more of the work has moved to green.',
     icon: 'tabler:trending-down',
     ghost: true,
   },
@@ -165,7 +165,7 @@ const concepts = [
   {
     title: 'Listener',
     icon: 'tabler:ear',
-    description: `Like a weather station with ears. About $40, sun-powered, never touches anything.<br/>${chips(['built'])}`,
+    description: `Like a weather station with ears. About $40, runs on a battery or the sun, never touches anything.<br/>${chips(['built'])}`,
   },
   {
     title: 'Signal',
@@ -254,10 +254,11 @@ const honesty = [
     id: 'truth-loop',
     tier: 'the vision — mechanics built',
     color: 'text-amber-300',
-    title: '"When nature earns, people protect it"',
+    title: '"Nature is already worth more alive"',
     body: `The mechanism is implemented and e2e-tested — quorum witnessing (<code>attest.scm</code>), per-contribution
-      mutual credit (<code>settlement.scm</code>), guardian custody (<code>agents.scm</code>). Whether that changes
-      real-world protection economics is the hypothesis this project exists to test — not a measured result.`,
+      mutual credit (<code>settlement.scm</code>), guardian custody (<code>agents.scm</code>). Whether earning and
+      alignment change real-world protection economics is the hypothesis this project exists to test — not a
+      measured result.`,
   },
   {
     id: 'truth-network',
@@ -407,7 +408,9 @@ const field: Row[] = [
     </Fragment>
     <Fragment slot="subtitle">
       Today's cloud is huge buildings full of computers. The living cloud is forests, reefs and soil — heard from a
-      distance, never touched. <b>Nature does the talking. Computers check what it says. Nature gets the credit.</b>
+      distance, never touched. <b
+        >Nature does the talking — and, piece by piece, the computing. Nature keeps the credit.</b
+      >
     </Fragment>
   </Hero>
 
@@ -561,8 +564,8 @@ const field: Row[] = [
   <WidgetWrapper id="why" containerClass="max-w-6xl">
     <Headline
       tagline="Why it matters"
-      title="When nature earns, people protect it"
-      subtitle="Right now a forest is often worth more cut down than standing. That is why so many disappear. If a forest can be heard, checked and paid for what it gives, staying alive starts to pay. People keep more of what pays."
+      title="Nature is already worth more alive"
+      subtitle="A living forest already beats a felled one — air, water, soil. But the world rarely pays for it. If ecosystems also join our search for knowledge — sensing, compute, storage — the partnership deepens."
       classes={{ container: 'max-w-4xl' }}
     />
     <ValueLoop />
@@ -600,7 +603,7 @@ const field: Row[] = [
       <Headline
         tagline="The market that's forming"
         title="Proof is a product people already pay for"
-        subtitle="Checking nature claims is already a market — and it's stuck. Buyers pay for data they can't verify. The living cloud sells the missing thing: proof."
+        subtitle="Checking nature claims is a market that is stuck — buyers pay for data they can't verify. But the living cloud is not just proof: it is sensing, compute and storage done by nature itself."
         classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
       />
       <div class="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
