@@ -31,7 +31,7 @@ routine if an equity raise requires it.
 | GBIF BID (via fiscal host) | €30–60k | Regional calls | **SENT** | Partner-outreach email sent to **sib@humboldt.org.co** (SiB Colombia / Instituto Humboldt — GBIF voting-participant node, publishes AudioMoth→Arbimon→GBIF acoustic datasets) — await reply, then scope BID window |
 | Filecoin Open Grant | up to $50k | Rolling | **SUBMITTED** | [devgrants issue #2233](https://github.com/filecoin-project/devgrants/issues/2233) — scope: receipted evidence store on Filecoin/IPLD. Draft at `applications/filecoin-open-grant.md` |
 | Emergent Ventures | $5–50k | Rolling, days-fast | drafted | `applications/emergent-ventures-outline.md` — **outline only: they test for + reject AI-written apps; user writes the 1500 words** |
-| Lacuna Fund (via Global South lead) | varies | Periodic dataset-creation RFPs | drafted | `applications/lacuna-partner-email.md` — requires lead HQ'd in low/middle-income country; pitch SiB Colombia as lead, us as technical partner |
+| Lacuna Fund (via Global South lead) | varies | Periodic dataset-creation RFPs | outreach sent | Email sent to sib@humboldt.org.co (attn. Ricardo Ortiz Gallego) from hardwoodstablecoin mailbox — SiB as eligible lead, us as technical partner; concept note offered on reply |
 | Cloudflare for Startups | $10k credits (in-kind) | Rolling | **SUBMITTED** | Applied as Temple Earth (Treetable LLC), Tier 3 (bootstrapped — the BOOTSTRAPPED promo is retired); confirmation in-app, decision to hello@templeearth.cc (Email Routing enabled → forwards to hardwoodstablecoin@gmail.com). ~48h review |
 | ~~Schmidt Futures AI-in-Science~~ | — | — | **NOT ELIGIBLE** | Postdoc-only + faculty-mentor required; AI2050 is closed-nomination. No non-academic Schmidt program exists |
 
