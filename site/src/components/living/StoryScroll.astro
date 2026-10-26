@@ -1,0 +1,106 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// StoryScroll — "one click, five stops". Sticky scene on desktop that
+// swaps as each stop scrolls by; stacked cards on mobile. Works with no
+// JS (all stops render inline) and honors prefers-reduced-motion.
+import StoryStops from '~/components/art/StoryStops.astro';
+import { tierChip, type TierKey } from '~/utils/tiers';
+
+const stops: { n: 1 | 2 | 3 | 4 | 5; title: string; text: string; tier: TierKey }[] = [
+  {
+    n: 1,
+    title: 'A thirsty plant clicks',
+    text: 'Real science: in 2023 researchers heard tomato plants click when the soil dried out — about 35 clicks an hour, too high for human ears. Nobody touched anything.',
+    tier: 'science',
+  },
+  {
+    n: 2,
+    title: 'A little box hears it',
+    text: 'A $40 listener sits beside the plant — never on it. It hears birds, insects and plant clicks, and notices the weather nearby.',
+    tier: 'built',
+  },
+  {
+    n: 3,
+    title: 'Three boxes agree, then seal it',
+    text: 'One box could be wrong, so the cloud waits until several agree — like a video review in sports. Then it stamps a receipt anyone can re-check.',
+    tier: 'built',
+  },
+  {
+    n: 4,
+    title: 'Brain maps think it over',
+    text: 'Your signal runs through subway-map wirings of real tiny brains. Ordinary computers run them today — the goal is for the living cloud itself to take that job over.',
+    tier: 'live',
+  },
+  {
+    n: 5,
+    title: 'Nature earns the credit',
+    text: 'The patch of nature that spoke earns credit for what it shared. A human guardian holds it in trust — and nature can always say no.',
+    tier: 'built',
+  },
+];
+---
+
+<div class="story-scroll not-prose">
+  <div class="grid gap-10 md:grid-cols-2">
+    <!-- sticky scene (desktop) -->
+    <div class="relative hidden md:block">
+      <div class="sticky top-28">
+        <div class="relative" id="story-scene">
+          {
+            stops.map((s) => (
+              <div class:list={['story-art', s.n !== 1 && 'hidden']} data-stop={s.n}>
+                <StoryStops stop={s.n} />
+              </div>
+            ))
+          }
+        </div>
+        <p id="story-step" class="text-muted mt-3 text-center font-mono text-xs">stop 1 of 5</p>
+      </div>
+    </div>
+    <!-- the stops -->
+    <ol class="space-y-8">
+      {
+        stops.map((s) => (
+          <li class="story-stop card p-6" data-stop={s.n}>
+            <div class="mb-4 md:hidden">
+              <StoryStops stop={s.n} />
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-leaf font-heading text-lg font-bold text-on-leaf">
+                {s.n}
+              </span>
+              <h3 class="font-heading text-xl font-bold text-heading">{s.title}</h3>
+            </div>
+            <p class="text-muted mt-3 text-[15px] leading-relaxed">{s.text}</p>
+            <p class="mt-3">
+              <Fragment set:html={tierChip(s.tier)} />
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+  <p class="text-muted mt-8 text-center text-sm">
+    And it can answer back — gently, and only after <b class="text-heading">two yeses</b>. ↓ try it below.
+  </p>
+</div>
+
+<script>
+  const stops = [...document.querySelectorAll<HTMLElement>('.story-stop')];
+  const arts = [...document.querySelectorAll<HTMLElement>('#story-scene .story-art')];
+  const stepEl = document.getElementById('story-step');
+
+  const show = (n: string) => {
+    arts.forEach((a) => a.classList.toggle('hidden', a.dataset.stop !== n));
+    if (stepEl) stepEl.textContent = `stop ${n} of ${stops.length}`;
+  };
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (es) => {
+        for (const e of es) if (e.isIntersecting) show((e.target as HTMLElement).dataset.stop ?? '1');
+      },
+      { rootMargin: '-45% 0px -45% 0px' }
+    );
+    stops.forEach((s) => io.observe(s));
+  }
+</script>

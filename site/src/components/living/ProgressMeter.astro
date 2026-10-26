@@ -1,0 +1,52 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// ProgressMeter — how far along the living cloud is. Four stages, plain
+// words, honest: most of it is "next frontier" and we say so.
+import { tiers } from '~/utils/tiers';
+
+interface Props {
+  /** Where the headline claim of this section sits on the path. */
+  stage?: 'science' | 'built' | 'live' | 'vision';
+}
+
+const { stage } = Astro.props;
+
+const stages = [
+  { key: 'science', label: 'Proven by science', short: 'researchers showed it works' },
+  { key: 'built', label: 'Built — heading outdoors', short: 'made and tested, not yet in the wild' },
+  { key: 'live', label: 'Live now', short: 'running today — check it yourself' },
+  { key: 'vision', label: 'Next frontier', short: 'where we are headed' },
+];
+const idx = stage ? stages.findIndex((s) => s.key === stage) : -1;
+---
+
+<div class="not-prose" aria-label="How far along this claim is">
+  <ol class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    {
+      stages.map((s, i) => {
+        const t = tiers[s.key as keyof typeof tiers];
+        const here = i === idx;
+        return (
+          <li
+            class:list={[
+              'card relative px-3 py-3 text-center transition',
+              here && 'ring-2 ring-leaf ring-offset-2 ring-offset-[var(--aw-color-bg-page)]',
+            ]}
+          >
+            <span class="text-[10px] font-bold uppercase tracking-widest text-muted">{`stage ${i + 1}`}</span>
+            <p class="mt-1 flex items-center justify-center gap-1.5 text-sm font-semibold text-heading">
+              {'pulse' in t && t.pulse && <span class="lc-live-dot" aria-hidden="true" />}
+              {s.label}
+            </p>
+            <p class="mt-0.5 text-xs text-muted">{s.short}</p>
+            {here && (
+              <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-leaf px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-on-leaf">
+                this part
+              </span>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</div>

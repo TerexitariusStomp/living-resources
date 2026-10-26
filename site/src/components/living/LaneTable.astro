@@ -32,7 +32,7 @@ const footnote =
   bare ? (
     <div class="font-mono text-sm">
       {lanes.map((l) => (
-        <div class="grid gap-x-5 gap-y-1 border-b border-white/10 py-3.5 md:grid-cols-[7rem_11rem_1fr]">
+        <div class="grid gap-x-5 gap-y-1 border-b border-line py-3.5 md:grid-cols-[7rem_11rem_1fr]">
           <span class="text-heading font-semibold">{mode === 'tech' ? l.id : l.plain}</span>
           <span>
             <span
@@ -51,7 +51,7 @@ const footnote =
       {title && <Headline title={title} tagline={tagline} subtitle={subtitle} />}
       <div class="font-mono text-sm">
         {lanes.map((l) => (
-          <div class="grid gap-x-5 gap-y-1 border-b border-white/10 py-3.5 md:grid-cols-[7rem_11rem_1fr]">
+          <div class="grid gap-x-5 gap-y-1 border-b border-line py-3.5 md:grid-cols-[7rem_11rem_1fr]">
             <span class="text-heading font-semibold">{mode === 'tech' ? l.id : l.plain}</span>
             <span>
               <span

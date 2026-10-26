@@ -1,0 +1,92 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// AnswerPlant — the write lane, taught by doing. The cloud can answer
+// back, but only with two yeses. Here the reader plays both parts: flip
+// guardian + owner on, and a soft tone plays through *their own speaker*
+// — nothing is sent, nothing touches a plant. A demo receipt is hashed
+// locally to show that even play leaves a receipt.
+---
+
+<div class="answer-plant card not-prose p-5">
+  <h3 class="text-heading text-lg font-bold">…and you can answer back</h3>
+  <p class="text-muted mt-1 text-sm">
+    The living cloud isn't only ears — it can answer, gently. But every write needs <b class="text-heading">two yeses</b
+    >: nature's guardian and the device's owner. Try being both:
+  </p>
+
+  <div class="mt-4 grid gap-2 sm:grid-cols-2">
+    <label class="flex items-center gap-3 rounded-xl border border-line bg-surface-2 px-4 py-3">
+      <input id="yes-guardian" type="checkbox" class="accent-leaf h-5 w-5" />
+      <span class="text-sm">
+        <b class="text-heading">Guardian says yes</b>
+        <span class="text-muted block text-xs">the person who looks after this patch</span>
+      </span>
+    </label>
+    <label class="flex items-center gap-3 rounded-xl border border-line bg-surface-2 px-4 py-3">
+      <input id="yes-owner" type="checkbox" class="accent-leaf h-5 w-5" />
+      <span class="text-sm">
+        <b class="text-heading">Owner says yes</b>
+        <span class="text-muted block text-xs">the person who owns the device — that's you</span>
+      </span>
+    </label>
+  </div>
+
+  <div class="mt-4 flex flex-wrap items-center gap-3">
+    <button
+      id="answer-btn"
+      class="rounded-full bg-leaf px-5 py-2 text-sm font-semibold text-on-leaf transition hover:bg-leaf-bright disabled:cursor-not-allowed disabled:opacity-40"
+      disabled
+    >
+      Answer gently
+    </button>
+    <span id="answer-state" class="text-muted font-mono text-xs">locked — needs both yeses</span>
+  </div>
+  <p id="answer-receipt" class="text-muted mt-3 hidden font-mono text-xs" data-reading="skip"></p>
+  <p class="text-muted mt-3 text-xs">
+    Demo: the sound plays on <b>your</b> speaker, not a plant. Real writes go to real devices — a watering pump, a soft speaker
+    — and every one leaves a receipt.
+  </p>
+</div>
+
+<script>
+  const g = document.getElementById('yes-guardian') as HTMLInputElement;
+  const o = document.getElementById('yes-owner') as HTMLInputElement;
+  const btn = document.getElementById('answer-btn') as HTMLButtonElement;
+  const state = document.getElementById('answer-state') as HTMLElement;
+  const out = document.getElementById('answer-receipt') as HTMLElement;
+
+  const sync = () => {
+    btn.disabled = !(g.checked && o.checked);
+    state.textContent = btn.disabled
+      ? g.checked || o.checked
+        ? 'still locked — one yes is not enough'
+        : 'locked — needs both yeses'
+      : 'unlocked — two yeses given';
+  };
+  g.addEventListener('change', sync);
+  o.addEventListener('change', sync);
+
+  btn.addEventListener('click', async () => {
+    // a soft, short, low-gain tone — gentle by construction
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = 432;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.3);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 2);
+
+    const seal = await crypto.subtle.digest(
+      'SHA-256',
+      new TextEncoder().encode(`answer:demo:${Date.now()}:432hz:2s:gain0.08`)
+    );
+    const hex = [...new Uint8Array(seal)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    out.classList.remove('hidden');
+    out.textContent = `demo receipt — sha256:${hex.slice(0, 24)}… · 432Hz · 2s · nothing left your device`;
+    state.textContent = 'answered — the receipt above seals it';
+  });
+</script>

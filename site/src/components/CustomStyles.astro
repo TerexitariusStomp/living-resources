@@ -1,49 +1,80 @@
 ---
-// Font family is provided by Astro's native Fonts API (see `fonts` in
-// astro.config.ts and <Font /> in Layout.astro), exposed as `--font-inter`.
-// To switch typefaces, change the `fonts` entry and repoint `--aw-font-*` below.
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Sunlit garden palette — light "day" theme by default, dark "night
+// garden" theme on .dark. Font families come from Astro's native Fonts
+// API (see `fonts` in astro.config.ts and <Font /> in Layout.astro).
+// To switch typefaces, change the `fonts` entries and repoint
+// --aw-font-* below.
 ---
 
 <style is:inline>
   :root {
     --aw-font-sans: var(--font-inter);
     --aw-font-serif: var(--font-inter);
-    --aw-font-heading: var(--font-inter);
+    --aw-font-heading: var(--font-bricolage);
 
-    --aw-color-primary: rgb(0 217 146);
-    --aw-color-secondary: rgb(0 160 110);
-    --aw-color-accent: rgb(224 166 75);
+    /* semantic accents */
+    --aw-color-primary: rgb(31 138 76); /* leaf — AA for large text on cream */
+    --aw-color-secondary: rgb(22 112 62); /* deeper leaf (hover) */
+    --aw-color-accent: rgb(217 101 59); /* clay */
+    --aw-color-link: rgb(24 122 66);
 
-    --aw-color-text-heading: rgb(247, 248, 248);
-    --aw-color-text-default: rgb(229 236 246);
-    --aw-color-text-muted: rgb(229 236 246 / 62%);
-    --aw-color-bg-page: rgb(5 5 7);
+    /* text */
+    --aw-color-text-heading: rgb(30 43 34); /* ink */
+    --aw-color-text-default: rgb(46 59 51);
+    --aw-color-text-muted: rgb(91 107 96);
 
-    --aw-color-bg-page-dark: rgb(16 16 16);
+    /* page + surfaces */
+    --aw-color-bg-page: rgb(255 248 236); /* cream */
+    --aw-color-bg-page-dark: rgb(253 241 218); /* warm panel */
+    --lc-surface: rgb(255 255 255);
+    --lc-surface-2: rgb(253 241 218);
+    --lc-line: rgb(30 43 34 / 13%);
+
+    /* living-cloud hues (fills / art; check contrast before text use) */
+    --lc-leaf: rgb(31 138 76);
+    --lc-on-leaf: rgb(255 255 255); /* text on leaf fills */
+    --lc-leaf-bright: rgb(61 190 106);
+    --lc-sun: rgb(255 194 61);
+    --lc-sky: rgb(19 138 158);
+    --lc-clay: rgb(217 101 59);
 
     ::selection {
-      background-color: rgb(0 217 146);
-      color: rgb(5 5 7);
+      background-color: rgb(255 194 61);
+      color: rgb(30 43 34);
     }
   }
 
   .dark {
     --aw-font-sans: var(--font-inter);
     --aw-font-serif: var(--font-inter);
-    --aw-font-heading: var(--font-inter);
+    --aw-font-heading: var(--font-bricolage);
 
-    --aw-color-primary: rgb(0 217 146);
-    --aw-color-secondary: rgb(127 166 106);
-    --aw-color-accent: rgb(224 166 75);
+    --aw-color-primary: rgb(91 227 138); /* glowing leaf */
+    --aw-color-secondary: rgb(61 190 106);
+    --aw-color-accent: rgb(255 138 92);
+    --aw-color-link: rgb(91 227 138);
 
-    --aw-color-text-heading: rgb(242 234 223);
-    --aw-color-text-default: rgb(222 226 218);
-    --aw-color-text-muted: rgb(222 226 218 / 62%);
-    --aw-color-bg-page: rgb(5 5 7);
+    --aw-color-text-heading: rgb(244 238 223); /* moonlit cream */
+    --aw-color-text-default: rgb(220 229 218);
+    --aw-color-text-muted: rgb(220 229 218 / 66%);
+
+    --aw-color-bg-page: rgb(12 26 29); /* night garden */
+    --aw-color-bg-page-dark: rgb(19 38 42);
+    --lc-surface: rgb(19 38 42);
+    --lc-surface-2: rgb(26 50 54);
+    --lc-line: rgb(244 238 223 / 14%);
+
+    --lc-leaf: rgb(91 227 138);
+    --lc-on-leaf: rgb(12 26 29);
+    --lc-leaf-bright: rgb(61 190 106);
+    --lc-sun: rgb(255 209 102);
+    --lc-sky: rgb(79 209 224);
+    --lc-clay: rgb(255 138 92);
 
     ::selection {
-      background-color: rgb(0 217 146);
-      color: rgb(5 5 7);
+      background-color: rgb(91 227 138);
+      color: rgb(12 26 29);
     }
   }
 </style>

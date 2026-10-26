@@ -5,6 +5,7 @@ import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Console from '~/components/living/Console.astro';
 import LaneTable from '~/components/living/LaneTable.astro';
+import { honesty } from '~/data/honesty';
 
 const metadata = { title: 'Developers — the live API' };
 const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/task -H 'content-type: application/json' -d '{"connectome":"celegans","features":{"confidence":0.72,"event_rate":0.35,"env_anomaly":0.18,"fleet_agreement":0.81}}'`;
@@ -12,7 +13,7 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
 
 <Layout metadata={metadata}>
   <WidgetWrapper containerClass="max-w-4xl pt-8">
-    <p class="text-muted mb-6 rounded-lg border border-white/10 bg-black/30 p-4 text-sm" data-reading="plain">
+    <p class="text-muted mb-6 rounded-lg border border-line bg-surface p-4 text-sm" data-reading="plain">
       This page is for programmers. The living cloud's checking service is live: send it a signal, get an answer and a
       receipt, then re-check the receipt yourself.
     </p>
@@ -22,12 +23,11 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
       subtitle="Deterministic tasks over 15 EM-derived connectome wirings. Simulation over preserved wiring, witnessed — no organism computed your answer."
     />
     <div
-      class="mb-8 flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-black/40 p-4 font-mono text-xs"
+      class="mb-8 flex flex-wrap items-center gap-3 rounded-lg border border-line bg-surface-2 p-4 font-mono text-xs"
     >
-      <span class="text-[#00d992]">$</span>
+      <span class="text-leaf">$</span>
       <code class="text-default break-all">{curl}</code>
-      <button id="copy" class="rounded border border-white/20 px-2 py-0.5 text-muted hover:border-white/40">copy</button
-      >
+      <button id="copy" class="rounded border border-line px-2 py-0.5 text-muted hover:border-line">copy</button>
     </div>
     <Console />
   </WidgetWrapper>
@@ -46,10 +46,12 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
           ['POST', '/verify', 'receipt → {verified}'],
           ['GET', '/receipts', 'issued task_said ledger'],
           ['GET', '/receipts/{said}', 'stored receipt, replayable forever'],
+          ['GET', '/federation', 'partner-network catalogue + live detections'],
+          ['POST', '/presence', 'ephemeral listener ping — hashed, ~90s, nothing stored'],
           ['POST', '/join', 'waitlist — {email, role, place?, consent}'],
         ].map(([m, pth, d]) => (
-          <div class="grid grid-cols-[3.5rem_11rem_1fr] items-baseline gap-3 border-b border-white/5 py-2">
-            <span class={m === 'POST' ? 'font-bold text-[#00d992]' : 'text-muted'}>{m}</span>
+          <div class="grid grid-cols-[3.5rem_11rem_1fr] items-baseline gap-3 border-b border-line py-2">
+            <span class={m === 'POST' ? 'font-bold text-leaf' : 'text-muted'}>{m}</span>
             <span class="text-heading">{pth}</span>
             <span class="text-muted">{d}</span>
           </div>
@@ -59,7 +61,7 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
     <div class="text-muted mt-8 space-y-2 font-mono text-xs">
       <p>
         // machinery: agents.scm custody → attest.scm quorum → settlement.scm credit → offers.scm gate · component map → <a
-          class="text-[#00d992] underline"
+          class="text-leaf underline"
           href="https://github.com/treetable/living-resources/blob/main/docs/ARCHITECTURE.md">docs/ARCHITECTURE.md</a
         >
       </p>
@@ -73,6 +75,29 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
         rest is a research program with the brakes on.
       </p>
     </div>
+  </WidgetWrapper>
+
+  <WidgetWrapper id="claims" containerClass="max-w-4xl">
+    <Headline
+      title="The claim ledger"
+      tagline="every headline, footnoted"
+      subtitle="The landing page shows one plain line per claim. This is the same ledger with the technical notes — what is measured, what is cited, what is refused."
+      classes={{ title: 'text-2xl md:text-3xl' }}
+    />
+    <div class="space-y-4">
+      {
+        honesty.map((s) => (
+          <div id={`dev-${s.id}`} class="card scroll-mt-24 p-5">
+            <p class="text-heading text-sm font-semibold">{s.title}</p>
+            <p class="text-default mt-1 text-sm">{s.plain}</p>
+            <p class="text-muted mt-2 text-xs leading-relaxed" set:html={s.body} />
+          </div>
+        ))
+      }
+    </div>
+    <p class="text-muted mt-6 font-mono text-xs">
+      // landing-page label chips resolve to the same ids — one ledger, two reading levels
+    </p>
   </WidgetWrapper>
 </Layout>
 

@@ -13,7 +13,7 @@ interface Props {
 const { title, hint } = Astro.props;
 ---
 
-<details name="deep-dive" class="group rounded-xl border border-white/10 bg-black/30">
+<details name="deep-dive" class="group rounded-xl border border-line bg-surface">
   <summary
     class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 outline-offset-4 [&::-webkit-details-marker]:hidden"
   >
@@ -23,10 +23,10 @@ const { title, hint } = Astro.props;
     </span>
     <Icon
       name="tabler:chevron-down"
-      class="h-5 w-5 shrink-0 text-[#00d992] transition-transform duration-200 group-open:rotate-180"
+      class="h-5 w-5 shrink-0 text-leaf transition-transform duration-200 group-open:rotate-180"
     />
   </summary>
-  <div class="border-t border-white/10 px-5 py-5">
+  <div class="border-t border-line px-5 py-5">
     <slot />
   </div>
 </details>

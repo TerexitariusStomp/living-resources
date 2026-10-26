@@ -1,0 +1,80 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// GreyVsGreen — the one-picture pitch: a grey data center aging on the
+// left, a living forest doing the same jobs on the right.
+---
+
+<svg viewBox="0 0 640 260" class="h-auto w-full" role="img" aria-labelledby="gvg-t" xmlns="http://www.w3.org/2000/svg">
+  <title id="gvg-t">Left: a grey data center wearing out. Right: a green forest running the same work.</title>
+
+  <!-- ======== grey side ======== -->
+  <rect x="0" y="0" width="310" height="260" rx="20" class="fill-ink" style="opacity:.06"></rect>
+  <!-- building -->
+  <rect x="52" y="90" width="180" height="120" rx="8" class="fill-ink" style="opacity:.28"></rect>
+  <rect x="66" y="104" width="152" height="14" rx="3" class="fill-surface" style="opacity:.5"></rect>
+  {
+    [118, 140, 162, 184].map((y) => (
+      <rect x="66" y={y} width="152" height="10" rx="3" class="fill-surface" style="opacity:.3" />
+    ))
+  }
+  <!-- fans / vents -->
+  <circle cx="120" cy="78" r="14" fill="none" class="stroke-ink" style="opacity:.4" stroke-width="3"></circle>
+  <circle cx="170" cy="78" r="14" fill="none" class="stroke-ink" style="opacity:.4" stroke-width="3"></circle>
+  <!-- smoke / heat -->
+  <g fill="none" stroke-linecap="round" stroke-width="3" class="stroke-ink" style="opacity:.35">
+    <path d="M96 60c-6-10 6-14 0-24M120 62c-6-10 6-14 0-24M196 60c-6-10 6-14 0-24"></path>
+  </g>
+  <!-- crack + wear -->
+  <path d="M70 210l18-12-4 12" fill="none" class="stroke-clay" stroke-width="2.4" stroke-linecap="round"></path>
+  <text x="40" y="40" class="fill-ink" font-size="16" font-weight="700">grey: huge, hot, wears out</text>
+  <text x="40" y="234" class="fill-muted" font-size="13">giant buildings · thirst for power · age badly</text>
+
+  <!-- ======== divider ======== -->
+  <line
+    x1="325"
+    y1="30"
+    x2="325"
+    y2="230"
+    class="stroke-ink"
+    stroke-width="2"
+    stroke-dasharray="4 8"
+    style="opacity:.25"></line>
+
+  <!-- ======== green side ======== -->
+  <rect x="340" y="0" width="300" height="260" rx="20" class="fill-leaf-bright" style="opacity:.1"></rect>
+  <!-- ground -->
+  <path d="M340 210q70-24 150-8t150 0v58H340z" class="fill-leaf" style="opacity:.5"></path>
+  <!-- trees -->
+  <g class="lc-sway" style="transform-origin:400px 210px">
+    <rect x="395" y="150" width="9" height="62" rx="4" class="fill-clay"></rect>
+    <circle cx="400" cy="132" r="36" class="fill-leaf"></circle>
+    <circle cx="372" cy="152" r="20" class="fill-leaf"></circle>
+    <circle cx="430" cy="150" r="22" class="fill-leaf"></circle>
+  </g>
+  <g class="lc-sway" style="transform-origin:520px 210px;animation-delay:-3s">
+    <rect x="516" y="160" width="8" height="52" rx="4" class="fill-clay"></rect>
+    <circle cx="520" cy="144" r="28" class="fill-leaf"></circle>
+  </g>
+  <!-- signals rising to a small leaf cloud -->
+  <path
+    d="M400 96C420 76 460 66 500 62"
+    fill="none"
+    class="stroke-leaf-bright lc-dash"
+    stroke-width="3"
+    style="stroke-dasharray:2 9"></path>
+  <path
+    d="M560 120C540 96 530 80 520 66"
+    fill="none"
+    class="stroke-leaf-bright lc-dash"
+    stroke-width="3"
+    style="stroke-dasharray:2 9;animation-delay:-1.4s"></path>
+  <path
+    d="M470 44c-4-16 8-30 26-28 4-12 18-18 30-12 10-8 26-6 32 5 14-2 24 9 23 20 8 5 9 16 3 22-12 9-96 9-108-4-2-4-2-8 4-11z"
+    class="fill-surface"
+    style="stroke:var(--lc-leaf-bright);stroke-width:2.6;stroke-linejoin:round"
+    transform="translate(0,12)"></path>
+  <!-- sun -->
+  <circle cx="608" cy="34" r="16" class="fill-sun"></circle>
+  <text x="356" y="40" class="fill-ink" font-size="16" font-weight="700">green: alive, self-repairing, grows</text>
+  <text x="356" y="234" class="fill-muted" font-size="13">forest, reef, soil · solar-fed · improves with age</text>
+</svg>

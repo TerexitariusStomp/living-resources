@@ -14,7 +14,7 @@ const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 
         name="email"
         autocomplete="email"
         placeholder="you@example.org"
-        class="w-full rounded-md border border-white/15 bg-black/40 px-4 py-3 text-page placeholder:text-muted/60 focus:border-[#00d992] focus:outline-none"
+        class="w-full rounded-md border border-line bg-surface-2 px-4 py-3 text-page placeholder:text-muted/60 focus:border-leaf focus:outline-none"
       />
     </label>
     <label class="block">
@@ -22,7 +22,7 @@ const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 
       <select
         name="role"
         required
-        class="w-full rounded-md border border-white/15 bg-black/40 px-4 py-3 text-page focus:border-[#00d992] focus:outline-none"
+        class="w-full rounded-md border border-line bg-surface-2 px-4 py-3 text-page focus:border-leaf focus:outline-none"
       >
         {roles.map((r) => <option value={r}>{r}</option>)}
       </select>
@@ -34,12 +34,12 @@ const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 
         name="place"
         maxlength="120"
         placeholder="a wetland, a farm, a park…"
-        class="w-full rounded-md border border-white/15 bg-black/40 px-4 py-3 text-page placeholder:text-muted/60 focus:border-[#00d992] focus:outline-none"
+        class="w-full rounded-md border border-line bg-surface-2 px-4 py-3 text-page placeholder:text-muted/60 focus:border-leaf focus:outline-none"
       />
     </label>
     <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
     <label class="flex items-start gap-3 sm:col-span-2">
-      <input required type="checkbox" name="consent" class="mt-1 accent-[#00d992]" />
+      <input required type="checkbox" name="consent" class="mt-1 accent-leaf" />
       <span class="text-muted text-sm">
         I agree to be contacted about the living cloud — one email when field pilots open, nothing else.
         <a href="/privacy" class="underline">Privacy</a>.
@@ -49,7 +49,7 @@ const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 
   <div class="mt-6 flex items-center gap-4">
     <button
       type="submit"
-      class="rounded-full bg-[#00d992] px-8 py-3 font-semibold text-black transition hover:bg-[#00e8a0] disabled:opacity-50"
+      class="rounded-full bg-leaf px-8 py-3 font-semibold text-on-leaf transition hover:bg-leaf-bright disabled:opacity-50"
     >
       Join the waitlist
     </button>
@@ -60,6 +60,17 @@ const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 
 <script>
   const form = document.getElementById('joinform') as HTMLFormElement;
   const msg = document.getElementById('joinmsg') as HTMLElement;
+  const roleSel = form.querySelector('select[name="role"]') as HTMLSelectElement;
+
+  // WayIn tiles (data-role) and ?role= pre-select the role — the tile's
+  // href still lands on the form so no-JS still works.
+  const pickRole = (r?: string | null) => {
+    if (r && [...roleSel.options].some((op) => op.value === r)) roleSel.value = r;
+  };
+  pickRole(new URLSearchParams(location.search).get('role'));
+  document
+    .querySelectorAll<HTMLElement>('[data-role]')
+    .forEach((el) => el.addEventListener('click', () => pickRole(el.dataset.role)));
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form.reportValidity()) return;
@@ -81,15 +92,15 @@ const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 
       const d = await r.json();
       if (r.ok) {
         msg.textContent = "you're in — welcome.";
-        msg.className = 'font-mono text-sm text-[#00d992]';
+        msg.className = 'font-mono text-sm text-leaf';
         form.reset();
       } else {
         msg.textContent = d.error || 'something refused — check the fields';
-        msg.className = 'font-mono text-sm text-red-400';
+        msg.className = 'font-mono text-sm text-clay';
       }
     } catch {
       msg.textContent = 'network error — try again';
-      msg.className = 'font-mono text-sm text-red-400';
+      msg.className = 'font-mono text-sm text-clay';
     }
   });
 </script>

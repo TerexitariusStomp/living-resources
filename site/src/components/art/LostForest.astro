@@ -1,0 +1,61 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// LostForest — the 404 scene: a path that grew over.
+---
+
+<svg
+  viewBox="0 0 400 260"
+  class="mx-auto h-auto w-full max-w-md"
+  role="img"
+  aria-labelledby="lf-t"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title id="lf-t">A forest path that has grown over with plants</title>
+  <rect x="0" y="0" width="400" height="260" rx="20" class="fill-surface-2"></rect>
+  <!-- overgrown path -->
+  <path
+    d="M180 260c0-50-30-80-10-130 12-30 40-40 60-50"
+    fill="none"
+    class="stroke-ink"
+    stroke-width="18"
+    stroke-linecap="round"
+    style="opacity:.1"></path>
+  <path
+    d="M180 260c0-50-30-80-10-130 12-30 40-40 60-50"
+    fill="none"
+    class="stroke-line"
+    stroke-width="3"
+    stroke-dasharray="6 10"></path>
+  <!-- trees crowding in -->
+  <g class="lc-sway" style="transform-origin:80px 260px">
+    <rect x="74" y="120" width="12" height="140" rx="6" class="fill-clay"></rect>
+    <circle cx="80" cy="100" r="46" class="fill-leaf"></circle>
+    <circle cx="44" cy="130" r="26" class="fill-leaf"></circle>
+    <circle cx="118" cy="128" r="26" class="fill-leaf"></circle>
+  </g>
+  <g class="lc-sway" style="transform-origin:330px 260px;animation-delay:-2s">
+    <rect x="324" y="140" width="12" height="120" rx="6" class="fill-clay"></rect>
+    <circle cx="330" cy="120" r="40" class="fill-leaf"></circle>
+    <circle cx="298" cy="146" r="22" class="fill-leaf"></circle>
+  </g>
+  <!-- plants reclaiming the path -->
+  <g class="fill-leaf-bright">
+    <circle cx="170" cy="210" r="8"></circle>
+    <circle cx="196" cy="180" r="6"></circle>
+    <circle cx="200" cy="240" r="9"></circle>
+    <circle cx="160" cy="246" r="6"></circle>
+  </g>
+  <!-- a lost signpost -->
+  <g transform="rotate(-8 250 200)">
+    <rect x="246" y="160" width="6" height="80" rx="3" class="fill-clay"></rect>
+    <rect
+      x="228"
+      y="150"
+      width="66"
+      height="26"
+      rx="8"
+      class="fill-surface"
+      style="stroke:var(--lc-line);stroke-width:2"></rect>
+    <text x="261" y="168" text-anchor="middle" class="fill-ink" font-size="12" font-weight="700">404</text>
+  </g>
+</svg>

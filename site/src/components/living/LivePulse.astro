@@ -1,0 +1,50 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// LivePulse — proof the network is alive, right in the hero. Pulls real
+// numbers from /federation and /presence; honest fallback when offline.
+---
+
+<div class="not-prose mx-auto mt-6 w-fit max-w-full">
+  <div
+    class="card flex flex-wrap items-center justify-center gap-x-4 gap-y-1 rounded-full px-5 py-2.5 text-sm"
+    role="status"
+  >
+    <span class="inline-flex items-center gap-2">
+      <span class="lc-live-dot" aria-hidden="true"></span>
+      <b id="pulse-devices" class="text-heading font-semibold">26,000+</b>
+      <span class="text-muted">devices listening</span>
+    </span>
+    <span class="text-line select-none" aria-hidden="true">·</span>
+    <span id="pulse-latest" class="text-muted">
+      <b class="text-heading">partner networks</b>, right now
+    </span>
+    <span id="pulse-ago" class="text-muted font-mono text-xs"></span>
+  </div>
+</div>
+
+<script>
+  import { fetchFederation } from '~/utils/federation';
+
+  const devicesEl = document.getElementById('pulse-devices') as HTMLElement;
+  const latestEl = document.getElementById('pulse-latest') as HTMLElement;
+  const agoEl = document.getElementById('pulse-ago') as HTMLElement;
+
+  const ago = (iso: string) => {
+    const s = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+    if (s < 60) return 'just now';
+    const m = Math.round(s / 60);
+    if (m < 60) return `${m} min ago`;
+    return `${Math.round(m / 60)} h ago`;
+  };
+
+  fetchFederation().then((d) => {
+    if (!d) return; // fallback text already on the page
+    const bw = (d.sources ?? []).find((s) => s.name === 'birdweather');
+    if (bw?.devices) devicesEl.textContent = Number(bw.devices).toLocaleString();
+    const det = (d.latest_detections ?? [])[0];
+    if (det) {
+      latestEl.innerHTML = `just heard: <b class="text-heading">${det.species ?? 'a bird'}</b>`;
+      if (det.at) agoEl.textContent = ago(det.at);
+    }
+  });
+</script>

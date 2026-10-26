@@ -1,0 +1,84 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// WayIn — "find your way in". Five honest paths into the living cloud,
+// each saying what happens next. Role tiles pre-select the join form.
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  /** compact = icon chips only (used near the hero) */
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
+
+const paths = [
+  {
+    icon: 'tabler:player-play',
+    title: 'Try it now',
+    text: 'Hear a plant, send a signal, let your phone listen. No sign-up — this page.',
+    href: '#try',
+  },
+  {
+    icon: 'tabler:device-desktop',
+    title: 'Host a box',
+    text: 'Put a ~$40 listener near your plants, garden or land. Waitlist now, field kits next.',
+    href: '#joinform',
+    role: 'host a listener',
+  },
+  {
+    icon: 'tabler:shield-heart',
+    title: 'Be a guardian',
+    text: 'Speak for a place you care for. You hold its consent and its credit.',
+    href: '#joinform',
+    role: 'guardian of a place',
+  },
+  {
+    icon: 'tabler:coin',
+    title: 'Fund or partner',
+    text: 'Back the field pilots, or bring your device network in. Deck and contacts inside.',
+    href: '#joinform',
+    role: 'funder',
+  },
+  {
+    icon: 'tabler:code',
+    title: 'Build with us',
+    text: 'It is all open source — AGPL code, open hardware, a live API with receipts.',
+    href: '/developers',
+  },
+];
+---
+
+{
+  compact ? (
+    <div class="not-prose mx-auto mt-8 flex max-w-3xl flex-wrap items-center justify-center gap-2">
+      {paths.map((p) => (
+        <a
+          href={p.href}
+          data-role={p.role}
+          class="card inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-heading transition hover:border-leaf"
+        >
+          <Icon name={p.icon} class="h-4 w-4 text-leaf" />
+          {p.title}
+        </a>
+      ))}
+    </div>
+  ) : (
+    <div class="not-prose mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {paths.map((p) => (
+        <a
+          href={p.href}
+          data-role={p.role}
+          class="card group flex flex-col gap-2 p-6 text-left transition hover:-translate-y-1 hover:border-leaf hover:shadow-lg"
+        >
+          <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-leaf/15">
+            <Icon name={p.icon} class="h-6 w-6 text-leaf" />
+          </span>
+          <span class="font-heading text-lg font-bold text-heading">{p.title}</span>
+          <span class="text-muted text-sm leading-relaxed">{p.text}</span>
+          <span class="mt-auto pt-2 text-sm font-semibold text-leaf group-hover:underline">
+            {p.role ? 'join the list →' : p.href === '/developers' ? 'open the docs →' : 'go try it →'}
+          </span>
+        </a>
+      ))}
+    </div>
+  )
+}

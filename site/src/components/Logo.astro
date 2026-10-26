@@ -1,12 +1,36 @@
 ---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Treetable mark: a leaf whose veins rise into a small cloud.
 import { SITE } from 'astrowind:config';
-import { Icon } from 'astro-icon/components';
 ---
 
-<span
-  class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
->
-  <Icon name="tabler:leaf" class="inline-block h-6 w-6 -mt-1 text-[#00d992]" aria-hidden="true" />
-  {SITE?.name?.split('—')[0].trim()}
-  <span class="hidden sm:inline">— {(SITE?.name?.split('—')[1] ?? '').trim()}</span>
+<span class="flex items-center self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold whitespace-nowrap">
+  <svg
+    class="mr-2 h-7 w-7 md:h-6 md:w-6"
+    viewBox="0 0 32 32"
+    fill="none"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <!-- leaf -->
+    <path
+      d="M16 27C8.5 25 4.5 19.5 5.5 11.5 6.2 6.4 10 3.8 16 3.2c6 0.6 9.8 3.2 10.5 8.3C27.5 19.5 23.5 25 16 27Z"
+      class="fill-leaf-bright"></path>
+    <!-- stem -->
+    <path d="M16 27v3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+    <!-- signal veins rising into a cloud -->
+    <path
+      d="M16 24V12m0 0-4.2-3.4M16 12l4.2-3.4M16 16l-5.5-2.2M16 16l5.5-2.2"
+      stroke="rgb(255 248 236)"
+      stroke-width="1.5"
+      stroke-linecap="round"></path>
+    <circle cx="11.8" cy="8.6" r="1.4" fill="rgb(255 194 61)"></circle>
+    <circle cx="20.2" cy="8.6" r="1.4" fill="rgb(255 194 61)"></circle>
+    <circle cx="10.5" cy="13.8" r="1.2" fill="rgb(255 194 61)"></circle>
+    <circle cx="21.5" cy="13.8" r="1.2" fill="rgb(255 194 61)"></circle>
+  </svg>
+  <span class="text-heading font-heading">{SITE?.name?.split('—')[0].trim()}</span>
+  <span class="text-muted hidden sm:inline font-heading font-medium"
+    >&nbsp;—&nbsp;{(SITE?.name?.split('—')[1] ?? '').trim()}</span
+  >
 </span>

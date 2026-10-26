@@ -1,0 +1,264 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// StoryStops — the five illustrated stops of "one click" journey.
+// `stop` picks the scene. Flat, token-colored, reduced-motion safe.
+interface Props {
+  stop: 1 | 2 | 3 | 4 | 5;
+}
+const { stop } = Astro.props;
+const titles = [
+  '',
+  'A thirsty plant clicks in dry soil',
+  'A small box nearby hears the click',
+  'Three boxes agree and seal a receipt',
+  'Brain maps think the signal over',
+  'Nature earns credit for the signal',
+];
+---
+
+<svg
+  viewBox="0 0 320 240"
+  class="h-auto w-full"
+  role="img"
+  aria-label={titles[stop]}
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect x="0" y="0" width="320" height="240" rx="20" class="fill-surface-2"></rect>
+
+  {
+    stop === 1 && (
+      <g>
+        {/* dry cracked soil */}
+        <path d="M0 190h320v50H0z" class="fill-clay" style="opacity:.25" />
+        <path
+          d="M40 196l16 10-8 10m110-20l-12 12 16 6m80-16l14 8-6 12"
+          fill="none"
+          class="stroke-clay"
+          stroke-width="2"
+        />
+        {/* tomato plant, drooping */}
+        <g class="lc-sway" style="transform-origin:160px 190px">
+          <path d="M160 190c0-40-4-60-4-84" fill="none" class="stroke-leaf" stroke-width="5" stroke-linecap="round" />
+          <path d="M156 120c-20-4-34-18-36-34 16-2 32 8 36 24z" class="fill-leaf" />
+          <path d="M156 140c20-2 34-14 38-30-14-4-32 4-38 22z" class="fill-leaf" />
+          <circle cx="152" cy="160" r="9" class="fill-clay" />
+          <circle cx="168" cy="172" r="7" class="fill-clay" />
+        </g>
+        {/* clicks */}
+        <g class="stroke-leaf-bright" fill="none" stroke-linecap="round" stroke-width="3">
+          <path d="M200 90l10-12m-2 22l14-6m-18 20l16 2" class="lc-dash" style="stroke-dasharray:1 6" />
+          <path
+            d="M104 76l-8-12m-2 22l-14-8m18 22l-16 4"
+            class="lc-dash"
+            style="stroke-dasharray:1 6;animation-delay:-1.2s"
+          />
+        </g>
+        <text x="230" y="60" class="fill-ink" font-size="17" font-weight="700">
+          click… click…
+        </text>
+      </g>
+    )
+  }
+
+  {
+    stop === 2 && (
+      <g>
+        <path d="M0 200h320v40H0z" class="fill-leaf" style="opacity:.3" />
+        {/* plant, same spot */}
+        <g class="lc-sway" style="transform-origin:96px 200px">
+          <path d="M96 200c0-30-3-48-3-66" fill="none" class="stroke-leaf" stroke-width="5" stroke-linecap="round" />
+          <path d="M93 140c-16-3-27-14-29-27 13-2 26 6 29 19z" class="fill-leaf" />
+          <circle cx="90" cy="166" r="8" class="fill-clay" />
+        </g>
+        {/* sound arcs plant → box */}
+        <g fill="none" stroke-linecap="round" stroke-width="3" class="stroke-leaf-bright">
+          <path d="M130 150a40 40 0 0 1 0-40" class="lc-dash" style="stroke-dasharray:1 7" />
+          <path d="M146 164a64 64 0 0 1 0-68" class="lc-dash" style="stroke-dasharray:1 7;animation-delay:-.8s" />
+        </g>
+        {/* listener box on a little post, beside not on */}
+        <g>
+          <rect
+            x="196"
+            y="140"
+            width="52"
+            height="38"
+            rx="9"
+            class="fill-surface"
+            style="stroke:var(--lc-leaf);stroke-width:3"
+          />
+          <circle cx="210" cy="159" r="5" class="fill-leaf-bright" />
+          <rect x="218" y="178" width="8" height="30" class="fill-ink" style="opacity:.5" />
+          <path
+            d="M254 148a12 12 0 0 1 0 14M262 140a22 22 0 0 1 0 30"
+            fill="none"
+            style="stroke:var(--lc-leaf);stroke-width:2.6;stroke-linecap:round"
+          />
+        </g>
+        <text x="180" y="226" class="fill-ink" font-size="15" font-weight="600">
+          nearby — never touching
+        </text>
+      </g>
+    )
+  }
+
+  {
+    stop === 3 && (
+      <g>
+        {/* three boxes in a row, linked */}
+        {[70, 160, 250].map((x, i) => (
+          <g>
+            <rect
+              x={x - 26}
+              y="86"
+              width="52"
+              height="38"
+              rx="9"
+              class="fill-surface"
+              style="stroke:var(--lc-leaf);stroke-width:3"
+            />
+            <circle cx={x - 12} cy="105" r="5" class="fill-leaf-bright" />
+            <path
+              d={`M${x - 6} 105l8 8 12-14`}
+              fill="none"
+              class="stroke-leaf"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            {i < 2 && (
+              <line
+                x1={x + 30}
+                y1="105"
+                x2={x + 60}
+                y2="105"
+                class="stroke-lc-sky lc-dash"
+                stroke-width="2.6"
+                style="stroke-dasharray:2 7"
+              />
+            )}
+          </g>
+        ))}
+        {/* sealed receipt */}
+        <g>
+          <rect
+            x="120"
+            y="152"
+            width="80"
+            height="52"
+            rx="10"
+            class="fill-surface"
+            style="stroke:var(--lc-sky);stroke-width:3"
+          />
+          <path
+            d="M134 166h52M134 178h52M134 190h34"
+            class="stroke-ink"
+            stroke-width="2.4"
+            style="opacity:.55"
+            stroke-linecap="round"
+          />
+          <circle cx="192" cy="196" r="12" class="fill-sun" />
+          <path
+            d="M186 196l4 4 8-9"
+            fill="none"
+            class="stroke-ink"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </g>
+        <text x="84" y="56" class="fill-ink" font-size="17" font-weight="700">
+          all three heard it?
+        </text>
+      </g>
+    )
+  }
+
+  {
+    stop === 4 && (
+      <g>
+        {/* subway-map brain: nodes + colored lines */}
+        <g stroke-linecap="round" stroke-width="3" fill="none">
+          <path
+            d="M60 190C90 150 110 150 140 120S200 90 250 70"
+            class="stroke-leaf lc-dash"
+            style="stroke-dasharray:1 8"
+          />
+          <path
+            d="M60 190C100 180 150 160 190 140S240 120 268 112"
+            class="stroke-lc-sky lc-dash"
+            style="stroke-dasharray:1 8;animation-delay:-1s"
+          />
+          <path
+            d="M80 60c40 10 80 40 110 70s60 40 80 50"
+            class="stroke-clay lc-dash"
+            style="stroke-dasharray:1 8;animation-delay:-2s"
+          />
+        </g>
+        {[
+          [60, 190],
+          [140, 120],
+          [250, 70],
+          [190, 140],
+          [268, 112],
+          [80, 60],
+          [160, 100],
+          [240, 170],
+        ].map(([x, y]) => (
+          <circle cx={x} cy={y} r="7" class="fill-surface" style="stroke:var(--lc-leaf);stroke-width:3" />
+        ))}
+        <circle cx="60" cy="190" r="10" class="fill-leaf-bright" />
+        <circle cx="268" cy="112" r="10" class="fill-sun" />
+        <text x="96" y="216" class="fill-ink" font-size="15" font-weight="600">
+          real nerve maps think it over
+        </text>
+      </g>
+    )
+  }
+
+  {
+    stop === 5 && (
+      <g>
+        <path d="M0 200h320v40H0z" class="fill-leaf" style="opacity:.3" />
+        {/* tree */}
+        <g class="lc-sway" style="transform-origin:110px 200px">
+          <rect x="104" y="140" width="12" height="62" rx="6" class="fill-clay" />
+          <circle cx="110" cy="122" r="40" class="fill-leaf" />
+          <circle cx="82" cy="142" r="24" class="fill-leaf" />
+          <circle cx="140" cy="142" r="24" class="fill-leaf" />
+        </g>
+        {/* credit coin drifting down into the tree */}
+        <g>
+          <circle cx="210" cy="80" r="20" class="fill-sun" style="stroke:var(--lc-clay);stroke-width:3" />
+          <path
+            d="M210 70v20m-7-16c0-4 14-4 14 0s-14 4-14 8 14 4 14 0"
+            fill="none"
+            class="stroke-ink"
+            stroke-width="2.4"
+            stroke-linecap="round"
+          />
+          <path
+            d="M210 104c-8 20-30 40-60 52"
+            fill="none"
+            class="stroke-sun lc-dash"
+            stroke-width="3"
+            style="stroke-dasharray:2 8"
+          />
+        </g>
+        {/* guardian figure */}
+        <g>
+          <circle cx="262" cy="142" r="12" class="fill-surface" style="stroke:var(--lc-sky);stroke-width:3" />
+          <path
+            d="M262 154v34m0-24l-14 10m14-10l14 10m-14 24l-12 22m12-22l12 22"
+            fill="none"
+            class="stroke-lc-sky"
+            stroke-width="3.4"
+            stroke-linecap="round"
+          />
+        </g>
+        <text x="36" y="56" class="fill-ink" font-size="15" font-weight="600">
+          credit goes to the tree — its guardian holds it
+        </text>
+      </g>
+    )
+  }
+</svg>

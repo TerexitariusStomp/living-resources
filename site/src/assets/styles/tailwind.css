@@ -18,6 +18,18 @@
   --color-muted: var(--aw-color-text-muted);
   --color-link: var(--aw-color-link, var(--aw-color-primary));
 
+  /* living-cloud tokens (defined per-theme in CustomStyles.astro) */
+  --color-surface: var(--lc-surface);
+  --color-surface-2: var(--lc-surface-2);
+  --color-line: var(--lc-line);
+  --color-ink: var(--aw-color-text-heading);
+  --color-leaf: var(--lc-leaf);
+  --color-on-leaf: var(--lc-on-leaf);
+  --color-leaf-bright: var(--lc-leaf-bright);
+  --color-sun: var(--lc-sun);
+  --color-lc-sky: var(--lc-sky);
+  --color-clay: var(--lc-clay);
+
   --font-sans:
     var(--aw-font-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
@@ -53,6 +65,14 @@
 
 @utility text-muted {
   color: var(--aw-color-text-muted);
+}
+
+/* Sunlit-garden card: pebble corners, soft shadow in day, soft glow at night. */
+@utility card {
+  border-radius: 1.5rem;
+  border: 1px solid var(--lc-line);
+  background-color: var(--lc-surface);
+  box-shadow: 0 1px 3px rgb(30 43 34 / 8%);
 }
 
 @utility btn {
@@ -150,4 +170,75 @@
 .dark .astro-code span {
   color: var(--shiki-dark) !important;
   background-color: var(--shiki-dark-bg) !important;
+}
+
+/* ---- living-cloud motion (all disabled under prefers-reduced-motion) ---- */
+@keyframes lc-sway {
+  0%,
+  100% {
+    transform: rotate(-2.5deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+@keyframes lc-pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(61 190 106 / 55%);
+  }
+  50% {
+    box-shadow: 0 0 0 0.5rem rgb(61 190 106 / 0%);
+  }
+}
+@keyframes lc-grow {
+  from {
+    transform: scaleY(0);
+    opacity: 0.4;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+@keyframes lc-dash {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+
+.lc-sway {
+  animation: lc-sway 7s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.lc-grow {
+  animation: lc-grow 0.8s ease-out both;
+  transform-origin: bottom center;
+}
+.lc-dash {
+  animation: lc-dash 3s linear infinite;
+}
+
+/* pulsing live dot — sits inside tier chips and the hero pulse strip */
+.lc-live-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: var(--lc-leaf-bright);
+  animation: lc-pulse-dot 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-sway,
+  .lc-grow,
+  .lc-dash,
+  .lc-live-dot {
+    animation: none !important;
+  }
+}
+
+/* dark theme: gentler card shadow, subtle glow */
+.dark .card {
+  box-shadow: 0 0 0 1px rgb(244 238 223 / 4%);
 }

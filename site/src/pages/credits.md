@@ -16,13 +16,10 @@ Target: ≤5% custom code (enforced by `tools/site/budget.py`).
 - **Connectome wiring data** — see `docs/CONNECTOME.md` in the repository for the
   per-dataset citations (EM reconstructions, various open licenses).
 
-## Imagery (Wikimedia Commons, public domain / CC0)
+## Artwork
 
-- Hero forest — _Hoh Rainforest, mossy log tree_, NPS / Olympic National Park (public domain)
-- Tomato physiologist — Scott Bauer, USDA-ARS (public domain)
-- Forest floor fungi — Bernard Spragg, NZ (public domain)
-- Reef diver — NOAA National Marine Sanctuaries (public domain)
-- Amazon from orbit — NASA / Jeff Schmaltz, MODIS Rapid Response (public domain)
+All illustrations on this site are hand-drawn SVG built for this project —
+`src/components/art/` — no stock or external imagery.
 
 ## Open source
 
@@ -34,5 +31,5 @@ Target: ≤5% custom code (enforced by `tools/site/budget.py`).
 | [cobe globe](https://github.com/shuding/cobe)                                                | MIT               |
 | [wavesurfer.js](https://wavesurfer.xyz)                                                      | BSD-3-Clause      |
 | [astro-icon](https://github.com/natemoo-re/astro-icon) + Tabler icons                        | MIT               |
-| Inter + JetBrains Mono fonts                                                                 | SIL OFL           |
+| Bricolage Grotesque + Inter + JetBrains Mono fonts                                           | SIL OFL           |
 | living-resources itself                                                                      | AGPL-3.0-or-later |

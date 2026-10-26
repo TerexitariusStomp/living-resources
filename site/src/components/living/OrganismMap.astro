@@ -18,8 +18,8 @@ const core = { cx: 240, cy: 160 };
     <title id="organism-title">The living cloud as one organism</title>
     <defs>
       <radialGradient id="om-cell" cx="50%" cy="42%">
-        <stop offset="0%" stop-color="#00d992" stop-opacity="0.14"></stop>
-        <stop offset="100%" stop-color="#00d992" stop-opacity="0.03"></stop>
+        <stop offset="0%" style="stop-color:var(--lc-leaf-bright)" stop-opacity="0.14"></stop>
+        <stop offset="100%" style="stop-color:var(--lc-leaf-bright)" stop-opacity="0.03"></stop>
       </radialGradient>
     </defs>
 
@@ -31,12 +31,18 @@ const core = { cx: 240, cy: 160 };
       height="272"
       rx="40"
       fill="none"
-      stroke="#00d992"
+      style="stroke:var(--lc-leaf-bright)"
       stroke-opacity="0.35"
       stroke-width="1.5"
       stroke-dasharray="6 5"></rect>
-    <text x="36" y="44" fill="#00d992" fill-opacity="0.9" font-size="15" font-weight="600" font-family="inherit"
-      >the living cloud</text
+    <text
+      x="36"
+      y="44"
+      style="fill:var(--lc-leaf-bright)"
+      fill-opacity="0.9"
+      font-size="15"
+      font-weight="600"
+      font-family="inherit">the living cloud</text
     >
 
     <!-- links: ecosystems → shared receipts core -->
@@ -47,7 +53,7 @@ const core = { cx: 240, cy: 160 };
           y1={c.cy}
           x2={core.cx}
           y2={core.cy}
-          stroke="#00d992"
+          style="stroke:var(--lc-leaf-bright)"
           stroke-opacity="0.4"
           stroke-width="1"
           class="om-link"
@@ -56,11 +62,22 @@ const core = { cx: 240, cy: 160 };
     }
 
     <!-- shared core -->
-    <circle cx={core.cx} cy={core.cy} r="26" fill="none" stroke="#00d992" stroke-opacity="0.7" stroke-width="1.5"
-    ></circle>
-    <circle cx={core.cx} cy={core.cy} r="5" fill="#00d992"></circle>
-    <text x={core.cx} y={core.cy + 46} text-anchor="middle" fill="#9fb0ab" font-size="12" font-family="inherit"
-      >receipts</text
+    <circle
+      cx={core.cx}
+      cy={core.cy}
+      r="26"
+      fill="none"
+      style="stroke:var(--lc-leaf-bright)"
+      stroke-opacity="0.7"
+      stroke-width="1.5"></circle>
+    <circle cx={core.cx} cy={core.cy} r="5" style="fill:var(--lc-leaf-bright)"></circle>
+    <text
+      x={core.cx}
+      y={core.cy + 46}
+      text-anchor="middle"
+      style="fill:var(--aw-color-text-muted)"
+      font-size="12"
+      font-family="inherit">receipts</text
     >
 
     <!-- ecosystem cells -->
@@ -72,17 +89,31 @@ const core = { cx: 240, cy: 160 };
             cy={c.cy}
             r="52"
             fill="url(#om-cell)"
-            stroke="#00d992"
+            style="stroke:var(--lc-leaf-bright)"
             stroke-opacity="0.55"
             stroke-width="1.2"
           />
-          <circle cx={c.cx - 18} cy={c.cy - 14} r="9" fill="#0a0f0d" stroke="#00d992" stroke-width="1.4" />
-          <circle cx={c.cx - 18} cy={c.cy - 14} r="2.4" fill="#00d992" />
-          <circle cx={c.cx + 18} cy={c.cy - 20} r="4" fill="none" stroke="#c9d4cf" stroke-width="1.2" />
+          <circle
+            cx={c.cx - 18}
+            cy={c.cy - 14}
+            r="9"
+            style="fill:var(--lc-surface-2)"
+            style="stroke:var(--lc-leaf-bright)"
+            stroke-width="1.4"
+          />
+          <circle cx={c.cx - 18} cy={c.cy - 14} r="2.4" style="fill:var(--lc-leaf-bright)" />
+          <circle
+            cx={c.cx + 18}
+            cy={c.cy - 20}
+            r="4"
+            fill="none"
+            style="stroke:var(--aw-color-text-muted)"
+            stroke-width="1.2"
+          />
           <path
             d={`M ${c.cx + 18} ${c.cy - 16} l -6 12 h 12 z`}
             fill="none"
-            stroke="#c9d4cf"
+            style="stroke:var(--aw-color-text-muted)"
             stroke-width="1.2"
             stroke-linejoin="round"
           />
@@ -90,7 +121,7 @@ const core = { cx: 240, cy: 160 };
             x={c.cx}
             y={c.cy + 24}
             text-anchor="middle"
-            fill="#e8efec"
+            style="fill:var(--aw-color-text-heading)"
             font-size="14"
             font-weight="600"
             font-family="inherit"
@@ -104,20 +135,23 @@ const core = { cx: 240, cy: 160 };
   <figcaption class="text-muted mt-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 font-mono text-xs">
     <span class="inline-flex items-center gap-2">
       <svg viewBox="0 0 18 18" class="h-4 w-4" aria-hidden="true"
-        ><circle cx="9" cy="9" r="8" fill="#0a0f0d" stroke="#00d992" stroke-width="1.4"></circle><circle
+        ><circle
           cx="9"
           cy="9"
-          r="2.4"
-          fill="#00d992"></circle></svg
+          r="8"
+          style="fill:var(--lc-surface-2)"
+          style="stroke:var(--lc-leaf-bright)"
+          stroke-width="1.4"></circle><circle cx="9" cy="9" r="2.4" style="fill:var(--lc-leaf-bright)"></circle></svg
       >
       AI companion
     </span>
     <span class="inline-flex items-center gap-2">
       <svg viewBox="0 0 18 18" class="h-4 w-4" aria-hidden="true"
-        ><circle cx="9" cy="4.5" r="3.5" fill="none" stroke="#c9d4cf" stroke-width="1.2"></circle><path
+        ><circle cx="9" cy="4.5" r="3.5" fill="none" style="stroke:var(--aw-color-text-muted)" stroke-width="1.2"
+        ></circle><path
           d="M 9 8.5 l -5.5 11 h 11 z"
           fill="none"
-          stroke="#c9d4cf"
+          style="stroke:var(--aw-color-text-muted)"
           stroke-width="1.2"
           stroke-linejoin="round"></path></svg
       >

@@ -14,7 +14,7 @@ interface Props {
 const { reads = [], writes = [], rule = '' } = Astro.props;
 ---
 
-<div class="webnode not-prose rounded-xl border border-cyan-400/30 bg-cyan-400/5 p-6">
+<div class="webnode not-prose rounded-xl border border-lc-sky/40 bg-lc-sky/10 p-6">
   <div class="flex items-start gap-4">
     <div class="text-3xl">📱</div>
     <div class="flex-1">
@@ -27,14 +27,14 @@ const { reads = [], writes = [], rule = '' } = Astro.props;
         {
           reads.map((r) => (
             <li>
-              <span class="text-cyan-300">hears ·</span> {r}
+              <span class="text-lc-sky">hears ·</span> {r}
             </li>
           ))
         }
         {
           writes.map((w) => (
             <li>
-              <span class="text-amber-300">could write ·</span> {w}
+              <span class="text-clay">could write ·</span> {w}
             </li>
           ))
         }
@@ -42,12 +42,12 @@ const { reads = [], writes = [], rule = '' } = Astro.props;
       <div class="mt-4 flex flex-wrap items-center gap-3">
         <button
           id="webnode-start"
-          class="rounded-full bg-cyan-400 px-5 py-2 text-sm font-semibold text-black transition hover:bg-cyan-300 disabled:opacity-50"
+          class="rounded-full bg-leaf px-5 py-2 text-sm font-semibold text-on-leaf transition hover:bg-leaf-bright disabled:opacity-50"
         >
           Let this device listen
         </button>
         <span id="webnode-status" class="text-muted font-mono text-xs">
-          about <b id="webnode-count" class="text-cyan-300">–</b> devices listening right now
+          about <b id="webnode-count" class="text-lc-sky">–</b> devices listening right now
         </span>
       </div>
       <p id="webnode-log" class="text-muted mt-2 hidden font-mono text-xs"></p>
@@ -132,7 +132,7 @@ const { reads = [], writes = [], rule = '' } = Astro.props;
       ctx.close();
       btn.disabled = false;
       btn.textContent = 'Let this device listen';
-      statusEl.innerHTML = 'about <b id="webnode-count" class="text-cyan-300">–</b> devices listening right now';
+      statusEl.innerHTML = 'about <b id="webnode-count" class="text-lc-sky">–</b> devices listening right now';
       logEl.textContent = 'stopped — the mic is off and nothing was sent';
     });
   });

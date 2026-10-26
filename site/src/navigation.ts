@@ -3,10 +3,11 @@ import { getPermalink } from './utils/permalinks';
 export const headerData = {
   links: [
     { text: 'How it works', href: getPermalink('/#how') },
+    { text: 'Try it', href: getPermalink('/#try') },
     { text: 'Is it real?', href: getPermalink('/#proof') },
     { text: 'Developers', href: getPermalink('/developers') },
   ],
-  actions: [{ text: 'Join', href: getPermalink('/#join') }],
+  actions: [{ text: 'Get involved', href: getPermalink('/#join') }],
 };
 
 export const footerData = {

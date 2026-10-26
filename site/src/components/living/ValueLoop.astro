@@ -19,7 +19,7 @@ const nodes = [
         <>
           <div class="loop-node" style={`--i:${i}`}>
             <span class="loop-ic" aria-hidden="true">
-              <Icon name={n.icon} class="h-6 w-6 text-[#00d992]" />
+              <Icon name={n.icon} class="h-6 w-6 text-leaf" />
             </span>
             <span class="loop-k">{n.k}</span>
             <span class="loop-d">{n.d}</span>
@@ -69,7 +69,7 @@ const nodes = [
   .loop-k {
     font-family: var(--font-jbm, monospace);
     font-weight: 600;
-    color: #00d992;
+    color: var(--lc-leaf);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -79,7 +79,7 @@ const nodes = [
     line-height: 1.45;
   }
   .loop-arrow {
-    color: #00d992;
+    color: var(--lc-leaf);
     text-align: center;
     font-size: 1.25rem;
     animation: loopin linear both;

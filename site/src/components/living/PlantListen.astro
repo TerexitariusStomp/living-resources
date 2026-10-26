@@ -18,9 +18,7 @@ const clips = [
           data-src={c.src}
           class:list={[
             'clip-btn rounded-full border px-4 py-1.5 text-sm font-medium transition',
-            i === 0
-              ? 'border-[#00d992] bg-[#00d992]/10 text-[#00d992]'
-              : 'border-white/20 text-muted hover:border-white/40',
+            i === 0 ? 'border-leaf bg-leaf/10 text-leaf' : 'border-line text-muted hover:border-line',
           ]}
         >
           {c.label}
@@ -28,12 +26,12 @@ const clips = [
       ))
     }
   </div>
-  <div class="rounded-lg border border-white/10 bg-black/40 p-4">
+  <div class="rounded-lg border border-line bg-surface-2 p-4">
     <div id="plantwave" class="h-20 w-full"></div>
     <div class="mt-3 flex items-center gap-4">
       <button
         id="plantplay"
-        class="inline-flex items-center gap-2 rounded-full bg-[#00d992] px-5 py-2 font-semibold text-black hover:bg-[#00e8a0]"
+        class="inline-flex items-center gap-2 rounded-full bg-leaf px-5 py-2 font-semibold text-on-leaf hover:bg-leaf-bright"
         aria-label="Play recording"
       >
         <span id="plantplay-icon">▶</span>
@@ -70,7 +68,7 @@ const clips = [
       container: waveEl,
       url: src,
       waveColor: '#2f4f42',
-      progressColor: '#00d992',
+      progressColor: getComputedStyle(document.documentElement).getPropertyValue('--lc-leaf').trim() || '#1f8a4c',
       cursorColor: '#f2eadf',
       height: 80,
       barWidth: 2,
@@ -96,11 +94,11 @@ const clips = [
   buttons.forEach((b) =>
     b.addEventListener('click', () => {
       buttons.forEach((x) => {
-        x.classList.remove('border-[#00d992]', 'bg-[#00d992]/10', 'text-[#00d992]');
-        x.classList.add('border-white/20', 'text-muted');
+        x.classList.remove('border-leaf', 'bg-leaf/10', 'text-leaf');
+        x.classList.add('border-line', 'text-muted');
       });
-      b.classList.add('border-[#00d992]', 'bg-[#00d992]/10', 'text-[#00d992]');
-      b.classList.remove('border-white/20', 'text-muted');
+      b.classList.add('border-leaf', 'bg-leaf/10', 'text-leaf');
+      b.classList.remove('border-line', 'text-muted');
       clipName.textContent = names[b.dataset.clip ?? ''];
       load(b.dataset.src ?? '');
     })

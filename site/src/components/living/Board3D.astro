@@ -7,7 +7,7 @@
 <div class="board3d not-prose">
   <canvas
     id="board3d"
-    class="w-full h-[340px] md:h-[420px] rounded-lg border border-white/10 bg-black/40 cursor-grab active:cursor-grabbing touch-none"
+    class="w-full h-[340px] md:h-[420px] rounded-lg border border-line bg-surface-2 cursor-grab active:cursor-grabbing touch-none"
     aria-label="3D model of the EcoCell One field node carrier board"></canvas>
   <p class="b3cap text-muted mt-2 font-mono text-xs">
     <b class="text-heading">ecocell one</b> — carrier 100×80&nbsp;mm · ESP32-S3 · swappable sensor heads · drag to orbit
@@ -30,7 +30,7 @@
     const key = new THREE.DirectionalLight(0xffffff, 1.6);
     key.position.set(60, 140, 80);
     scene.add(key);
-    const rim = new THREE.DirectionalLight(0x00d992, 1.1);
+    const rim = new THREE.DirectionalLight(0x3dbe6a, 1.1);
     rim.position.set(-80, 40, -90);
     scene.add(rim);
 
@@ -42,7 +42,7 @@
     const matGreen = new THREE.MeshStandardMaterial({ color: 0x0d4a32, roughness: 0.6 });
     const matBrass = new THREE.MeshStandardMaterial({ color: 0xa8853c, roughness: 0.3, metalness: 0.9 });
     const matBatt = new THREE.MeshStandardMaterial({ color: 0x12181c, roughness: 0.5, metalness: 0.3 });
-    const matLED = new THREE.MeshStandardMaterial({ color: 0x00d992, emissive: 0x00d992, emissiveIntensity: 1.6 });
+    const matLED = new THREE.MeshStandardMaterial({ color: 0x3dbe6a, emissive: 0x3dbe6a, emissiveIntensity: 1.6 });
 
     const board = new THREE.Group();
     scene.add(board);
@@ -93,7 +93,7 @@
     g.fillRect(0, 0, 1000, 800);
     let seed = 7;
     const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    g.strokeStyle = 'rgba(0,217,146,.20)';
+    g.strokeStyle = 'rgba(61,190,106,.22)';
     g.lineWidth = 1.6;
     for (let i = 0; i < 150; i++) {
       let x = rnd() * 1000,
@@ -220,7 +220,7 @@
     ])
       add(box(2, 1, 1.2, matChip), x, y, 1.3);
     add(box(2, 1, 1.2, matLED), 76, 20, 1.3);
-    const ledGlow = new THREE.PointLight(0x00d992, 6, 22);
+    const ledGlow = new THREE.PointLight(0x3dbe6a, 6, 22);
     ledGlow.position.set(26, 6, -20);
     board.add(ledGlow);
 
@@ -300,6 +300,6 @@
   } catch {
     cv.style.display = 'none';
     cap.innerHTML =
-      'ecocell one — 3D unavailable · <a href="https://github.com/treetable/living-resources/tree/main/hardware/pcb" class="underline text-[#00d992]">see the KiCad sources</a>';
+      'ecocell one — 3D unavailable · <a href="https://github.com/treetable/living-resources/tree/main/hardware/pcb" class="underline text-leaf">see the KiCad sources</a>';
   }
 </script>

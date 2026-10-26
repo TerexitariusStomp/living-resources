@@ -1,0 +1,486 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Treetable pitch deck — print to PDF:
+     chrome --headless --print-to-pdf=public/treetable-deck.pdf --no-pdf-header-footer deck.html -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Treetable — the living cloud</title>
+    <style>
+      @font-face {
+        font-family: Bricolage;
+        src: url('dist/_astro/fonts/93b3050bb25583df.woff2') format('woff2');
+        font-weight: 200 800;
+      }
+      @font-face {
+        font-family: Inter;
+        src: url('dist/_astro/fonts/2640269fc0017342.woff2') format('woff2');
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: JBMono;
+        src: url('dist/_astro/fonts/cc5f60fd46e42cc9.woff2') format('woff2');
+      }
+      @page {
+        size: 1280px 720px;
+        margin: 0;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        font-family: Inter, sans-serif;
+        color: #1e2b22;
+        background: #fff8ec;
+      }
+      .slide {
+        width: 1280px;
+        height: 720px;
+        page-break-after: always;
+        padding: 64px 80px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .kicker {
+        font-family: Bricolage;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #1f8a4c;
+        margin-bottom: 14px;
+      }
+      h1 {
+        font-family: Bricolage;
+        font-size: 88px;
+        font-weight: 800;
+        line-height: 1.02;
+        letter-spacing: -1px;
+      }
+      h2 {
+        font-family: Bricolage;
+        font-size: 52px;
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.5px;
+        margin-bottom: 28px;
+      }
+      h3 {
+        font-family: Bricolage;
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      p,
+      li {
+        font-size: 21px;
+        line-height: 1.5;
+        color: #2e3b33;
+      }
+      .sub {
+        font-size: 24px;
+        color: #5b6b60;
+        margin-top: 18px;
+        max-width: 900px;
+      }
+      .leaf {
+        color: #1f8a4c;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 22px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid rgba(30, 43, 34, 0.13);
+        border-radius: 22px;
+        padding: 26px 28px;
+        box-shadow: 0 1px 3px rgba(30, 43, 34, 0.08);
+      }
+      .chip {
+        display: inline-block;
+        font-family: Bricolage;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 999px;
+        border: 1.5px solid;
+        vertical-align: middle;
+      }
+      .c-live {
+        color: #16703e;
+        border-color: #2fa35c;
+        background: #e9f7ee;
+      }
+      .c-sci {
+        color: #177e8f;
+        border-color: #3aa8b8;
+        background: #e6f6f8;
+      }
+      .c-built {
+        color: #8a6116;
+        border-color: #d9a83e;
+        background: #fdf3d8;
+      }
+      .c-fed {
+        color: #7a4fa0;
+        border-color: #a578c8;
+        background: #f3ecf9;
+      }
+      .c-vis {
+        color: #b35430;
+        border-color: #e08a63;
+        background: #fdefe9;
+      }
+      .c-lock {
+        color: #8a2c3d;
+        border-color: #cf6a7c;
+        background: #fdeaee;
+      }
+      .num {
+        font-family: Bricolage;
+        font-size: 56px;
+        font-weight: 800;
+        color: #1f8a4c;
+        line-height: 1;
+      }
+      .mono {
+        font-family: JBMono;
+        font-size: 15px;
+        color: #5b6b60;
+      }
+      .foot {
+        position: absolute;
+        bottom: 28px;
+        left: 80px;
+        right: 80px;
+        display: flex;
+        justify-content: space-between;
+        font-family: JBMono;
+        font-size: 13px;
+        color: #5b6b60;
+      }
+      ul {
+        padding-left: 22px;
+      }
+      li {
+        margin-bottom: 12px;
+      }
+      .big {
+        font-size: 30px;
+        line-height: 1.4;
+      }
+      .hill {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        background: linear-gradient(#a5d9a4, #7ec98f);
+        border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 1 · cover -->
+    <section class="slide" style="justify-content: center">
+      <p class="kicker">Treetable</p>
+      <h1>What if <span class="leaf">nature</span><br />was the cloud?</h1>
+      <p class="sub">
+        Today's internet lives in buildings full of machines that wear out. The living cloud is forests, reefs and soil
+        — listening, thinking, remembering — and every living system keeps the credit.
+      </p>
+      <p class="mono" style="margin-top: 48px">Treetable LLC · Thomas Price · terexmaps@gmail.com · terexmaps.com</p>
+      <div class="hill"></div>
+    </section>
+
+    <!-- 2 · the shift -->
+    <section class="slide">
+      <p class="kicker">The idea</p>
+      <h2>Nature stops being the data source.<br />It becomes the <span class="leaf">provider</span>.</h2>
+      <div class="grid3">
+        <div class="card">
+          <h3>Sense</h3>
+          <p style="font-size: 18px">
+            Forests, reefs and soil already emit signals — birdsong, plant clicks, water chemistry. Small boxes listen
+            without touching anything.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Think</h3>
+          <p style="font-size: 18px">
+            Answers run through maps of real animal nerves — and, piece by piece, through living systems themselves.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Remember</h3>
+          <p style="font-size: 18px">
+            Every answer ships a receipt anyone can re-check. Later, storage moves into nature's own media.
+          </p>
+        </div>
+      </div>
+      <p class="sub" style="margin-top: 34px">
+        Not a data center we build next to nature — a cloud nature <em>is</em>, with machines as the scaffolding that
+        gets thinner every generation.
+      </p>
+      <div class="foot"><span>the living cloud</span><span>02</span></div>
+    </section>
+
+    <!-- 3 · live today -->
+    <section class="slide">
+      <p class="kicker">Running now</p>
+      <h2>What already works <span class="chip c-live">live now</span></h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Receipted compute API</h3>
+          <p style="font-size: 18px">
+            Deterministic tasks over 15 EM-derived connectome wirings. Every call returns a replayable receipt —
+            verified bit-identical across two implementations (930/930 checks).
+          </p>
+          <p class="mono" style="margin-top: 12px">connectome-compute-api.terexmaps.workers.dev</p>
+        </div>
+        <div class="card">
+          <h3>Federated sensing</h3>
+          <p style="font-size: 18px">
+            26,000+ allied devices already listening — BirdWeather detections stream through our live endpoint right
+            now. Their devices, their counts, labeled as theirs.
+          </p>
+          <p class="mono" style="margin-top: 12px">GET /federation</p>
+        </div>
+        <div class="card">
+          <h3>Visitor nodes</h3>
+          <p style="font-size: 18px">
+            Any browser becomes a listener: the permission prompt is the consent, analysis stays on-device, only
+            receipts travel.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Open evidence layer</h3>
+          <p style="font-size: 18px">
+            AGPL stack — quorum witnessing, mutual-credit settlement, guardian custody. 121/121 e2e checks under Guile.
+          </p>
+        </div>
+      </div>
+      <div class="foot"><span>the living cloud</span><span>03</span></div>
+    </section>
+
+    <!-- 4 · built -->
+    <section class="slide">
+      <p class="kicker">Heading outdoors</p>
+      <h2>Built — field test next <span class="chip c-built">built</span></h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>EcoCell One · ~$35–45</h3>
+          <p style="font-size: 18px">
+            Universal listener — every head's electronics on every device: camera, air mic, env, hydrophone front-end,
+            ultrasonic MEMS. Battery by default, solar optional. Manufacturable KiCad, DRC-clean, pick-and-place files
+            ready.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Reads <em>and</em> writes</h3>
+          <p style="font-size: 18px">
+            The node is bidirectional: it reads living systems and — only on joint guardian+operator consent — writes
+            back, gently. Nothing attaches, nothing enters soil. Every emission logged and receipted.
+          </p>
+        </div>
+      </div>
+      <p class="sub" style="margin-top: 30px">
+        Backhaul is federated too: LoRa mesh, LoRaWAN, APRS, Meshtastic — thin seams over existing radios, ~5% custom
+        code total.
+      </p>
+      <div class="foot"><span>the living cloud</span><span>04</span></div>
+    </section>
+
+    <!-- 5 · rules -->
+    <section class="slide">
+      <p class="kicker">The consent contract</p>
+      <h2>Four rules, enforced in code</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>1 · We never attach</h3>
+          <p style="font-size: 18px">
+            No sensors on plants or animals, nothing in soil. Listening from a distance is the default.
+          </p>
+        </div>
+        <div class="card">
+          <h3>2 · Nothing is hidden</h3>
+          <p style="font-size: 18px">Every reading and answer gets a receipt anyone can replay.</p>
+        </div>
+        <div class="card">
+          <h3>3 · Nature has a voice</h3>
+          <p style="font-size: 18px">
+            Each ecosystem has a human guardian with custody. Refusal is a first-class value — the API says "no" out
+            loud.
+          </p>
+        </div>
+        <div class="card">
+          <h3>4 · Two yeses to write</h3>
+          <p style="font-size: 18px">
+            Writes need guardian + owner consent, stay minimally disruptive, and refused lanes (hop / compute /
+            engineered) refuse outright.
+          </p>
+        </div>
+      </div>
+      <p class="sub" style="margin-top: 28px">
+        Not poster promises — the lane gate (<span class="mono">lane-gate.rego · offers.scm</span>) refuses what breaks
+        them.
+      </p>
+      <div class="foot"><span>the living cloud</span><span>05</span></div>
+    </section>
+
+    <!-- 6 · why nature wins -->
+    <section class="slide">
+      <p class="kicker">Why nature</p>
+      <h2>Green improves. Grey decays.</h2>
+      <div class="grid2">
+        <div class="card">
+          <h3>Machines wear out</h3>
+          <p style="font-size: 18px">
+            Every grey solution degrades — silicon ages, buildings depreciate, batteries die.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Living systems heal</h3>
+          <p style="font-size: 18px">
+            Forests self-repair, self-power, and get better at surviving every year — for free.
+          </p>
+        </div>
+      </div>
+      <div class="card" style="margin-top: 26px">
+        <p class="big" style="font-size: 20px">
+          <span class="chip c-sci">proven by science</span>&nbsp; Sparse biological wiring beats dense compute at scale
+          — <b>measured</b>: medulla (40k neurons) 1.17e-1 J vs dense fp32 8.30 J (~70×). The degree-matched shuffle
+          control refuted our own flattering interpretation — and we published it.
+        </p>
+      </div>
+      <p class="sub" style="margin-top: 24px">
+        Ecosystems are already worth more alive — air, water, soil. If they also join humanity's knowledge work, the
+        alignment deepens.
+      </p>
+      <div class="foot"><span>the living cloud</span><span>06</span></div>
+    </section>
+
+    <!-- 7 · roadmap -->
+    <section class="slide">
+      <p class="kicker">The path</p>
+      <h2>Step by step, work moves to nature</h2>
+      <div class="card" style="margin-bottom: 16px">
+        <p style="font-size: 19px">
+          <span class="chip c-live">live now</span>&nbsp; <b>Receipts + compute over real connectomes</b> —
+          replay-verified API, federation streaming, visitor nodes.
+        </p>
+      </div>
+      <div class="card" style="margin-bottom: 16px">
+        <p style="font-size: 19px">
+          <span class="chip c-built">built</span>&nbsp; <b>Field listeners</b> — EcoCell One fleets witness each other;
+          first living quorum.
+        </p>
+      </div>
+      <div class="card" style="margin-bottom: 16px">
+        <p style="font-size: 19px">
+          <span class="chip c-vis">next frontier</span>&nbsp; <b>Nature does more of the job</b> — organism-bound
+          memory, living compute — each step consent-gated, proven by receipts before it ships.
+        </p>
+      </div>
+      <div class="card">
+        <p style="font-size: 19px">
+          <span class="chip c-lock">locked until proven</span>&nbsp; <b>What we refuse</b> — relaying strangers'
+          traffic, unwitnessed claims, any write without two yeses.
+        </p>
+      </div>
+      <p class="sub" style="margin-top: 22px">
+        Each generation must prove with receipts that it uses less power, space and time than the last.
+      </p>
+      <div class="foot"><span>the living cloud</span><span>07</span></div>
+    </section>
+
+    <!-- 8 · market -->
+    <section class="slide">
+      <p class="kicker">The market <span class="chip c-fed" style="font-size: 11px">market research</span></p>
+      <h2>Buyers pay for data they can't verify.<br />We sell proof — then the cloud itself.</h2>
+      <div class="grid3">
+        <div class="card">
+          <p class="num">$380B+</p>
+          <p style="font-size: 17px; margin-top: 8px">
+            cloud + environmental data markets combined — cited research, not our measurement
+          </p>
+        </div>
+        <div class="card">
+          <p class="num">$5–40B</p>
+          <p style="font-size: 17px; margin-top: 8px">
+            biodiversity credits & MRV — where integrity demand is rising fastest
+          </p>
+        </div>
+        <div class="card">
+          <p class="num">$35–45</p>
+          <p style="font-size: 17px; margin-top: 8px">
+            our listener BOM vs $600+ incumbents — hardware becomes distribution
+          </p>
+        </div>
+      </div>
+      <p class="sub" style="margin-top: 30px">
+        Revenue ladder: verification audits → replay-verified API tiers → hardware via crowdfunding → receipted MRV →
+        mutual-credit settlement margin.
+      </p>
+      <div class="foot"><span>the living cloud</span><span>08</span></div>
+    </section>
+
+    <!-- 9 · traction -->
+    <section class="slide">
+      <p class="kicker">Traction</p>
+      <h2>Already shipped</h2>
+      <ul style="font-size: 20px">
+        <li>
+          <b>Compute API live</b> — replay-verified tasks over 15 connectomes; TS port bit-identical to the Python
+          engine (930/930)
+        </li>
+        <li><b>Evidence layer open</b> — sensing → quorum → receipt → settlement, 121/121 e2e, AGPL</li>
+        <li><b>Federation live</b> — 24 adapter seams; BirdWeather detections served in production</li>
+        <li><b>EcoCell One</b> — fab-ready Gerbers, BOM, pick-and-place; firmware passes e2e</li>
+        <li><b>NSF SBIR/STTR pitch submitted</b> (#00131003) · Crowd Supply application filed</li>
+        <li>
+          <b>Benchmark published</b> — first measured efficiency table over real connectomes, with honesty tiers and an
+          unfavorable control included
+        </li>
+      </ul>
+      <div class="foot"><span>the living cloud</span><span>09</span></div>
+    </section>
+
+    <!-- 10 · close -->
+    <section class="slide" style="justify-content: center">
+      <p class="kicker">Join in</p>
+      <h2>The cloud that plants<br />would join <span class="leaf">willingly</span>.</h2>
+      <div class="grid3" style="margin-top: 10px">
+        <div class="card">
+          <h3>Host a box</h3>
+          <p style="font-size: 17px">A ~$40 listener near your garden or land. Waitlist open.</p>
+        </div>
+        <div class="card">
+          <h3>Build with us</h3>
+          <p style="font-size: 17px">AGPL stack, live API, docs — github.com/treetable/living-resources</p>
+        </div>
+        <div class="card">
+          <h3>Fund the frontier</h3>
+          <p style="font-size: 17px">Verification revenue funds the field pilot; hardware follows.</p>
+        </div>
+      </div>
+      <p class="mono" style="margin-top: 44px">
+        Treetable LLC · Thomas Price · terexmaps@gmail.com · terexmaps.com ·
+        connectome-compute-api.terexmaps.workers.dev
+      </p>
+      <div class="hill"></div>
+    </section>
+  </body>
+</html>

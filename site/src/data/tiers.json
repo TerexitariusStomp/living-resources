@@ -1,50 +1,52 @@
 {
+  "live": {
+    "label": "Live now",
+    "short": "running today — you can check it yourself",
+    "icon": "tabler:bolt",
+    "pulse": true,
+    "class": "text-[#146b3b] border-[#1f8a4c]/50 bg-[#3dbe6a]/15 dark:text-[#5be38a] dark:border-[#3dbe6a]/40 dark:bg-[#3dbe6a]/10"
+  },
   "science": {
-    "label": "Proven by scientists",
+    "label": "Proven by science",
     "short": "published and checked by other researchers — not our measurement",
     "icon": "tabler:microscope",
-    "class": "text-teal-300 border-teal-400/40 bg-teal-400/10"
-  },
-  "live": {
-    "label": "Works today",
-    "short": "running now — you can check it yourself",
-    "icon": "tabler:circle-check",
-    "class": "text-[#00d992] border-[#00d992]/40 bg-[#00d992]/10"
+    "class": "text-[#0e7a86] border-[#0e7a86]/50 bg-[#4fd1e0]/15 dark:text-[#4fd1e0] dark:border-[#4fd1e0]/40 dark:bg-[#4fd1e0]/10"
   },
   "built": {
-    "label": "Built — field test next",
+    "label": "Built — heading outdoors",
     "short": "made and tested in the lab, not yet out in nature",
     "icon": "tabler:tool",
-    "class": "text-sky-300 border-sky-400/40 bg-sky-400/10"
+    "class": "text-[#1d6fa5] border-[#1d6fa5]/50 bg-[#7ab8e0]/15 dark:text-[#7ab8e0] dark:border-[#7ab8e0]/40 dark:bg-[#7ab8e0]/10"
   },
   "consent": {
-    "label": "Only with permission",
-    "short": "ready, but locked until nature's guardian and the box's owner both say yes",
+    "label": "Ready — waits for two yeses",
+    "short": "it works, but it stays locked until nature's guardian and the box's owner both say yes",
     "icon": "tabler:key",
-    "class": "text-amber-300 border-amber-400/40 bg-amber-400/10"
-  },
-  "vision": {
-    "label": "Someday — we're working on it",
-    "short": "where we are headed, not done yet",
-    "icon": "tabler:telescope",
-    "class": "text-violet-300 border-violet-400/40 bg-violet-400/10"
+    "class": "text-[#9a6516] border-[#c98a1e]/50 bg-[#ffc23d]/20 dark:text-[#ffd166] dark:border-[#ffd166]/40 dark:bg-[#ffd166]/10"
   },
   "federated": {
-    "label": "Shared by a partner",
+    "label": "Live — partner network",
     "short": "heard by another network's devices — their measurement, labeled as theirs",
     "icon": "tabler:world-share",
-    "class": "text-cyan-300 border-cyan-400/40 bg-cyan-400/10"
+    "pulse": true,
+    "class": "text-[#0e7a86] border-[#0e7a86]/50 bg-[#4fd1e0]/15 dark:text-[#4fd1e0] dark:border-[#4fd1e0]/40 dark:bg-[#4fd1e0]/10"
+  },
+  "vision": {
+    "label": "Next frontier",
+    "short": "where we are headed, not done yet",
+    "icon": "tabler:telescope",
+    "class": "text-[#7c4dc9] border-[#7c4dc9]/50 bg-[#b48ef0]/15 dark:text-[#b48ef0] dark:border-[#b48ef0]/40 dark:bg-[#b48ef0]/10"
   },
   "market": {
-    "label": "From market reports",
+    "label": "Market research",
     "short": "estimates by market researchers — cited, not our measurement",
     "icon": "tabler:chart-line",
-    "class": "text-orange-300 border-orange-400/40 bg-orange-400/10"
+    "class": "text-[#b5502e] border-[#d9653b]/50 bg-[#ff8a5c]/15 dark:text-[#ff8a5c] dark:border-[#ff8a5c]/40 dark:bg-[#ff8a5c]/10"
   },
   "refused": {
-    "label": "Not allowed",
+    "label": "Locked until proven",
     "short": "blocked on purpose until there is proof it is real and safe",
-    "icon": "tabler:ban",
-    "class": "text-red-400/90 border-red-500/30 bg-red-500/5"
+    "icon": "tabler:lock",
+    "class": "text-[#b03060] border-[#d1446e]/50 bg-[#ff6f96]/10 dark:text-[#ff8fab] dark:border-[#ff6f96]/40 dark:bg-[#ff6f96]/10"
   }
 }

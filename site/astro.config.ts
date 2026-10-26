@@ -48,6 +48,15 @@ export default defineConfig({
     },
     {
       provider: fontProviders.fontsource(),
+      name: 'Bricolage Grotesque',
+      cssVariable: '--font-bricolage',
+      weights: ['200 800'],
+      styles: ['normal'],
+      subsets: ['latin'],
+      fallbacks: ['sans-serif'],
+    },
+    {
+      provider: fontProviders.fontsource(),
       name: 'JetBrains Mono',
       cssVariable: '--font-jbm',
       weights: ['400', '600'],
