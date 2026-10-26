@@ -40,7 +40,7 @@ pipeline, budget split, deliverables) or jump on a short call.
 Would this fit your lab's mobilization plans for the next BID window?
 
 Best,
-Thomas Price
+T.R. Price
 Treetable LLC · terexmaps.com · terexmaps@gmail.com
 
 ---
