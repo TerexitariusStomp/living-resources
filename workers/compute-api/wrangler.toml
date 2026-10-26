@@ -14,6 +14,16 @@ routes = [
 [assets]
 directory = "../../site/dist"
 binding = "ASSETS"
+# the Worker routes every request — API endpoints must never be shadowed
+# by the asset layer (404-page handling would otherwise answer /info etc.
+# without invoking the Worker). Unmatched paths fall through to ASSETS,
+# which serves the styled site/dist/404.html.
+run_worker_first = true
+not_found_handling = "404-page"
+
+# NOTE: /verdict {"connectome":"all"} (15 sims inline) and single verdicts
+# on the largest substrates (medulla ~17ms, hemibrain ~9ms warm) exceed the
+# Free plan's ~10ms CPU budget — requires Workers Paid to set cpu_ms.
 
 [[kv_namespaces]]
 binding = "RECEIPTS"

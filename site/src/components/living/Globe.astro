@@ -1,7 +1,7 @@
 ---
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Federation globe — cobe (MIT). Markers are places the living cloud could
-// listen (illustrative). "Send a signal" fires the real POST /verdict {all}.
+// listen (illustrative). "Send a signal" fires a real POST /verdict per substrate.
 ---
 
 <div class="globe-wrap not-prose">
@@ -103,32 +103,48 @@
     chips.classList.remove('hidden');
     chips.classList.add('grid');
     try {
-      const r = await fetch('/verdict', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          connectome: 'all',
-          features: { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 },
-        }),
-      });
-      const d = await r.json();
-      if (d.error) {
-        cap.textContent = JSON.stringify(d);
-        return;
-      }
-      const ACT: Record<string, string> = { '1': 'affirm', '-1': 'refute', '0': 'abstain' };
-      chips.innerHTML = d.verdicts
-        .map(
-          (v: { connectome: string; action: number; spike_digest?: string }) => `
-        <div class="rounded border border-line bg-surface-2 px-3 py-2">
-          <b class="text-heading">${v.connectome}</b>
-          <span class="text-leaf"> · ${ACT[v.action] ?? v.action}</span>
-          <span class="text-muted block truncate">${(v.spike_digest || '').slice(8, 34)}…</span>
-        </div>`
+      const FEATS = { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 };
+      const { connectomes } = await (await fetch('/connectomes')).json();
+      // Fan out per substrate — each call is a separate worker invocation,
+      // so the free-plan CPU budget applies per brain, not to all fifteen.
+      const rs = await Promise.allSettled(
+        (connectomes as { name: string }[]).map((c) =>
+          fetch('/verdict', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ connectome: c.name, features: FEATS }),
+          }).then(async (r) => {
+            const j = await r.json();
+            if (j.verdict) return { name: c.name, verdict: j.verdict };
+            return { name: c.name, error: true };
+          })
         )
+      );
+      const ACT: Record<string, string> = { '1': 'affirm', '-1': 'refute', '0': 'abstain' };
+      let answered = 0;
+      chips.innerHTML = rs
+        .map((r) => {
+          const v = r.status === 'fulfilled' ? r.value : null;
+          if (v && 'verdict' in v) {
+            answered++;
+            return `
+        <div class="rounded border border-line bg-surface-2 px-3 py-2">
+          <b class="text-heading">${v.verdict.connectome}</b>
+          <span class="text-leaf"> · ${ACT[v.verdict.action] ?? v.verdict.action}</span>
+          <span class="text-muted block truncate">${(v.verdict.spike_digest || '').slice(8, 34)}…</span>
+        </div>`;
+          }
+          return `
+        <div class="rounded border border-line bg-surface-2 px-3 py-2 opacity-60">
+          <b class="text-heading">${v?.name ?? '?'}</b>
+          <span class="text-clay"> · cpu limit — retry</span>
+        </div>`;
+        })
         .join('');
-      const uniq = new Set(d.verdicts.map((v: { spike_digest?: string }) => v.spike_digest)).size;
-      cap.textContent = `one signal → ${d.verdicts.length} wirings → ${uniq} distinct answers — each replayable bit-for-bit`;
+      cap.textContent =
+        answered === rs.length
+          ? `one signal → ${rs.length} wirings → ${new Set(rs.map((r) => (r.status === 'fulfilled' && 'verdict' in r.value ? r.value.verdict.spike_digest : ''))).size} distinct answers — each replayable bit-for-bit`
+          : `one signal → ${answered} of ${rs.length} wirings answered — the biggest brains exceed this plan's compute budget; retry fires them again`;
     } catch (e) {
       cap.textContent = 'call failed: ' + e;
     } finally {

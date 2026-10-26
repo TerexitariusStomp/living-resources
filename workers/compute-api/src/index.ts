@@ -307,9 +307,15 @@ export default {
 
       const cx = String(toPlain(obj.connectome ?? ""));
       if (!cx) return bad("connectome required");
-      const feats = obj.features ?? obj;
+      // Raw-input mode: {connectome, input:[...]} — wrap as CanonVal so
+      // runTask's vector path sees numeric lexemes, not the whole body.
+      const feats = obj.features ??
+        (obj.input ? { k: "o", obj: [["input", obj.input]] } : obj);
       try {
         if (url.pathname === "/verdict" && cx === "all") {
+          // All 15 sims in one invocation — needs the raised cpu_ms limit
+          // in wrangler.toml; the fan-out over HTTP or a self service
+          // binding both failed (522 loop / shared CPU budget → 1102).
           const names = (await listConnectomes(env)).map((m: any) => m.name);
           const out = [];
           for (const name of names)
@@ -334,6 +340,12 @@ export default {
         return json({ receipt });
       } catch (e: any) { return bad(String(e.message ?? e)); }
     }
+
+    // The assets binding rewrites _redirects internally (200 + target body)
+    // — keep the legacy deck path a real 301 so links and caches update.
+    if (url.pathname === "/treetable-deck.pdf")
+      return Response.redirect(
+        new URL("/temple-earth-deck.pdf", url).toString(), 301);
 
     // Non-API paths fall through to static assets (deck, docs).
     return env.ASSETS.fetch(req.url);

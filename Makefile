@@ -83,4 +83,9 @@ check-lane-drift:
 check-readability:
 	@$(PYTHON3) tools/site/readability.py
 
-.PHONY: test check-custom-budget site check-site-budget check-lane-drift check-readability
+# e2e smoke of the deployed site + worker API — pages, assets, OG meta,
+# and the task→receipt→verify chain against the live origin.
+check-site-e2e:
+	@node workers/compute-api/test/e2e.mjs $(if $(BASE),--base=$(BASE),)
+
+.PHONY: test check-custom-budget site check-site-budget check-lane-drift check-readability check-site-e2e

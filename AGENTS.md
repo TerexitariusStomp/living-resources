@@ -22,6 +22,8 @@ make site                  # build the frontend (site/, AstroWind vendored)
 make check-site-budget     # site custom-code ratio vs everything shipped (<5%)
 make check-lane-drift      # frontend lane rows vs specs.scm/lane-gate.rego
 make check-readability     # / must stay <= grade 7 (needs textstat: pip install -r tools/site/requirements.txt)
+make check-site-e2e        # live-site smoke: pages, assets, OG meta, task→verify chain
+                           # (BASE=https://staging.example to target another origin)
 ```
 
 Tests run directly:
