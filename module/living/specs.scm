@@ -23,7 +23,8 @@
   #:use-module (srfi srfi-9)
   #:export (;; lanes
             *living-lanes* *admitted-lanes* *consent-lanes* *refused-lanes*
-            lane-known? lane-refused? lane-consent-gated?
+            *transport-lanes*
+            lane-known? lane-refused? lane-consent-gated? lane-transport?
             consent-of sense-kind? taxa-scope?
             ;; ids and quorum parameters
             generate-id *default-quorum-size* *default-quorum-nodes*
@@ -61,17 +62,20 @@
 
 
 ;;; ── the lane vocabulary ─────────────────────────────────────────────────
-;;; Eight names, deliberately small, in three classes. sense and fleet are
+;;; Nine names, deliberately small, in four classes. sense and fleet are
 ;;; the commons' admitted lanes: passive listening and the quorum merge
 ;;; over it. emit, cast and store are CONSENT lanes — a guardian + node
 ;;; operator decide to ride them (bio-write, downlink tasking, node-SD
 ;;; storage); they refuse without both approvals, never on absent evidence.
 ;;; hop, compute and engineered stay refused outright — no evidence on file,
-;;; and no consent can substitute for it. A lane not in this list is
-;;; unknown; a refusal always names why.
+;;; and no consent can substitute for it. relay is the TRANSPORT lane:
+;;; node→node forwarding of already content-addressed bundles — an offer
+;;; may ride it only naming the packet SAID it carries; it moves receipts,
+;;; it never touches an organism. A lane not in this list is unknown; a
+;;; refusal always names why.
 
 (define *living-lanes*
-  '(sense fleet emit cast hop compute store engineered))
+  '(sense fleet emit cast hop compute store engineered relay))
 
 (define *admitted-lanes* '(sense fleet))
 
@@ -79,9 +83,12 @@
 
 (define *refused-lanes* '(hop compute engineered))
 
+(define *transport-lanes* '(relay))
+
 (define (lane-known? x)         (and (memq x *living-lanes*) #t))
 (define (lane-refused? x)       (and (memq x *refused-lanes*) #t))
 (define (lane-consent-gated? x) (and (memq x *consent-lanes*) #t))
+(define (lane-transport? x)     (and (memq x *transport-lanes*) #t))
 
 ;;; A consent is an alist — ((guardian . aid) (operator . aid) (said . s))
 ;;; — naming the two humans whose joint approval unlocks a consent lane and

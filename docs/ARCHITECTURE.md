@@ -21,6 +21,7 @@ named is denied as `unknown-lane`. A refusal is a value, never silence.
 | `hop` | refused | none — refused outright; consent is not evidence | E5 is the research path |
 | `compute` | refused | none — refused outright | E4/E6 run outside the organism lane (witness simulation) |
 | `engineered` | refused | none — refused outright | none |
+| `relay` | transport | the intent must name the `packet-said` it forwards — only content-addressed bundles move | built (rns_edge.py) |
 
 ## Status legend
 
@@ -82,6 +83,7 @@ every lane's electronics populated incl. consent-gated `EmitLane`
 | `edge/classify.py` | edge classifier loop — OpenSoundscape seam + energy-gate fallback |
 | `edge/rns_edge.py` | real RNS/LXMF edge daemon |
 | `e0/score.py` | blinded E0 validation scorer — never shows which chunk was which during capture |
+| `e5/relay_check.py` | E5 graduation harness — relays an encoded observation through every packed connectome, checks replay determinism (local + optional deployed-verifier legs) and input→output provenance digests, emits a SAIDed bundle. Honest bound: preserved wiring only; the refused `hop` lane is untouched |
 | `connectome/lif.py` | deterministic Q24 LIF inference over packed int4 CSR connectomes; canonical input SAIDs |
 | `connectome/bench.py` | evidenced efficiency vs dense/sparse machine baselines (measured, incl. unfavorable cells) |
 

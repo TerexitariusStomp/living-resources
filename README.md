@@ -56,6 +56,7 @@ docs/            ARCHITECTURE (component map) · SCIENCE (claim table)
 tests/e2e/       sensing-cell · refused-lanes · write-lanes
 tools/edge/      classify.py (edge ML seam) · rns_edge.py (LXMF daemon)
 tools/e0/        score.py (blinded field-validation scorer)
+tools/e5/        relay_check.py (E5 hop-graduation harness)
 ```
 
 ## Non-interference

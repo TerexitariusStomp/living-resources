@@ -343,6 +343,10 @@
         <span class="desc">The second evidence lane — multi-node fleet readings folding into quorum. Same gate: admitted only when the lane's evidence SAID lands. <span class="src">offers.scm · attest.scm</span></span>
       </div>
       <div class="lane">
+        <span class="name">relay</span><span class="badge b-built">built · transport</span>
+        <span class="desc">Node→node mesh hops — Reticulum store-and-forward carrying <b>only content-addressed bundles</b>: an intent names the packet SAID it moves or it refuses. The network hop, not the biological one — <code>hop</code> below stays refused. <span class="src">rns_edge.py · lane-gate.rego</span></span>
+      </div>
+      <div class="lane">
         <span class="name">emit</span><span class="badge b-consent">consent-gated</span>
         <span class="desc">The write lane exists and is fully implemented — it rides only on joint guardian + operator consent, duty-cycled minimum power, every burst logged and receipted. <span class="src">EmitLane · consent.rego</span></span>
       </div>
@@ -356,7 +360,7 @@
       </div>
       <div class="lane">
         <span class="name">hop</span><span class="badge b-refused">refused</span>
-        <span class="desc">Relay through living wiring — refused outright: consent is not evidence. E5 is the research path toward it, not a lane status. <span class="src">lane-gate.rego · E5</span></span>
+        <span class="desc">Relay through living wiring — refused outright: consent is not evidence. E5 is the graduation path: its preserved-wiring harness already passes (15/15 relays replay bit-for-bit across two verifiers), the living half stays refused until evidence lands. <span class="src">lane-gate.rego · tools/e5</span></span>
       </div>
       <div class="lane">
         <span class="name">compute <span class="dim">(organism)</span></span><span class="badge b-refused">refused</span>

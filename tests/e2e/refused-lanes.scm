@@ -86,6 +86,16 @@
               (admitted? reply) #t)))
    '(emit cast store))
 
+  (scenario "the transport lane — relay needs a content-addressed payload")
+  (check "relay without a packet SAID refuses"
+         (reason-of (admit-intent book 'relay '())) 'payload-required)
+  (check "relay refusal names its lane"
+         (refusal-lane (cdr (admit-intent book 'relay '()))) 'relay)
+  (check "relay carrying a packet SAID is admitted"
+         (admitted? (admit-intent book 'relay
+                                  '((packet-said . "said:bundle-node7-0482"))))
+         #t)
+
   (scenario "lanes the commons does not name")
   (check "an unnamed lane refuses as unknown"
          (reason-of (admit-intent book 'warp '())) 'unknown-lane)

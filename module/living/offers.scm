@@ -15,7 +15,7 @@
 ;;; and detail, so a test or a door can say WHY, not just no. The reasons
 ;;; are a closed vocabulary: lane-refused, unknown-lane, evidence-required,
 ;;; consent-required, incomplete-declaration, subject-required,
-;;; unknown-subject, revoked-subject.
+;;; unknown-subject, revoked-subject, write-refused, payload-required.
 ;;;
 ;;; This is the module the minimum-disruption policy lives in as code:
 ;;; nothing emits without the two humans deciding it, nothing computes or
@@ -99,6 +99,11 @@
         (refused lane 'write-refused
                  "the cell declared it accepts no writes"))
        (else (admitted lane)))))
+   ((lane-transport? lane)
+    (if (assq-ref params 'packet-said)
+        (admitted lane)
+        (refused lane 'payload-required
+                 "relay forwards only content-addressed bundles — name the packet SAID")))
    ((not (gate-evidence book lane))
     (refused lane 'evidence-required
              "the lane's gate carries no evidence SAID"))

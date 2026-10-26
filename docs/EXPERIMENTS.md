@@ -66,6 +66,13 @@ criterion stated *before* it runs, and a refusal is a valid result.
 - **Honest bound:** the measured topology relays, not the organism.
 - **Pass:** relay traces replay deterministically across verifiers and
   carry input→output provenance digests end to end.
+- **Harness:** `tools/e5/relay_check.py` — runs the relay over all packed
+  connectomes, replays locally and against the deployed worker as an
+  independent verifier, emits a SAIDed bundle. Preserved-wiring half:
+  **PASS** (15/15 relays, 15 topology-unique signatures, cross-
+  implementation replay verified). The refused `hop` lane — living
+  wiring — remains refused; this scaffold only earns the
+  preserved-wiring leg of its path.
 
 ## E6 — connectome compute efficiency benchmark
 

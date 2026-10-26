@@ -6,7 +6,9 @@
 # intent is admitted only if its lane carries an evidence SAID — except the
 # consent lanes (emit, cast, store), which ride the joint approval of the
 # subject's guardian and the node operator. hop/compute/engineered are
-# denied outright: consent is not evidence. No silent defaults.
+# denied outright: consent is not evidence. relay is the transport lane:
+# node-to-node forwarding, admitted only when it names the content-
+# addressed packet SAID it carries. No silent defaults.
 #
 # Input shape:
 #   {"lane": "sense", "evidence_said": "said:…", "duty_cycle_declared": true,
@@ -21,11 +23,13 @@ import rego.v1
 default allow := false
 
 # the closed vocabulary — anything not named is denied as unknown
-lanes := {"sense", "fleet", "emit", "cast", "hop", "compute", "store", "engineered"}
+lanes := {"sense", "fleet", "emit", "cast", "hop", "compute", "store", "engineered", "relay"}
 
 consent_lanes := {"emit", "cast", "store"}
 
 refused_lanes := {"hop", "compute", "engineered"}
+
+transport_lanes := {"relay"}
 
 deny contains msg if {
 	not lanes[input.lane]
@@ -56,6 +60,13 @@ deny contains msg if {
 	msg := sprintf("consent-required: %v needs the consent credential SAID", [input.lane])
 }
 
+# transport lanes forward only content-addressed bundles — name the packet
+deny contains msg if {
+	transport_lanes[input.lane]
+	not input.packet_said
+	msg := "payload-required: relay forwards only content-addressed bundles"
+}
+
 deny contains msg if {
 	input.lane in {"sense", "fleet"}
 	not input.evidence_said
@@ -82,6 +93,11 @@ allow if {
 
 allow if {
 	consent_lanes[input.lane]
+	count(deny) == 0
+}
+
+allow if {
+	transport_lanes[input.lane]
 	count(deny) == 0
 }
 
