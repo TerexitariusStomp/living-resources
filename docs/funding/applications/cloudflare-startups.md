@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 # Cloudflare for Startups — field answers ($10k credits, BOOTSTRAPPED)
 
-Apply: cloudflare.com/startups — promo code **BOOTSTRAPPED** for the
+Apply: cloudflare.com/startups — promo code **BOOTSTRAPPED tier is now "Tier 3" (bootstrapped, under $1M raised) — note for future reference:
 bootstrapped/self-funded tier (<$1M raised → $10k credits).
 Why: the Startup Plan credits/upgrade directly addresses our one
 infrastructure limit — the Free tier's ~10ms CPU/invocation caps the two

@@ -32,7 +32,7 @@ routine if an equity raise requires it.
 | Filecoin Open Grant | up to $50k | Rolling | **SUBMITTED** | [devgrants issue #2233](https://github.com/filecoin-project/devgrants/issues/2233) — scope: receipted evidence store on Filecoin/IPLD. Draft at `applications/filecoin-open-grant.md` |
 | Emergent Ventures | $5–50k | Rolling, days-fast | drafted | `applications/emergent-ventures-outline.md` — **outline only: they test for + reject AI-written apps; user writes the 1500 words** |
 | Lacuna Fund (via Global South lead) | varies | Periodic dataset-creation RFPs | drafted | `applications/lacuna-partner-email.md` — requires lead HQ'd in low/middle-income country; pitch SiB Colombia as lead, us as technical partner |
-| Cloudflare for Startups | $10k credits (in-kind) | Rolling | drafted | `applications/cloudflare-startups.md` — BOOTSTRAPPED tier; credits ≠ guaranteed CPU-limit raise, but a Startup Plan would help the medulla/hemibrain verdict ceiling |
+| Cloudflare for Startups | $10k credits (in-kind) | Rolling | **SUBMITTED** | Applied as Temple Earth (Treetable LLC), Tier 3 (bootstrapped — the BOOTSTRAPPED promo is retired); confirmation in-app, decision to hello@templeearth.cc (Email Routing enabled → forwards to hardwoodstablecoin@gmail.com). ~48h review |
 | ~~Schmidt Futures AI-in-Science~~ | — | — | **NOT ELIGIBLE** | Postdoc-only + faculty-mentor required; AI2050 is closed-nomination. No non-academic Schmidt program exists |
 
 ## Lane C — ReFi / community (parallel)
@@ -42,7 +42,7 @@ routine if an equity raise requires it.
 | Gitcoin Regen Coordination round | $1–5k realistic | Quarterly-ish rounds | watching | `applications/gitcoin-regen.md` ready — needs wallet connect + an open round |
 | Regen Network grants | 50/50 cash/REGEN | Waves (old program dormant) | watching | `applications/regen-network.md` ready — verify current grant program status |
 | Greenpill / Ma Earth local rounds | $1–10k | Opportunistic | watching | Attach to the Gitcoin submission |
-| Giveth listing | varies (donations) | Always open | drafted | `applications/giveth-listing.md` — paste-ready; needs a dedicated donation wallet, then publish |
+| Giveth listing | varies (donations) | Always open | **SUBMITTED** | Listing published (copy at `applications/giveth-listing.md`) — enables GIVbacks + Octant-era visibility |
 | Octant | varies | Epoch windows | watching | `applications/public-goods-retro.md` — Giveth listing + visible impact first |
 | Optimism RetroPGF | varies | Periodic rounds | watching | `applications/public-goods-retro.md` — retroactive only; needs demonstrated Superchain-ecosystem impact to score |
 
