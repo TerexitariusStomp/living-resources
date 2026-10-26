@@ -11,7 +11,7 @@
       class="aspect-square w-full"
       aria-label="Rotating globe showing example places the living cloud could listen"></canvas>
     <p class="text-muted mt-1 text-center font-mono text-xs">
-      where the living cloud could listen. the Amazon. a coral reef. a northern forest. the Sahel. a city park.
+      big dots — where our listeners could go. small dots — allied networks already listening.
     </p>
   </div>
   <div class="mt-6 text-center">
@@ -48,11 +48,19 @@
       markerColor: [0, 0.85, 0.57],
       glowColor: [0, 0.5, 0.36],
       markers: [
+        // larger — places our own listeners could go
         { location: [-3.4, -62.2], size: 0.07 }, // amazon
         { location: [-1.8, 130.5], size: 0.07 }, // coral triangle
         { location: [60.1, -105.0], size: 0.07 }, // boreal taiga
         { location: [15.0, -1.0], size: 0.07 }, // sahel
         { location: [39.7, -104.9], size: 0.05 }, // a city park
+        // smaller — allied networks listening today (federated lane)
+        { location: [50.8, 4.3], size: 0.035 }, // birdweather station, europe
+        { location: [47.6, -122.3], size: 0.035 }, // orcasound hydrophones
+        { location: [30.0, -40.0], size: 0.035 }, // argo float, atlantic
+        { location: [42.5, -72.2], size: 0.035 }, // neon site, harvard forest
+        { location: [-33.9, 151.2], size: 0.035 }, // sensor.community, sydney
+        { location: [35.7, 139.7], size: 0.035 }, // raspberry shake, tokyo
       ],
     });
     if (!reduce) {

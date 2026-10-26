@@ -253,6 +253,50 @@ class Uplink:
         return None
 
 
+class TtnLane:
+    """The Things Network backhaul — LoRaWAN, not raw LoRa. The radio is
+    injected: on real hardware it's an SX127x + LoRaWAN stack (uLoRaWAN /
+    arduino-limx class on the MCU); in sim it's None and every send falls
+    back to False so the spool keeps the chunk. OTAA keys are provisioned
+    per device, never in the tree. Community gateways carry the frame to
+    TTN's edge; our webhook in adapters/ttn.scm receives it. Downlinks —
+    admitted write intents — arrive on the same session."""
+
+    def __init__(self, lwan=None):
+        self.lwan = lwan                     # joined LoRaWAN radio | None
+
+    def joined(self):
+        return bool(self.lwan and getattr(self.lwan, "has_joined", lambda: False)())
+
+    def send_detection(self, det_line, port=1):
+        """Same tens-of-bytes frame as Uplink.send_detection — TTN carries
+        it where WiFi and our own LoRa can't reach."""
+        if not self.joined():
+            return False
+        if isinstance(det_line, str):
+            det_line = det_line.encode()
+        try:
+            self.lwan.send(det_line, port=port)
+            return True
+        except Exception:
+            return False
+
+    def poll_task(self):
+        """Downlink bytes → the same task dict handle_task consumes."""
+        if not self.joined():
+            return None
+        try:
+            data = self.lwan.receive()
+        except Exception:
+            return None
+        if not data:
+            return None
+        try:
+            return json.loads(data)
+        except Exception:
+            return None
+
+
 # ── detection packet ──────────────────────────────────────────────────────
 # The node is dumb: detections arrive either from the edge (after it
 # classifies an audio window) or, later, from a tiny on-device gate. A

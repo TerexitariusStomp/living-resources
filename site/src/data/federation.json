@@ -1,0 +1,110 @@
+{
+  "reads": [
+    {
+      "name": "BirdWeather",
+      "devices": "26,000+ stations",
+      "hears": "bird and insect sounds",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "Sensor.Community",
+      "devices": "~14,000 boxes",
+      "hears": "air, noise, weather",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "Raspberry Shake",
+      "devices": "~6,000 sensors",
+      "hears": "ground vibration",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "River gauges (USGS + EA)",
+      "devices": "~13,000 gauges",
+      "hears": "the pulse of rivers",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "Argo floats",
+      "devices": "~4,000 floats",
+      "hears": "ocean heat and salt",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "iNaturalist",
+      "devices": "millions of people",
+      "hears": "species sightings",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "NEON",
+      "devices": "81 sites",
+      "hears": "whole instrumented ecosystems",
+      "status": "live",
+      "statusLabel": "open today"
+    },
+    {
+      "name": "Orcasound",
+      "devices": "~10 hydrophones",
+      "hears": "whales, live",
+      "status": "verify",
+      "statusLabel": "open, checking"
+    },
+    {
+      "name": "PhenoCam",
+      "devices": "~900 cameras",
+      "hears": "leaves turning",
+      "status": "verify",
+      "statusLabel": "open, checking"
+    },
+    {
+      "name": "Guardians of Earth",
+      "devices": "1,000+ nature realms",
+      "hears": "biodiversity scores and sightings",
+      "status": "partner",
+      "statusLabel": "partnership"
+    }
+  ],
+  "writes": [
+    {
+      "name": "FarmBot demo garden",
+      "kind": "water a real plant",
+      "status": "open-invitation",
+      "statusLabel": "open invitation"
+    },
+    { "name": "OpenSprinkler", "kind": "irrigation", "status": "opt-in", "statusLabel": "owner opt-in" },
+    { "name": "Reef tanks (reef-pi)", "kind": "feed, light, pump", "status": "opt-in", "statusLabel": "owner opt-in" },
+    { "name": "Garden robots", "kind": "mow, water", "status": "opt-in", "statusLabel": "owner opt-in" },
+    {
+      "name": "Ultrasound buoys",
+      "kind": "gentle sound into lakes",
+      "status": "partner",
+      "statusLabel": "partnership"
+    },
+    {
+      "name": "People — cleanups, quests",
+      "kind": "hands on nature",
+      "status": "human",
+      "statusLabel": "human actuators"
+    }
+  ],
+  "backhaul": [
+    { "name": "The Things Network", "devices": "~21,000 gateways", "does": "free radios carry our notes." },
+    { "name": "Meshtastic + APRS", "devices": "~30,000 radios", "does": "they reach where phones do not." }
+  ],
+  "yourDevice": {
+    "reads": ["the microphone hears birds and insects", "the camera sees leaves", "sensors feel light and motion"],
+    "writes": [
+      "the speaker can play a soft sound back",
+      "the screen can flash a pattern",
+      "plugged-in gear like a feeder can be driven"
+    ],
+    "rule": "Nothing turns on until you say yes — your browser asks, and you can take it back any time."
+  }
+}

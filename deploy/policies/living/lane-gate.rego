@@ -23,13 +23,15 @@ import rego.v1
 default allow := false
 
 # the closed vocabulary — anything not named is denied as unknown
-lanes := {"sense", "fleet", "emit", "cast", "hop", "compute", "store", "engineered", "relay"}
+lanes := {"sense", "fleet", "emit", "cast", "hop", "compute", "store", "engineered", "relay", "federated"}
 
 consent_lanes := {"emit", "cast", "store"}
 
 refused_lanes := {"hop", "compute", "engineered"}
 
 transport_lanes := {"relay"}
+
+federated_lanes := {"federated"}
 
 deny contains msg if {
 	not lanes[input.lane]
@@ -73,6 +75,20 @@ deny contains msg if {
 	msg := "evidence-required: the lane's gate carries no evidence SAID"
 }
 
+# federated rides provenance: name the source network and the record it
+# stands on — not our evidence gate, not consent
+deny contains msg if {
+	federated_lanes[input.lane]
+	not input.source
+	msg := "source-required: federated imports must name their source network"
+}
+
+deny contains msg if {
+	federated_lanes[input.lane]
+	not input.source_id
+	msg := "source-required: federated imports must name the upstream record id"
+}
+
 deny contains msg if {
 	input.lane == "sense"
 	not input.duty_cycle_declared
@@ -98,6 +114,11 @@ allow if {
 
 allow if {
 	transport_lanes[input.lane]
+	count(deny) == 0
+}
+
+allow if {
+	federated_lanes[input.lane]
 	count(deny) == 0
 }
 

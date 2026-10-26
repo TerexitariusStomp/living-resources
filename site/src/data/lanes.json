@@ -50,6 +50,16 @@
     "src": "rns_edge.py · lane-gate.rego"
   },
   {
+    "id": "federated",
+    "tier": "federated",
+    "badge": "federated · provenance",
+    "baseLane": "federated",
+    "plain": "Hearing through other people's sensors",
+    "plainDesc": "Bird trackers, river gauges and sea floats already listen. We can carry their notes — each one labeled with whose device heard it.",
+    "desc": "The federation lane — imports from allied device networks (BirdWeather, iNaturalist, river gauges, ocean floats, a visitor's browser). Admitted only when the intent names its source network and the upstream record id: provenance, not our quorum — we never claim their devices as our measurements.",
+    "src": "federated.scm · /federation"
+  },
+  {
     "id": "emit",
     "tier": "consent",
     "badge": "consent-gated",

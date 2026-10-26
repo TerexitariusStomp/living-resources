@@ -70,6 +70,79 @@ const json = (body: any, status = 200): Response =>
 
 const bad = (msg: string, status = 400) => json({ error: msg }, status);
 
+// ── federation ────────────────────────────────────────────────────────────
+// The federated lane at the edge: allied networks' devices, provenance-
+// tagged, never claimed as our quorum. Each source carries a status the
+// site renders honestly — live-now sources are fetched here; the rest are
+// the static catalogue until their seam binds.
+
+const FED_SOURCES: [string, string, string][] = [
+  // [name, direction, status] — mirrors *federated-sources*
+  ["birdweather", "read", "live-now"],
+  ["sensorcommunity", "read", "live-now"],
+  ["raspberryshake", "read", "live-now"],
+  ["usgs-water", "read", "live-now"],
+  ["argo", "read", "live-now"],
+  ["neon", "read", "live-now"],
+  ["phenocam", "read", "live-now"],
+  ["orcasound", "read", "public-verify"],
+  ["safecast", "read", "public-verify"],
+  ["inaturalist", "read", "live-now"],
+  ["purpleair", "read", "key-required"],
+  ["ebird", "read", "key-required"],
+  ["motus", "read", "key-required"],
+  ["goe", "read", "gated-partnership"],
+  ["rfcx", "read", "gated-partnership"],
+  ["frogid", "read", "gated-partnership"],
+  ["farmbot-demo", "write", "open-invitation"],
+  ["opensprinkler", "write", "opt-in-operator"],
+  ["farmbot", "write", "opt-in-operator"],
+  ["husqvarna", "write", "opt-in-operator"],
+  ["reef-pi", "write", "opt-in-operator"],
+  ["lg-sonic", "write", "gated-partnership"],
+  ["ttn", "backhaul", "live-now"],
+  ["meshtastic", "backhaul", "live-now"],
+];
+
+const BIRDWEATHER_GQL = "https://app.birdweather.com/graphql";
+let fedCache: { at: number; body: any } | null = null;
+const FED_TTL_MS = 5 * 60 * 1000;
+
+async function birdweatherSummary(): Promise<any> {
+  const gql = (query: string) =>
+    fetch(BIRDWEATHER_GQL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query }),
+    }).then(r => r.ok ? r.json() : null).catch(() => null);
+  const [stations, detections] = await Promise.all([
+    gql("{ stations { totalCount } }"),
+    gql(`{ detections(first: 10) { edges { node { id timestamp score
+          species { commonName } station { id } } } } }`),
+  ]);
+  return {
+    stations: stations?.data?.stations?.totalCount ?? null,
+    detections: (detections?.data?.detections?.edges ?? [])
+      .map((e: any) => ({
+        id: e.node.id, at: e.node.timestamp, score: e.node.score,
+        species: e.node.species?.commonName ?? null,
+        station: e.node.station?.id ?? null,
+      })),
+  };
+}
+
+// Ephemeral presence — a visitor's browser pings while its sensors are
+// granted. In-memory per isolate: nothing persists, nothing is written to
+// KV, and the count honestly approximates ("about N") because isolates
+// don't share state. Sessions are SHA-256'd before keying.
+const presence = new Map<string, number>();
+const PRESENCE_WINDOW_MS = 90 * 1000;
+
+function prunePresence(now: number) {
+  for (const [k, t] of presence)
+    if (now - t > PRESENCE_WINDOW_MS) presence.delete(k);
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
@@ -98,6 +171,8 @@ export default {
           "POST /verify": "a receipt → recompute → {verified}",
           "GET /receipts": "content-addressed ledger of issued task_said receipts",
           "GET /receipts/{task_said}": "fetch a stored receipt for replay",
+          "GET /federation": "allied device networks — status, live counts, latest detections",
+          "POST /presence": "{session} → ephemeral listener count (in-memory, ~90s window)",
         },
         posture: "every result is deterministic and replayable; the computation is the proof",
         source: "https://github.com/treetable/living-resources (AGPL-3.0)",
@@ -116,6 +191,50 @@ export default {
       const said = url.pathname.slice("/receipts/".length);
       const v = await env.RECEIPTS.get(said);
       return v ? json(parseCanon(v)) : bad("unknown task_said", 404);
+    }
+
+    if (url.pathname === "/federation" && req.method === "GET") {
+      const now = Date.now();
+      if (!fedCache || now - fedCache.at > FED_TTL_MS) {
+        const bw = await birdweatherSummary();
+        fedCache = { at: now, body: {
+          generated_at: new Date(now).toISOString(),
+          sources: FED_SOURCES.map(([name, direction, status]) => ({
+            name, direction, status,
+            ...(name === "birdweather" && bw.stations
+                ? { devices: bw.stations } : {}),
+          })),
+          latest_detections: bw.detections,
+          note: "provenance-tagged imports from allied networks — not " +
+                "this commons' own measurements; statuses mark what is " +
+                "live vs awaiting keys or partnership",
+        }};
+      }
+      return json(fedCache.body);
+    }
+
+    // Presence: a granted-sensor session pings; we keep only a hash and a
+    // timestamp in isolate memory for ~90s. Nothing is logged or persisted.
+    if (url.pathname === "/presence" && req.method === "POST") {
+      if (Number(req.headers.get("content-length") ?? 0) > 1024)
+        return bad("body too large");
+      let b: any;
+      try { b = JSON.parse(await req.text()); }
+      catch { return bad("invalid JSON body"); }
+      const session = String(b?.session ?? "");
+      if (!session || session.length > 128) return bad("session required");
+      const digest = await crypto.subtle.digest(
+        "SHA-256", new TextEncoder().encode(session));
+      const key = [...new Uint8Array(digest)]
+        .map(x => x.toString(16).padStart(2, "0")).join("");
+      const now = Date.now();
+      presence.set(key, now);
+      prunePresence(now);
+      return json({ listening: presence.size, approximate: true });
+    }
+    if (url.pathname === "/presence" && req.method === "GET") {
+      prunePresence(Date.now());
+      return json({ listening: presence.size, approximate: true });
     }
 
     // Guardian waitlist — separate KV from the public receipt ledger so PII

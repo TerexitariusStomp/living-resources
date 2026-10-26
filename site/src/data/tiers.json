@@ -29,6 +29,12 @@
     "icon": "tabler:telescope",
     "class": "text-violet-300 border-violet-400/40 bg-violet-400/10"
   },
+  "federated": {
+    "label": "Shared by a partner",
+    "short": "heard by another network's devices — their measurement, labeled as theirs",
+    "icon": "tabler:world-share",
+    "class": "text-cyan-300 border-cyan-400/40 bg-cyan-400/10"
+  },
   "market": {
     "label": "From market reports",
     "short": "estimates by market researchers — cited, not our measurement",

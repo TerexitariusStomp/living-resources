@@ -56,7 +56,10 @@ Guile at all, `make test` runs static checks instead — never a silent pass.
    `module/living/offers.scm` and mirrored in
    `deploy/policies/living/lane-gate.rego`; consent is a value on the
    intent, never a default. `hop`/`compute`/`engineered` refuse outright —
-   consent is not evidence. A refusal is a value, never silence.
+   consent is not evidence. `federated` rides provenance: an intent names
+   its source network and the upstream record id, or it refuses — imports
+   are labeled theirs, never our quorum. A refusal is a value, never
+   silence.
 2. **Minimum-disruption.** Passive-listen-only by default. Nothing
    attaches to an organism, nothing enters soil, no anchor moorings.
    Emission is allowed **only** when guardian + operator jointly decide —
@@ -85,13 +88,21 @@ module/living/   specs · agents (^eco-agent) · sense-subject (^sense-node)
                  attest (quorum→receipt) · settlement (mutual credit)
                  offers (the evidence gate)
 adapters/        mic · camera · sonar · c4d · reticulum (UDP socket
-                 + LXMF seam) · weather (Open-Meteo context)
+                 + LXMF seam) · weather (Open-Meteo context) ·
+                 federated (the source/actuator catalogue) ·
+                 webnode (visitor browsers as nodes) · thin read seams
+                 (birdweather, sensor-community, raspberry-shake,
+                 usgs-water, argo, neon, phenocam, orcasound, safecast,
+                 inat — plus key-required/partnership stubs) · thin
+                 write seams (opensprinkler, farmbot, husqvarna,
+                 reef-pi, lg-sonic) · ttn (LoRaWAN backhaul)
 firmware/node/   main.py — MicroPython universal node: I2S 48kHz/16-bit →
                  SD spool → LXMF uplink (stub) → duty-cycle sleep; all
                  lanes populated incl. consent-gated EmitLane
 deploy/policies/ lane-gate.rego · consent.rego
 tests/e2e/       sensing-cell.scm (full pipeline) · refused-lanes.scm
                  · write-lanes.scm (consent-gated writes)
+                 · federated.scm (provenance lane + write registry)
 tools/edge/      classify.py (OpenSoundscape seam + energy-gate fallback)
                  · rns_edge.py (real RNS/LXMF edge daemon)
 tools/e0/        score.py (blinded-validation scorer for field E0)

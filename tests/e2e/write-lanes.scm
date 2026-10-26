@@ -75,6 +75,30 @@
 (check "store without a named cell still needs only consent"
        (admitted? (admit-intent book 'store CONSENT)) #t)
 
+(scenario "write-kinds — a declared actuator bounds what it accepts")
+(define irrigator
+  (make-cell-decl #:node-id "sprinkler-3" #:heads '()
+                  #:link-type 'wifi #:location-class 'garden
+                  #:accepts-write #t #:write-kinds '(irrigate)))
+(check "a declared write-kind is admitted"
+       (admitted? (admit-intent book 'emit
+                                `((cell . ,irrigator)
+                                  (write-kind . irrigate)
+                                  ,@CONSENT)))
+       #t)
+(check "an undeclared write-kind refuses as write-refused"
+       (reason-of (admit-intent book 'emit
+                                `((cell . ,irrigator)
+                                  (write-kind . acoustic-playback)
+                                  ,@CONSENT)))
+       'write-refused)
+(check "a write-kind no device speaks refuses as write-refused"
+       (reason-of (admit-intent book 'emit
+                                `((cell . ,open-cell)
+                                  (write-kind . teleport)
+                                  ,@CONSENT)))
+       'write-refused)
+
 (scenario "consent is not evidence — the refused lanes hold")
 (for-each
  (lambda (lane)

@@ -15,7 +15,8 @@
 ;;; and detail, so a test or a door can say WHY, not just no. The reasons
 ;;; are a closed vocabulary: lane-refused, unknown-lane, evidence-required,
 ;;; consent-required, incomplete-declaration, subject-required,
-;;; unknown-subject, revoked-subject, write-refused, payload-required.
+;;; unknown-subject, revoked-subject, write-refused, payload-required,
+;;; source-required.
 ;;;
 ;;; This is the module the minimum-disruption policy lives in as code:
 ;;; nothing emits without the two humans deciding it, nothing computes or
@@ -27,7 +28,7 @@
   #:use-module (srfi srfi-9)
   #:use-module (living specs)
   #:export (<refusal> refusal? refusal-lane refusal-reason refusal-detail
-            admitted? refused?
+            admitted refused admitted? refused?
             declare-lane lane-gate-of gate-evidence
             admit-intent admit-offer admit-reading
             offer-declared?))
@@ -89,16 +90,31 @@
              "no evidence on file; hop/compute/engineered stay refused"))
    ((lane-consent-gated? lane)
     (let ((c (consent-of params))
-          (cell (assq-ref params 'cell)))
+          (cell (or (assq-ref params 'cell) (assq-ref params 'device)))
+          (kind (assq-ref params 'write-kind)))
       (cond
        ((not (valid-consent? c))
         (refused lane 'consent-required
                  "emit/cast/store ride the joint consent of guardian and node operator"))
-       ((and (eq? lane 'store) cell (cell-decl? cell)
+       ((and cell (cell-decl? cell)
              (not (cell-decl-accepts-write cell)))
         (refused lane 'write-refused
                  "the cell declared it accepts no writes"))
+       ((and cell (cell-decl? cell) (cell-decl-write-kinds cell)
+             kind (not (memq kind (cell-decl-write-kinds cell))))
+        (refused lane 'write-refused
+                 "the device does not accept this write kind"))
+       ((and kind (not (write-kind? kind)))
+        (refused lane 'write-refused
+                 "not a write kind the commons names"))
        (else (admitted lane)))))
+   ((lane-federated? lane)
+    ;; federated rides provenance, not our evidence gate: the intent must
+    ;; name its source network and the upstream record id it stands on.
+    (if (and (assq-ref params 'source) (assq-ref params 'source-id))
+        (admitted lane)
+        (refused lane 'source-required
+                 "federated imports must name their source network and the upstream record id")))
    ((lane-transport? lane)
     (if (assq-ref params 'packet-said)
         (admitted lane)

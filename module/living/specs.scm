@@ -23,8 +23,10 @@
   #:use-module (srfi srfi-9)
   #:export (;; lanes
             *living-lanes* *admitted-lanes* *consent-lanes* *refused-lanes*
-            *transport-lanes*
+            *transport-lanes* *federated-lanes*
             lane-known? lane-refused? lane-consent-gated? lane-transport?
+            lane-federated?
+            write-kind?
             consent-of sense-kind? taxa-scope?
             ;; ids and quorum parameters
             generate-id *default-quorum-size* *default-quorum-nodes*
@@ -42,6 +44,7 @@
             <cell-decl> make-cell-decl cell-decl?
             cell-decl-node-id cell-decl-heads cell-decl-link-type
             cell-decl-location-class cell-decl-accepts-write
+            cell-decl-write-kinds
             ;; the reading, the leg, the receipt
             <reading> make-reading reading?
             reading-subject reading-channel reading-timestamp
@@ -62,7 +65,7 @@
 
 
 ;;; ── the lane vocabulary ─────────────────────────────────────────────────
-;;; Nine names, deliberately small, in four classes. sense and fleet are
+;;; Ten names, deliberately small, in five classes. sense and fleet are
 ;;; the commons' admitted lanes: passive listening and the quorum merge
 ;;; over it. emit, cast and store are CONSENT lanes — a guardian + node
 ;;; operator decide to ride them (bio-write, downlink tasking, node-SD
@@ -71,11 +74,16 @@
 ;;; and no consent can substitute for it. relay is the TRANSPORT lane:
 ;;; node→node forwarding of already content-addressed bundles — an offer
 ;;; may ride it only naming the packet SAID it carries; it moves receipts,
-;;; it never touches an organism. A lane not in this list is unknown; a
-;;; refusal always names why.
+;;; it never touches an organism. federated is its own class: imports of
+;;; observations made by allied networks' devices (BirdWeather, iNaturalist,
+;;; Sensor.Community, a visitor's browser…). It rides provenance — every
+;;; intent names its source and the upstream record id — not our evidence
+;;; gate (we cannot vouch for others' devices) and not consent (importing
+;;; a public record is not an organism write). A lane not in this list is
+;;; unknown; a refusal always names why.
 
 (define *living-lanes*
-  '(sense fleet emit cast hop compute store engineered relay))
+  '(sense fleet emit cast hop compute store engineered relay federated))
 
 (define *admitted-lanes* '(sense fleet))
 
@@ -85,10 +93,13 @@
 
 (define *transport-lanes* '(relay))
 
+(define *federated-lanes* '(federated))
+
 (define (lane-known? x)         (and (memq x *living-lanes*) #t))
 (define (lane-refused? x)       (and (memq x *refused-lanes*) #t))
 (define (lane-consent-gated? x) (and (memq x *consent-lanes*) #t))
 (define (lane-transport? x)     (and (memq x *transport-lanes*) #t))
+(define (lane-federated? x)     (and (memq x *federated-lanes*) #t))
 
 ;;; A consent is an alist — ((guardian . aid) (operator . aid) (said . s))
 ;;; — naming the two humans whose joint approval unlocks a consent lane and
@@ -97,6 +108,18 @@
 ;;; *guardian-verify* seam every guardian act already passes through.
 
 (define (consent-of params) (assq-ref params 'consent))
+
+;;; write kinds: what an emit/cast/store intent is honestly asking a device
+;;; to do — irrigation is a friendlier write than acoustic playback, and a
+;;; declared actuator may accept one and refuse the other. A cell-decl with
+;;; write-kinds #f accepts any write (back-compat); a list means exactly
+;;; these. webnode is the visitor-device source: browser mic/camera reads
+;;; and speaker/screen writes, session-bounded.
+(define *write-kinds*
+  '(irrigate mist soundscape acoustic-playback water seed mow feed dose
+    gpio-feeder downlink vibrate light))
+
+(define (write-kind? x) (and (memq x *write-kinds*) #t))
 
 ;;; sense kinds: what a passive head can honestly read. doppler-motion is
 ;;; E1-gated (speaker sonar is an emitting lane's read side — it stays
@@ -219,21 +242,25 @@
 ;;; a policy flag — never a purchase and never a missing part.
 
 (define-record-type <cell-decl>
-  (%make-cell-decl node-id heads link-type location-class accepts-write)
+  (%make-cell-decl node-id heads link-type location-class accepts-write write-kinds)
   cell-decl?
   (node-id        cell-decl-node-id)
   (heads          cell-decl-heads)          ; list of head symbols
   (link-type      cell-decl-link-type)      ; 'wifi 'lora 'lte-m 'satellite 'serial
   (location-class cell-decl-location-class) ; 'garden 'shore-dock 'reef-float …
-  (accepts-write  cell-decl-accepts-write)) ; #t: node processes task/store intents
+  (accepts-write  cell-decl-accepts-write)  ; #t: node processes task/store intents
+  (write-kinds    cell-decl-write-kinds))   ; #f: any | list of *write-kinds*
 
 (define *link-types* '(wifi lora lte-m satellite serial mesh))
 
 (define* (make-cell-decl #:key node-id heads link-type location-class
-                         (accepts-write #t))
+                         (accepts-write #t) (write-kinds #f))
   (unless (memq link-type *link-types*)
     (error "cell-decl: not a link type" link-type))
-  (%make-cell-decl node-id heads link-type location-class accepts-write))
+  (when (and write-kinds (not (every write-kind? write-kinds)))
+    (error "cell-decl: not a write kind" write-kinds))
+  (%make-cell-decl node-id heads link-type location-class accepts-write
+                   write-kinds))
 
 
 ;;; ── the reading ─────────────────────────────────────────────────────────

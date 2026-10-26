@@ -22,6 +22,12 @@ named is denied as `unknown-lane`. A refusal is a value, never silence.
 | `compute` | refused | none — refused outright | E4/E6 run outside the organism lane (witness simulation) |
 | `engineered` | refused | none — refused outright | none |
 | `relay` | transport | the intent must name the `packet-said` it forwards — only content-addressed bundles move | built (rns_edge.py) |
+| `federated` | provenance | the intent names its `source` network and upstream `source-id` — imports are labeled theirs, never our quorum | built (adapters/federated.scm) |
+
+Write kinds bound what an admitted write may ask of a declared cell
+(`cell-decl` → `write-kinds`; `#f` = any, back-compat):
+`irrigate mist soundscape acoustic-playback water seed mow feed dose
+gpio-feeder downlink vibrate light`.
 
 ## Status legend
 
@@ -45,7 +51,8 @@ claim a tier the artifact hasn't earned.
 
 E2E suites: `tests/e2e/sensing-cell.scm` (full pipeline),
 `refused-lanes.scm`, `write-lanes.scm` (consent-gated writes),
-`connectome-witness.scm`. 63/63 pass under bare Guile via the
+`connectome-witness.scm`, `federated.scm` (provenance lane + write
+registry + webnode). 63/63 pass under bare Guile via the
 `specs.scm` shim; real Goblins when `(goblins)` resolves.
 
 ## Adapters — `adapters/`
@@ -61,6 +68,12 @@ Thin parse-only seams — they never classify (the ≤5% custom rule).
 | `weather.scm` | Open-Meteo context → readings | context on all heads |
 | `reticulum.scm` | UDP socket + LXMF seam → edge | transport for `sense`/`fleet` |
 | `connectome.scm` | LIF verdict JSONL → connectome-verdicts | witness leg |
+| `federated.scm` | `<federated-record>` + `*federated-sources*` catalogue | `federated` lane |
+| `birdweather.scm` … `inat.scm` | open API records → federated records (ObsPy/pyinaturalist/erddapy/dataretrieval at the edge) | `federated` reads |
+| `purpleair.scm` … `goe.scm` | key-required / partnership stubs — `'no-source` until credentials land | `federated` reads |
+| `opensprinkler.scm` … `reef-pi.scm` | admitted emit intents → device commands (farmbot-py etc. at the edge) | `emit`/`cast` writes |
+| `ttn.scm` | TTN webhook uplinks → records; downlinks → LoRaWAN actuators | `federated` + backhaul |
+| `webnode.scm` | browser session → cell-decl + `web-visitor` records | `federated` reads, `emit` writes |
 
 ## Firmware — `firmware/node/main.py`
 
@@ -95,7 +108,7 @@ Deployed: `connectome-compute-api.terexmaps.workers.dev`.
 |---|---|
 | `src/lif.ts` | TypeScript port of `lif.py` — same packed int4 blobs, same Q24 fixed point, same digests. 930/930 bit-identical vs the Python runner (`test/diff.mjs`) |
 | `src/blake2s.ts` | vendored unkeyed BLAKE2s-256 (RFC 7693) |
-| `src/index.ts` | routes: `GET /` (the site) · `GET /info` · `GET /connectomes` · `POST /task` · `POST /verdict` (incl. `"all"`) · `POST /verify` · `GET /receipts` + `/receipts/{said}` (RECEIPTS KV ledger) · `POST /join` (WAITLIST KV waitlist) |
+| `src/index.ts` | routes: `GET /` (the site) · `GET /info` · `GET /connectomes` · `POST /task` · `POST /verdict` (incl. `"all"`) · `POST /verify` · `GET /receipts` + `/receipts/{said}` (RECEIPTS KV ledger) · `POST /join` (WAITLIST KV waitlist) · `GET /federation` (allied-network status + live BirdWeather counts, 5-min cache) · `POST`/`GET /presence` (ephemeral listener count — hashed sessions, ~90 s in-memory window, approximate) |
 
 ## Frontend — `site/`
 

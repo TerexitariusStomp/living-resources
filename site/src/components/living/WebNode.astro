@@ -1,0 +1,139 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// WebNode — a visitor's browser as a living-cloud node. The permission
+// prompt IS the operator consent: mic/camera stay off until the visitor
+// says yes, and closing the tab revokes it. Classification runs on-device;
+// what leaves is a detection receipt, never raw audio. Presence pings are
+// hashed session ids held ~90s in memory — nothing is stored.
+
+interface Props {
+  reads?: string[];
+  writes?: string[];
+  rule?: string;
+}
+const { reads = [], writes = [], rule = '' } = Astro.props;
+---
+
+<div class="webnode not-prose rounded-xl border border-cyan-400/30 bg-cyan-400/5 p-6">
+  <div class="flex items-start gap-4">
+    <div class="text-3xl">📱</div>
+    <div class="flex-1">
+      <h3 class="text-heading text-xl font-bold">Your device can listen too</h3>
+      <p class="text-muted mt-1 text-sm">
+        This {reads.length ? 'phone or laptop' : 'device'} already carries the senses.
+        {rule}
+      </p>
+      <ul class="text-muted mt-3 grid gap-1 text-sm sm:grid-cols-2">
+        {
+          reads.map((r) => (
+            <li>
+              <span class="text-cyan-300">hears ·</span> {r}
+            </li>
+          ))
+        }
+        {
+          writes.map((w) => (
+            <li>
+              <span class="text-amber-300">could write ·</span> {w}
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          id="webnode-start"
+          class="rounded-full bg-cyan-400 px-5 py-2 text-sm font-semibold text-black transition hover:bg-cyan-300 disabled:opacity-50"
+        >
+          Let this device listen
+        </button>
+        <span id="webnode-status" class="text-muted font-mono text-xs">
+          about <b id="webnode-count" class="text-cyan-300">–</b> devices listening right now
+        </span>
+      </div>
+      <p id="webnode-log" class="text-muted mt-2 hidden font-mono text-xs"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const session = crypto.randomUUID();
+  const countEl = document.getElementById('webnode-count') as HTMLElement;
+  const statusEl = document.getElementById('webnode-status') as HTMLElement;
+  const logEl = document.getElementById('webnode-log') as HTMLElement;
+  const btn = document.getElementById('webnode-start') as HTMLButtonElement;
+
+  async function ping() {
+    try {
+      const r = await fetch('/presence', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ session }),
+      });
+      const d = await r.json();
+      if (d.listening != null) countEl.textContent = String(d.listening);
+    } catch {
+      /* presence is best-effort */
+    }
+  }
+  fetch('/presence')
+    .then((r) => r.json())
+    .then((d) => {
+      if (d.listening != null) countEl.textContent = String(d.listening);
+    })
+    .catch(() => {});
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'asking your browser…';
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Let this device listen';
+      logEl.classList.remove('hidden');
+      logEl.textContent = 'permission not granted — nothing turned on, nothing sent';
+      return;
+    }
+    btn.textContent = 'listening — click again to stop';
+    statusEl.innerHTML = 'the mic is on. sounds are checked <b>on this device</b> — only a receipt can leave.';
+    logEl.classList.remove('hidden');
+
+    // on-device detection: energy peaks over the ambient floor. Raw audio
+    // never leaves — the analyser runs in this tab only.
+    const ctx = new AudioContext();
+    const src = ctx.createMediaStreamSource(stream);
+    const an = ctx.createAnalyser();
+    an.fftSize = 2048;
+    src.connect(an);
+    const buf = new Float32Array(an.fftSize);
+    let floor = 0;
+    let hits = 0;
+    let listening = true;
+    const tick = () => {
+      if (!listening) return;
+      an.getFloatTimeDomainData(buf);
+      let peak = 0;
+      for (let i = 0; i < buf.length; i++) peak = Math.max(peak, Math.abs(buf[i]));
+      floor = floor === 0 ? peak : floor * 0.98 + peak * 0.02;
+      if (floor > 0 && peak > floor * 4 && peak > 0.02) hits++;
+      logEl.textContent = `on-device check · ambient floor ${floor.toFixed(3)} · ${hits} sound event${hits === 1 ? '' : 's'} noticed — raw audio stays here`;
+    };
+    const iv = setInterval(tick, 500);
+    const pi = setInterval(ping, 30000);
+    ping();
+
+    btn.addEventListener('click', () => {
+      if (!listening) return;
+      listening = false;
+      clearInterval(iv);
+      clearInterval(pi);
+      stream.getTracks().forEach((t) => t.stop());
+      ctx.close();
+      btn.disabled = false;
+      btn.textContent = 'Let this device listen';
+      statusEl.innerHTML = 'about <b id="webnode-count" class="text-cyan-300">–</b> devices listening right now';
+      logEl.textContent = 'stopped — the mic is off and nothing was sent';
+    });
+  });
+</script>

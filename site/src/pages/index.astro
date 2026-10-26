@@ -12,6 +12,7 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import PlantListen from '~/components/living/PlantListen.astro';
 import Board3D from '~/components/living/Board3D.astro';
 import Globe from '~/components/living/Globe.astro';
+import WebNode from '~/components/living/WebNode.astro';
 import ValueLoop from '~/components/living/ValueLoop.astro';
 import OrganismMap from '~/components/living/OrganismMap.astro';
 import LaneTable from '~/components/living/LaneTable.astro';
@@ -21,6 +22,7 @@ import Comparison from '~/components/widgets/Comparison.astro';
 import Timeline from '~/components/widgets/Timeline.astro';
 import cloud from '~/data/cloud.json';
 import market from '~/data/market.json';
+import federation from '~/data/federation.json';
 import tiers from '~/data/tiers.json';
 import { tierChip, type TierKey } from '~/utils/tiers';
 import { SITE, METADATA, I18N } from 'astrowind:config';
@@ -214,6 +216,21 @@ const concepts = [
     description: `Some things stay blocked on purpose. Making living things compute. Sending signals through them. Changing them.<br/>${chips(['refused'])}`,
   },
   {
+    title: 'Federated',
+    icon: 'tabler:world-share',
+    description: `Heard by another network's boxes — bird trackers, river gauges, sea floats. Their numbers, labeled as theirs.<br/>${chips(['federated'])}`,
+  },
+  {
+    title: 'Realm',
+    icon: 'tabler:map-pin-heart',
+    description: `Guardians of Earth's word for a place with its own caretakers and score. A partner network we are building alongside.<br/>${chips(['federated'])}`,
+  },
+  {
+    title: 'Web node',
+    icon: 'tabler:device-mobile',
+    description: `Your own phone or laptop as a listener. The browser asks first, checking happens on the device, and you can take it back any time.<br/>${chips(['federated'])}`,
+  },
+  {
     title: 'Market report',
     icon: 'tabler:chart-line',
     description: `An estimate of how much people spend on something, written by market researchers. Useful direction, not a measurement.<br/>${chips(['market'])}`,
@@ -301,6 +318,18 @@ const honesty = [
       <b>sparsity</b>, not biological topology. Generational replace-only-if-receipts-show-less is a proposed rule,
       measurable today with E6 replay bundles, not yet enforced. Moving work into living systems stays behind the
       consent and refused lanes.`,
+  },
+  {
+    id: 'truth-federation',
+    tier: 'their devices, their numbers — labeled',
+    color: 'text-cyan-300',
+    title: '"Already listening — nature\'s other ears"',
+    body: `The device counts are the networks' own published numbers, spot-checked live (BirdWeather's public graph
+      returned 26k+ stations when we looked). Federated imports ride provenance — each record names whose device
+      heard it — and are never shown as our quorum. Writes are different: every actuator is owner-keyed.
+      <b>Open-invitation</b> means a stranger may drive it under the owner's published terms (FarmBot's demo garden
+      is the working example); <b>opt-in</b> fleets mean the owner must volunteer. Nobody's device is reachable by
+      default. Your browser's permission prompt is the operator consent — and nothing is recorded unless you say yes.`,
   },
   {
     id: 'truth-market',
@@ -471,6 +500,89 @@ const field: Row[] = [
         Today a regular computer runs the maps. No animal is involved.
       </p>
       <div class="mt-2 text-center"><TierLink anchor="truth-network" tier="live" /></div>
+    </div>
+
+    <!-- the federation: allied networks' devices, honestly labeled -->
+    <div class="mt-16">
+      <Headline
+        tagline="Job 1 · Listen — the shared ears"
+        title="Already listening — nature's other ears"
+        subtitle="Our boxes are not the only ones. Bird trackers, river gauges, sea floats and whole observatories are already out there. We can carry their notes — each one labeled with whose device heard it."
+        classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
+      />
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="rounded-xl border border-white/10 bg-black/30 p-5">
+          <h3 class="text-heading mb-3 font-mono text-xs uppercase tracking-wide">
+            They listen — we carry their notes
+          </h3>
+          <ul class="space-y-2 text-sm">
+            {
+              federation.reads.map((r) => (
+                <li class="flex items-start justify-between gap-3">
+                  <span>
+                    <b class="text-heading">{r.name}</b>
+                    <span class="text-muted"> — {r.hears}</span>
+                    <span class="text-muted block text-xs">{r.devices}</span>
+                  </span>
+                  <span
+                    class:list={[
+                      'mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase',
+                      r.status === 'live' && 'border-[#00d992]/40 text-[#00d992]',
+                      r.status === 'verify' && 'border-cyan-400/40 text-cyan-300',
+                      r.status === 'partner' && 'border-violet-400/40 text-violet-300',
+                    ]}
+                  >
+                    {r.statusLabel}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="rounded-xl border border-white/10 bg-black/30 p-5">
+          <h3 class="text-heading mb-3 font-mono text-xs uppercase tracking-wide">
+            They can act — only when the owner says yes
+          </h3>
+          <ul class="space-y-2 text-sm">
+            {
+              federation.writes.map((w) => (
+                <li class="flex items-start justify-between gap-3">
+                  <span>
+                    <b class="text-heading">{w.name}</b>
+                    <span class="text-muted"> — {w.kind}</span>
+                  </span>
+                  <span
+                    class:list={[
+                      'mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase',
+                      w.status === 'open-invitation' && 'border-[#00d992]/40 text-[#00d992]',
+                      w.status === 'opt-in' && 'border-amber-400/40 text-amber-300',
+                      w.status === 'partner' && 'border-violet-400/40 text-violet-300',
+                      w.status === 'human' && 'border-teal-400/40 text-teal-300',
+                    ]}
+                  >
+                    {w.statusLabel}
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="text-muted mt-3 text-xs">
+            Every write still needs the guardian's yes too — and the device owner's key. Nothing here is reachable
+            without it.
+          </p>
+        </div>
+      </div>
+      <p class="text-muted mt-4 text-center font-mono text-xs">
+        {federation.backhaul.map((b) => `${b.name}: ${b.does}`).join(' ')}
+      </p>
+      <div class="mx-auto mt-8 max-w-3xl">
+        <WebNode
+          reads={federation.yourDevice.reads}
+          writes={federation.yourDevice.writes}
+          rule={federation.yourDevice.rule}
+        />
+      </div>
+      <div class="mt-4 text-center"><TierLink anchor="truth-federation" tier="federated" /></div>
     </div>
   </WidgetWrapper>
 
