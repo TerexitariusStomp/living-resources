@@ -2,6 +2,7 @@
 
 Lanes graduate experiment → offer only when their evidence SAID lands in
 the gate book. Emit/cast/store graduate on consent. Everything else waits.
+Component-level status map: `docs/ARCHITECTURE.md`.
 
 ## v1 — the sensing cell (current)
 

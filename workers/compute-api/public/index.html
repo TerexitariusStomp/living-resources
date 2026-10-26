@@ -159,12 +159,14 @@
 
   /* ── lane map ── */
   .lane {
-    display: grid; grid-template-columns: 9rem 8.5rem 1fr; gap: 1rem;
+    display: grid; grid-template-columns: 9rem 10.5rem 1fr; gap: 1rem;
     padding: .85rem .15rem; border-bottom: 1px solid rgba(61,58,57,.55);
     align-items: baseline;
   }
   .lane:last-child { border-bottom: none; }
   .lane .name { font-family: var(--mono); font-size: .82rem; color: var(--snow); font-weight: 500; }
+  .lane .name .dim { color: var(--slate); font-weight: 400; font-size: .72rem; }
+  .lane .desc code { font-family: var(--mono); font-size: .9em; color: var(--mint); }
   .lane .desc { color: var(--parchment); font-size: .88rem; line-height: 1.55; }
   .lane .desc .src { font-family: var(--mono); font-size: .72rem; color: var(--slate); }
   .badge {
@@ -174,6 +176,7 @@
     width: fit-content; white-space: nowrap;
   }
   .b-live     { color: var(--signal);  border: 1px solid var(--signal); }
+  .b-built    { color: var(--parchment); border: 1px solid var(--parchment); }
   .b-consent  { color: var(--mint);    border: 1px solid var(--charcoal); border-bottom-color: var(--mint); }
   .b-research { color: var(--slate);   border: 1px solid var(--charcoal); }
   .b-cited    { color: var(--parchment); border: 1px solid var(--charcoal); }
@@ -324,29 +327,46 @@
     </div>
     <div class="panel">
       <div class="lane">
-        <span class="name">sense</span><span class="badge b-live">live</span>
-        <span class="desc">Passive multimodal sensing — audio, ultrasonic, environmental, camera, hydrophone front-end on one ~$35–45 node. Nothing attaches, nothing enters soil. <span class="src">EcoCell One · firmware/node</span></span>
-      </div>
-      <div class="lane">
-        <span class="name">compute</span><span class="badge b-live">live</span>
-        <span class="desc">This API — deterministic LIF tasks over 15 real EM-derived connectomes, every receipt replayable to an identical digest. <span class="src">lif.py · FlyEngine.sol</span></span>
+        <span class="name">witness</span><span class="badge b-live">live</span>
+        <span class="desc">This API — deterministic LIF tasks over 15 real EM-derived connectomes, every receipt replayable to an identical digest. Simulation over preserved wiring, as an additive evidence leg — not the refused organism-compute lane. <span class="src">lif.py · lif.ts · connectome.scm</span></span>
       </div>
       <div class="lane">
         <span class="name">store</span><span class="badge b-live">live</span>
-        <span class="desc">As receipts: every reading and task is content-addressed and persisted — tamper-evident commitments, not bulk storage. <span class="src">/receipts · KV ledger</span></span>
+        <span class="desc">As receipts: every reading and task is content-addressed and persisted — tamper-evident commitments, not bulk storage. (The gate's organism-bound <code>store</code> lane is consent-gated — see below; what runs today is the evidence ledger.) <span class="src">/receipts · KV ledger</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">sense</span><span class="badge b-built">built · E0 pending</span>
+        <span class="desc">Passive multimodal sensing — audio, ultrasonic, environmental, camera, hydrophone front-end on one ~$35–45 node. Nothing attaches, nothing enters soil. Firmware + actors e2e-tested; field-validation gate E0 not yet run. <span class="src">EcoCell One · firmware/node</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">fleet</span><span class="badge b-built">built · E0 pending</span>
+        <span class="desc">The second evidence lane — multi-node fleet readings folding into quorum. Same gate: admitted only when the lane's evidence SAID lands. <span class="src">offers.scm · attest.scm</span></span>
       </div>
       <div class="lane">
         <span class="name">emit</span><span class="badge b-consent">consent-gated</span>
         <span class="desc">The write lane exists and is fully implemented — it rides only on joint guardian + operator consent, duty-cycled minimum power, every burst logged and receipted. <span class="src">EmitLane · consent.rego</span></span>
       </div>
       <div class="lane">
-        <span class="name">relay</span><span class="badge b-research">research</span>
-        <span class="desc">Signal through preserved wiring — input current propagates along real synaptic paths, the receipted spike train is the relayed output. E5 is the graduation path. <span class="src">docs/EXPERIMENTS.md</span></span>
+        <span class="name">cast</span><span class="badge b-consent">consent-gated</span>
+        <span class="desc">Broadcast lane — same joint-consent gate: guardian + operator, consent credential SAID, never a default. <span class="src">offers.scm · lane-gate.rego</span></span>
       </div>
       <div class="lane">
-        <span class="name">into-organism</span><span class="badge b-refused">refused</span>
-        <span class="desc"><b>compute / store / hop into living systems — refused.</b> Not until an evidence SAID lands in the gate book; a refusal is a value, not silence. What the field has published as possible is cited below — we claim the receipts, not the miracle. <span class="src">docs/SCIENCE.md</span></span>
+        <span class="name">store <span class="dim">(organism)</span></span><span class="badge b-consent">consent-gated</span>
+        <span class="desc">Organism-bound storage — writing into living systems. Consent-gated by policy; distinct from the evidence ledger running above. <span class="src">lane-gate.rego</span></span>
       </div>
+      <div class="lane">
+        <span class="name">hop</span><span class="badge b-refused">refused</span>
+        <span class="desc">Relay through living wiring — refused outright: consent is not evidence. E5 is the research path toward it, not a lane status. <span class="src">lane-gate.rego · E5</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">compute <span class="dim">(organism)</span></span><span class="badge b-refused">refused</span>
+        <span class="desc">Living-systems compute — refused until an evidence SAID lands. What the field has published as possible is cited below — we claim the receipts, not the miracle. <span class="src">docs/SCIENCE.md</span></span>
+      </div>
+      <div class="lane">
+        <span class="name">engineered</span><span class="badge b-refused">refused</span>
+        <span class="desc">Engineered-biology lanes — refused outright. Natural and wild systems only; no engineered substrate carries a lane here. <span class="src">lane-gate.rego</span></span>
+      </div>
+      <div class="lanenote">// machinery: agents.scm custody → attest.scm quorum → settlement.scm credit → offers.scm gate. component map → docs/ARCHITECTURE.md</div>
       <div class="lanenote">// lanes graduate experiment → offer only when their evidence SAID lands. receipts are the product; the rest is a research program with the brakes on.</div>
     </div>
   </section>
