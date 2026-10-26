@@ -23,14 +23,14 @@ export const footerData = {
     {
       title: 'Source',
       links: [
-        { text: 'GitHub — living-resources', href: 'https://github.com/treetable/living-resources' },
+        { text: 'GitHub — living-resources', href: 'https://github.com/TerexitariusStomp/living-resources' },
         {
           text: 'Architecture map',
-          href: 'https://github.com/treetable/living-resources/blob/main/docs/ARCHITECTURE.md',
+          href: 'https://github.com/TerexitariusStomp/living-resources/blob/master/docs/ARCHITECTURE.md',
         },
         {
           text: 'Claim tiers (SCIENCE.md)',
-          href: 'https://github.com/treetable/living-resources/blob/main/docs/SCIENCE.md',
+          href: 'https://github.com/TerexitariusStomp/living-resources/blob/master/docs/SCIENCE.md',
         },
       ],
     },
@@ -48,7 +48,7 @@ export const footerData = {
     { text: 'Credits & licenses', href: getPermalink('/credits') },
   ],
   socialLinks: [
-    { ariaLabel: 'GitHub', icon: 'tabler:brand-github', href: 'https://github.com/treetable/living-resources' },
+    { ariaLabel: 'GitHub', icon: 'tabler:brand-github', href: 'https://github.com/TerexitariusStomp/living-resources' },
   ],
   footNote: `
     TREETABLE LLC · AGPL-3.0-or-later · Built on <a class="underline" href="https://github.com/arthelokyo/astrowind">AstroWind</a> (MIT) and open libraries — see <a class="underline" href="/credits">credits</a>.

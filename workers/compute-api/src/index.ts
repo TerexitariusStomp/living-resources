@@ -175,7 +175,7 @@ export default {
           "POST /presence": "{session} → ephemeral listener count (in-memory, ~90s window)",
         },
         posture: "every result is deterministic and replayable; the computation is the proof",
-        source: "https://github.com/treetable/living-resources (AGPL-3.0)",
+        source: "https://github.com/TerexitariusStomp/living-resources (AGPL-3.0)",
       });
 
     if (url.pathname === "/connectomes" && req.method === "GET")
