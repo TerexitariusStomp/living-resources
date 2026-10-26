@@ -84,6 +84,10 @@ Large wiring — medulla (40,000 neurons):
 | Biological synapse | ~1–100 pJ / event (literature range) | cited — the substrate the wiring came from |
 | GPU datacenter | ~0.5–5 mJ / small matvec-class op (TDP × latency) | cited — categorical, batching makes per-op numbers context-dependent |
 | Cortical CL1 / FinalSpark | vendor efficiency claims | cited — unverified by us |
+| Human brain (event throughput) | ~10¹³–10¹⁶ ops/s on ~20 W (Merkle 1989 via Sandberg 2016, arXiv:1602.04019; Levy & Calvert, PNAS 2021) | cited — order-of-magnitude estimates; synaptic events ≠ FLOPs |
+| Fastest supercomputer | 1,809 PFLOP/s Rmax at 29.7 MW (El Capitan, TOP500) | cited — reference point: brain ≈ 10×–10,000× more ops/W |
+| Wetware I/O latency | sub-millisecond read/write cycles to 800k lab neurons (Cortical Labs CL1, shipping 2025) | cited — vendor-reported; lab-grown cells, not our substrate |
+| DNA retrieval speed | 3,200× faster reconstruction, +40% accuracy (Bar-Lev et al., Nat. Mach. Intell. 2025) | cited — in-vitro pipeline; non-invasive in-vivo interface unknown |
 
 ## Claim table — exactly what is and isn't evidenced
 
@@ -97,6 +101,9 @@ Large wiring — medulla (40,000 neurons):
 | Deterministic task traces replay bit-for-bit | **measured** — `--replay` (15/15 legs) |
 | On purpose hardware the same wiring would run at ~24 pJ/synop | **projected** — spike counts measured, J/spike cited; projection labeled |
 | Wetware vendors' efficiency claims | **cited** — unverified |
+| Biology beats silicon ~10×–10,000× on ops/W for event workloads | **cited** — published estimates, not our measurement; synaptic events ≠ FLOPs |
+| Sub-millisecond wetware interfaces are commercially shipped | **cited** — vendor-reported (CL1) |
+| Serial digital latency/throughput favors silicon today | **measured** — our API answers in ms on a Worker |
 
 ## E6 — the experiment
 

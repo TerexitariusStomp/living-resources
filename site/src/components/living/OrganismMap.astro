@@ -1,0 +1,128 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// OrganismMap — the living cloud as one organism made of many ecosystems.
+// Static inline SVG: no JS, no external assets. Each ecosystem circle holds a
+// small AI-companion dot and a guardian glyph; thin links join them to the
+// shared receipts core.
+const cells = [
+  { label: 'forest', cx: 150, cy: 96 },
+  { label: 'reef', cx: 330, cy: 96 },
+  { label: 'field', cx: 150, cy: 224 },
+  { label: 'wetland', cx: 330, cy: 224 },
+];
+const core = { cx: 240, cy: 160 };
+---
+
+<figure class="mx-auto max-w-3xl">
+  <svg viewBox="0 0 480 300" class="w-full h-auto" role="img" aria-labelledby="organism-title">
+    <title id="organism-title">The living cloud as one organism</title>
+    <defs>
+      <radialGradient id="om-cell" cx="50%" cy="42%">
+        <stop offset="0%" stop-color="#00d992" stop-opacity="0.14"></stop>
+        <stop offset="100%" stop-color="#00d992" stop-opacity="0.03"></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- outer boundary: one organism -->
+    <rect
+      x="14"
+      y="14"
+      width="452"
+      height="272"
+      rx="40"
+      fill="none"
+      stroke="#00d992"
+      stroke-opacity="0.35"
+      stroke-width="1.5"
+      stroke-dasharray="6 5"></rect>
+    <text x="34" y="44" fill="#00d992" fill-opacity="0.9" font-size="15" font-weight="600" font-family="inherit"
+      >the living cloud</text
+    >
+
+    <!-- links: ecosystems → shared receipts core -->
+    {
+      cells.map((c) => (
+        <line
+          x1={c.cx}
+          y1={c.cy}
+          x2={core.cx}
+          y2={core.cy}
+          stroke="#00d992"
+          stroke-opacity="0.4"
+          stroke-width="1"
+          class="om-link"
+        />
+      ))
+    }
+
+    <!-- shared core -->
+    <circle cx={core.cx} cy={core.cy} r="26" fill="none" stroke="#00d992" stroke-opacity="0.7" stroke-width="1.5"
+    ></circle>
+    <circle cx={core.cx} cy={core.cy} r="5" fill="#00d992"></circle>
+    <text x={core.cx} y={core.cy + 46} text-anchor="middle" fill="#9fb0ab" font-size="12" font-family="inherit"
+      >receipts</text
+    >
+
+    <!-- ecosystem cells -->
+    {
+      cells.map((c) => (
+        <g>
+          <circle
+            cx={c.cx}
+            cy={c.cy}
+            r="52"
+            fill="url(#om-cell)"
+            stroke="#00d992"
+            stroke-opacity="0.55"
+            stroke-width="1.2"
+          />
+          <circle cx={c.cx - 18} cy={c.cy - 8} r="9" fill="#0a0f0d" stroke="#00d992" stroke-width="1.4" />
+          <circle cx={c.cx - 18} cy={c.cy - 8} r="2.4" fill="#00d992" />
+          <circle cx={c.cx + 18} cy={c.cy - 14} r="4" fill="none" stroke="#c9d4cf" stroke-width="1.2" />
+          <path
+            d={`M ${c.cx + 18} ${c.cy - 10} l -6 12 h 12 z`}
+            fill="none"
+            stroke="#c9d4cf"
+            stroke-width="1.2"
+            stroke-linejoin="round"
+          />
+          <text
+            x={c.cx}
+            y={c.cy + 20}
+            text-anchor="middle"
+            fill="#e8efec"
+            font-size="14"
+            font-weight="600"
+            font-family="inherit"
+          >
+            {c.label}
+          </text>
+          <text x={c.cx} y={c.cy + 38} text-anchor="middle" fill="#9fb0ab" font-size="11" font-family="inherit">
+            AI companion + guardian
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+  <figcaption class="text-muted sr-only">
+    One large outline holds four ecosystems — forest, reef, field and wetland. Each keeps its own AI companion and human
+    guardian, and a line links each one to the shared receipts memory at the center.
+  </figcaption>
+</figure>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .om-link {
+      animation: om-pulse 5s ease-in-out infinite;
+    }
+  }
+  @keyframes om-pulse {
+    0%,
+    100% {
+      stroke-opacity: 0.2;
+    }
+    50% {
+      stroke-opacity: 0.55;
+    }
+  }
+</style>

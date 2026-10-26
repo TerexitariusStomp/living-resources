@@ -106,9 +106,11 @@ provenance. Custom code budget: **<5% of everything shipped**
 | Path | Role |
 |---|---|
 | `src/data/lanes.json` | single source of truth for lane portrayal; `tools/site/lane_drift.py` fails CI if it diverges from `specs.scm`/`lane-gate.rego` |
-| `src/data/cloud.json` | living-cloud-vs-conventional comparison rows, trajectory items, per-axis evidence (content, not code) |
-| `src/components/living/` | the custom seam: `LaneTable` `TierLink` `PlantListen` `Board3D` `Globe` `ValueLoop` `JoinForm` `Console` |
-| `src/pages/` | `/` story homepage · `/science` claim tiers · `/developers` API + live console · `/privacy` · `/credits` |
+| `src/data/tiers.json` + `src/utils/tiers.ts` | single source of truth for plain-language claim tiers ("Works today" · "Built — field test next" · …); `tierChip` emits chip markup |
+| `src/data/cloud.json` | living-cloud-vs-conventional comparison rows, trajectory items, per-axis evidence, AI-organism anatomy/evolution copy (content, not code) |
+| `src/components/living/` | the custom seam: `LaneTable` `TierLink` `PlantListen` `Board3D` `Globe` `ValueLoop` `OrganismMap` `JoinForm` `Console` |
+| `src/pages/` | `/` story homepage · `/how-it-works` signal journey + plain-English glossary · `/science` claim tiers · `/developers` API + live console · `/privacy` · `/credits` |
+| `tools/site/readability.py` | Flesch-Kincaid gate: `/` and `/how-it-works` must stay ≤ grade 7 (`make check-readability`) |
 | `public/packed/` `public/audio/` `public/img/` | connectome blobs · CC0 plant-sound clips (Dryad 10.5061/dryad.jwstqjqf7 via `tools/site/plant_audio.py`) · PD/CC0 imagery |
 
 ## Hardware tooling — `tools/pcb/`

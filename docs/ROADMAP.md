@@ -35,6 +35,28 @@ data contracts.
 - Wild-consortium reservoir compute: research lane, E-gated, no claims
   ahead of receipts.
 
+## The AI organism — generational efficiency
+
+The living cloud is portrayed as one organism: per-subject `^eco-agent`
+companions as cells, listeners as senses, quorum + relay as nerves,
+receipts as memory, the connectome engine as brain, mutual credit as
+metabolism, the lane gate as immune system. On the site this is a
+metaphor over real parts — the companions are rule-following actors
+today, not learning models.
+
+The organism gets more efficient on four tracks:
+
+- **Learn nature's designs** — sparse wiring is already measured
+  (46×–5,900× smaller, ~70× J at medulla; sparsity, not topology).
+- **Tune itself** — firmware duty-cycles on fixed dawn/dusk windows,
+  re-tunable via the consent-gated `duty` downlink. Autonomous tuning
+  (learn when to listen, what to keep) is **not built**.
+- **Prove every step** — *proposed rule, not implemented*: a generation
+  replaces the previous one only if replayed receipts (E6 bundles as the
+  yardstick) show it uses less power, space or time.
+- **Move work to nature** — compute/storage migrate to living systems
+  only as consent and refused lanes graduate on evidence.
+
 ## Funding track
 
 - **Now → E0:** self-funded, ~$100 total hardware.

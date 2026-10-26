@@ -1,9 +1,11 @@
 ---
 import { SITE } from 'astrowind:config';
+import { Icon } from 'astro-icon/components';
 ---
 
 <span
   class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
 >
-  🚀 {SITE?.name}
+  <Icon name="tabler:leaf" class="inline-block h-6 w-6 -mt-1 text-[#00d992]" aria-hidden="true" />
+  {SITE?.name}
 </span>

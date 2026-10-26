@@ -1,0 +1,38 @@
+{
+  "science": {
+    "label": "Proven by scientists",
+    "short": "published and checked by other researchers — not our measurement",
+    "icon": "tabler:microscope",
+    "class": "text-teal-300 border-teal-400/40 bg-teal-400/10"
+  },
+  "live": {
+    "label": "Works today",
+    "short": "running now — you can check it yourself",
+    "icon": "tabler:circle-check",
+    "class": "text-[#00d992] border-[#00d992]/40 bg-[#00d992]/10"
+  },
+  "built": {
+    "label": "Built — field test next",
+    "short": "made and tested in the lab, not yet out in nature",
+    "icon": "tabler:tool",
+    "class": "text-sky-300 border-sky-400/40 bg-sky-400/10"
+  },
+  "consent": {
+    "label": "Only with permission",
+    "short": "ready, but locked until nature's guardian and the box's owner both say yes",
+    "icon": "tabler:key",
+    "class": "text-amber-300 border-amber-400/40 bg-amber-400/10"
+  },
+  "vision": {
+    "label": "Someday — we're working on it",
+    "short": "where we are headed, not done yet",
+    "icon": "tabler:telescope",
+    "class": "text-violet-300 border-violet-400/40 bg-violet-400/10"
+  },
+  "refused": {
+    "label": "Not allowed",
+    "short": "blocked on purpose until there is proof it is real and safe",
+    "icon": "tabler:ban",
+    "class": "text-red-400/90 border-red-500/30 bg-red-500/5"
+  }
+}

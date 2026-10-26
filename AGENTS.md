@@ -21,6 +21,7 @@ make check-custom-budget   # first-party LOC vs adopted-OSS seam stubs
 make site                  # build the frontend (site/, AstroWind vendored)
 make check-site-budget     # site custom-code ratio vs everything shipped (<5%)
 make check-lane-drift      # frontend lane rows vs specs.scm/lane-gate.rego
+make check-readability     # / and /how-it-works must stay <= grade 7 (needs textstat: pip install -r tools/site/requirements.txt)
 ```
 
 Tests run directly:

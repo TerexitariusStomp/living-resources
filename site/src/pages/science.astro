@@ -6,19 +6,29 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import LaneTable from '~/components/living/LaneTable.astro';
 import Features2 from '~/components/widgets/Features2.astro';
 import cloud from '~/data/cloud.json';
+import tiers from '~/data/tiers.json';
+import type { TierKey } from '~/utils/tiers';
 
 const metadata = { title: 'The science — every claim tiered' };
 
-const tierCards = [
-  { title: 'real today', description: 'running, deployed, replayable', icon: 'tabler:circle-check' },
-  { title: 'built · pending', description: 'tested end-to-end, field gate unrun', icon: 'tabler:tool' },
-  { title: 'consent-gated', description: 'implemented, locked behind joint consent', icon: 'tabler:key' },
-  { title: 'the vision', description: 'what the network is building toward', icon: 'tabler:telescope' },
-  { title: 'refused', description: 'out of bounds until evidence earns it', icon: 'tabler:ban' },
-];
+const tierCards = (Object.keys(tiers) as TierKey[]).map((k) => ({
+  title: tiers[k].label,
+  description: tiers[k].short,
+  icon: tiers[k].icon,
+}));
 
 // each homepage section, honestly
 const sections = [
+  {
+    id: 'jobs',
+    tier: 'mixed — the four jobs wear different labels',
+    color: 'text-[#00d992]',
+    title: '"Every cloud has four jobs"',
+    body: `Listen — <b>built</b>, field test E0 next. Check — <b>works today</b> via the live receipt API
+      (<code>/verify</code>). Think — <b>works today</b> on silicon over real connectomes; organism compute itself is
+      refused. Remember — receipts <b>today</b>; organism-bound store is <b>consent-gated</b>; DNA storage is
+      <b>someday</b>. The split is the point.`,
+  },
   {
     id: 'plant-sound',
     tier: 'real — published field science',
@@ -34,7 +44,7 @@ const sections = [
     id: 'listener',
     tier: 'built — field validation pending',
     color: 'text-sky-300',
-    title: '"A $40 listener that never touches"',
+    title: '"A $40 box that listens without touching"',
     body: `EcoCell One exists as a manufacturable KiCad board (real Gerbers, pick-and-place files) plus MicroPython
       firmware that passes its e2e suites. It has not yet been deployed in a field pilot — that is what E0 tests.`,
   },
@@ -51,7 +61,7 @@ const sections = [
     id: 'network',
     tier: 'real — one lane live',
     color: 'text-[#00d992]',
-    title: '"Fifteen living wirings answer"',
+    title: '"15 real brain maps answer you"',
     body: `Live today: deterministic LIF tasks over 15 EM-derived connectome wirings, every receipt replayable — TS port
       verified bit-identical to the Python engine (930/930 checks). The globe markers are places the living cloud
       <em>could</em> listen; no field nodes are deployed yet.`,
@@ -60,7 +70,7 @@ const sections = [
     id: 'promises',
     tier: 'enforced in code',
     color: 'text-[#00d992]',
-    title: '"Four rules"',
+    title: '"Four rules the whole cloud follows"',
     body: `Not aspirations — code. The lane gate (<code>lane-gate.rego</code> / <code>offers.scm</code>) admits evidence
       lanes only with an evidence fingerprint, consent lanes only with a joint guardian+operator credential, and
       refuses <code>hop</code>, <code>compute</code>, and <code>engineered</code> outright. 93/93 e2e checks pass.`,
@@ -69,9 +79,25 @@ const sections = [
     id: 'cloud-map',
     tier: 'the vision — trajectory, honestly split',
     color: 'text-amber-300',
-    title: '"The living cloud"',
-    body: `The next-cloud thesis, on the record: we lose on latency, throughput and bulk storage <em>today</em> and say
-      so. Energy per synapse and storage density carry field evidence. The rest is a roadmap, marked as such below.`,
+    title: '"The cloud is going living"',
+    body: `The next-cloud thesis, on the record: one step at a time, silicon wins <em>today</em> — measured and we
+      say so. Per watt and at scale, published evidence already favors living systems; turning that into useful work
+      is the roadmap below.`,
+  },
+  {
+    id: 'organism',
+    tier: 'the vision — a metaphor over real parts',
+    color: 'text-violet-300',
+    title: '"An AI organism that grows with nature"',
+    body: `The nested organism is a metaphor over real parts. Each ecosystem's companion is an <code>^eco-agent</code>
+      actor (<code>agents.scm</code>, e2e-tested): a capability-secure record with guardian custody and voice 0 —
+      <b>not a learning model</b>. The ears already use AI: OpenSoundscape/BirdNET models via
+      <code>classify.py</code>, with an energy-gate fallback. Duty-cycling runs on fixed dawn/dusk windows, re-tunable
+      by a consent-gated <code>duty</code> downlink; autonomous tuning is not built. The sparse-wiring footprint is
+      measured (46×–5,900× smaller, ~70× J at medulla) — and the degree-matched shuffle control shows the gain is
+      <b>sparsity</b>, not biological topology. Generational replace-only-if-receipts-show-less is a proposed rule,
+      measurable today with E6 replay bundles, not yet enforced. Moving work into living systems stays behind the
+      consent and refused lanes.`,
   },
 ];
 
@@ -122,16 +148,31 @@ const field: Row[] = [
     claim: 'Neuromorphic silicon runs at <b>~24–26 pJ per synaptic event</b>; a biological synapse ~1–100 pJ',
     note: '<a class="underline" href="https://doi.org/10.1126/science.1254642">Merolla et al., Science 2014</a> · <a class="underline" href="https://doi.org/10.1109/MM.2018.112130359">Davies et al., IEEE Micro 2018</a> — cited, unverified by us',
   },
+  {
+    claim:
+      'A brain does an estimated <b>10¹³–10¹⁶ ops/s on ~20 W</b> — ~10×–10,000× more per watt than El Capitan (1.8 EFLOP/s @ 29.7 MW)',
+    note: '<a class="underline" href="https://arxiv.org/abs/1602.04019">Sandberg 2016</a> · <a class="underline" href="https://doi.org/10.1073/pnas.2107022118">Levy & Calvert, PNAS 2021</a> · <a class="underline" href="https://www.top500.org/system/180307/">TOP500</a> — cited; synaptic events are not FLOPs',
+  },
+  {
+    claim: 'Commercial wetware already reads and writes living neurons in <b>sub-millisecond cycles</b>',
+    note: 'Cortical Labs CL1, 800k neurons, shipping 2025 — <a class="underline" href="https://www.abc.net.au/news/science/2025-03-05/cortical-labs-neuron-brain-chip/104996484">ABC</a> · <a class="underline" href="https://www.forbes.com/sites/johnkoetsier/2025/06/04/hardware-software-meet-wetware-a-computer-with-800000-human-neurons/">Forbes</a> — vendor-reported, unverified by us; lab-grown cells, not our substrate',
+  },
+  {
+    claim: 'DNA data retrieval got <b>3,200× faster</b> with 40% higher accuracy',
+    note: '<a class="underline" href="https://doi.org/10.1038/s42256-025-01003-z">Bar-Lev et al., Nature Machine Intelligence 2025</a> — in-vitro pipeline; the non-invasive in-vivo interface remains unknown',
+  },
 ];
 ---
 
 <Layout metadata={metadata}>
   <WidgetWrapper containerClass="max-w-5xl pt-8">
-    <Headline
-      tagline="How real is it?"
-      title="Every claim wears its tier"
-      subtitle="The homepage speaks in the future tense. Here is what actually exists — measured by us, demonstrated by the field, pending validation, gated by consent, or refused outright. If it isn't in a tier below, we don't claim it."
-    />
+    <div data-reading="plain">
+      <Headline
+        tagline="Is it real?"
+        title="How much of this works today?"
+        subtitle="Every claim on this site wears a label. Here is what each label means, and the proof behind each one. If something has no label, we don't claim it."
+      />
+    </div>
     <Features2 columns={3} classes={{ container: 'pb-0 md:pb-0 lg:pb-0' }} items={tierCards} />
   </WidgetWrapper>
 

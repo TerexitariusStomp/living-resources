@@ -2,11 +2,11 @@ import { getPermalink } from './utils/permalinks';
 
 export const headerData = {
   links: [
-    { text: 'Story', href: getPermalink('/') },
-    { text: 'Science', href: getPermalink('/science') },
+    { text: 'How it works', href: getPermalink('/how-it-works') },
+    { text: 'Is it real?', href: getPermalink('/science') },
     { text: 'Developers', href: getPermalink('/developers') },
   ],
-  actions: [{ text: 'Join as a guardian', href: getPermalink('/#join') }],
+  actions: [{ text: 'Join', href: getPermalink('/#join') }],
 };
 
 export const footerData = {
@@ -14,7 +14,8 @@ export const footerData = {
     {
       title: 'The project',
       links: [
-        { text: 'The story', href: getPermalink('/') },
+        { text: 'Home', href: getPermalink('/') },
+        { text: 'How it works', href: getPermalink('/how-it-works') },
         { text: 'The science', href: getPermalink('/science') },
         { text: 'For developers', href: getPermalink('/developers') },
         { text: 'Pitch deck', href: '/treetable-deck.pdf' },

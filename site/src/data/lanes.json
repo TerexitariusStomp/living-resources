@@ -5,6 +5,7 @@
     "badge": "live",
     "baseLane": null,
     "plain": "You can check our work",
+    "plainDesc": "Send a signal, get an answer and a receipt. Re-check the receipt yourself and you get the same result.",
     "desc": "This API — deterministic tasks over 15 real connectome wirings (maps of living nervous systems captured by electron microscopy). Every answer comes with a receipt you can replay yourself and get the identical result.",
     "src": "lif.py · lif.ts · connectome.scm"
   },
@@ -14,6 +15,7 @@
     "badge": "live",
     "baseLane": "store",
     "plain": "Every result leaves a permanent fingerprint",
+    "plainDesc": "Every reading and every answer is sealed with a code and kept forever. Change one letter and the seal breaks.",
     "desc": "As receipts: every reading and task is content-addressed and persisted — tamper-evident commitments, not bulk storage. What runs today is the evidence ledger; organism-bound store is consent-gated below.",
     "src": "/receipts · KV ledger"
   },
@@ -23,6 +25,7 @@
     "badge": "built · E0 pending",
     "baseLane": "sense",
     "plain": "Listening without touching",
+    "plainDesc": "A small box hears birds, bugs and plant clicks from a distance. Nothing attaches, nothing enters soil.",
     "desc": "Passive multimodal sensing — audio, ultrasonic, environmental, camera, hydrophone front-end on one ~$35–45 node. Nothing attaches, nothing enters soil. Firmware + actors e2e-tested; field-validation gate E0 not yet run.",
     "src": "EcoCell One · firmware/node"
   },
@@ -32,6 +35,7 @@
     "badge": "built · E0 pending",
     "baseLane": "fleet",
     "plain": "Many listeners, one picture",
+    "plainDesc": "Lots of boxes listen at once, and the cloud counts it only when they agree.",
     "desc": "The second evidence lane — multi-node fleet readings folding into quorum. Same gate: admitted only when the lane's evidence SAID lands.",
     "src": "offers.scm · attest.scm"
   },
@@ -41,6 +45,7 @@
     "badge": "built · transport",
     "baseLane": "relay",
     "plain": "Listeners pass sealed notes",
+    "plainDesc": "Boxes pass sealed notes to each other, like a note down a row of desks. Only sealed notes can be passed.",
     "desc": "Node→node mesh hops — Reticulum store-and-forward carrying only content-addressed bundles: an intent names the packet SAID it moves or it refuses. The network hop, not the biological one.",
     "src": "rns_edge.py · lane-gate.rego"
   },
@@ -49,6 +54,7 @@
     "tier": "consent",
     "badge": "consent-gated",
     "plain": "Talking back — only with two keys",
+    "plainDesc": "Sending a small sound back to nature. It needs two yeses: the guardian's and the box owner's.",
     "desc": "The write lane exists and is fully implemented — it rides only on joint guardian + operator consent, duty-cycled minimum power, every burst logged and receipted.",
     "src": "EmitLane · consent.rego"
   },
@@ -57,6 +63,7 @@
     "tier": "consent",
     "badge": "consent-gated",
     "plain": "Broadcasting — same two-key rule",
+    "plainDesc": "Sending a sound to many at once. Same rule: two yeses, or nothing happens.",
     "desc": "Broadcast lane — same joint-consent gate: guardian + operator, consent credential SAID, never a default.",
     "src": "offers.scm · lane-gate.rego"
   },
@@ -66,6 +73,7 @@
     "badge": "consent-gated",
     "baseLane": "store",
     "plain": "Writing into living systems",
+    "plainDesc": "Saving data with a living thing, like a plant. Locked until both the guardian and the box owner say yes.",
     "desc": "Organism-bound storage — writing into living systems. Consent-gated by policy; distinct from the evidence ledger running above.",
     "src": "lane-gate.rego"
   },
@@ -74,6 +82,7 @@
     "tier": "refused",
     "badge": "refused",
     "plain": "Asking a plant to carry a message",
+    "plainDesc": "Sending signals through living things. Blocked until there is proof it works without harm.",
     "desc": "Relay through living wiring — refused outright: consent is not evidence. E5 is the graduation path: its preserved-wiring harness already passes (15/15 relays replay bit-for-bit across two verifiers), the living half stays refused until evidence lands.",
     "src": "lane-gate.rego · tools/e5"
   },
@@ -83,6 +92,7 @@
     "badge": "refused",
     "baseLane": "compute",
     "plain": "Asking a forest to do math",
+    "plainDesc": "Computing done by living things. Blocked until there is proof it is real.",
     "desc": "Living-systems compute — refused until an evidence SAID lands. What the field has published as possible is cited on /science — we claim the receipts, not the miracle.",
     "src": "docs/SCIENCE.md"
   },
@@ -91,6 +101,7 @@
     "tier": "refused",
     "badge": "refused",
     "plain": "Engineered organisms",
+    "plainDesc": "Living things changed by people in a lab. Not part of this project — wild and natural systems only.",
     "desc": "Engineered-biology lanes — refused outright. Natural and wild systems only; no engineered substrate carries a lane here.",
     "src": "lane-gate.rego"
   }

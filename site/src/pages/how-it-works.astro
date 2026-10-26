@@ -1,0 +1,205 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+import Layout from '~/layouts/PageLayout.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Timeline from '~/components/widgets/Timeline.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import tiers from '~/data/tiers.json';
+import { tierChip, type TierKey } from '~/utils/tiers';
+
+const metadata = { title: 'How the living cloud works' };
+const chip = (k: TierKey) => tierChip(k);
+
+const journey = [
+  {
+    date: 'Proven by scientists',
+    title: 'A plant makes a signal',
+    description:
+      'A tomato plant runs low on water and starts clicking. Scientists recorded this in 2023. Nobody touches the plant. It is just being itself.',
+    icon: 'tabler:plant',
+  },
+  {
+    date: 'Built — field test next',
+    title: 'A listener hears it',
+    description:
+      'A small box sits nearby, not on the plant. Its microphone picks up the click. The box never touches the plant or the soil.',
+    icon: 'tabler:ear',
+  },
+  {
+    date: 'Built — field test next',
+    title: 'Several listeners agree',
+    description:
+      'One box could be wrong. So the cloud waits until several boxes agree, like three friends who all saw the same goal. Scientists call this a quorum.',
+    icon: 'tabler:users-group',
+  },
+  {
+    date: 'Works today',
+    title: 'A receipt is made',
+    description:
+      "The cloud writes down what happened and seals it with a code. Anyone can redo the work and get the same code. If anything was changed, the code won't match.",
+    icon: 'tabler:receipt',
+    highlight: true,
+  },
+  {
+    date: 'Works today',
+    title: 'The cloud thinks it over',
+    description:
+      'The signal runs through maps of real animal nerves, called connectomes. They are like subway maps of tiny brains. Today a regular computer runs these maps. No animal is involved.',
+    icon: 'tabler:route',
+    highlight: true,
+  },
+  {
+    date: 'Built — field test next',
+    title: 'Nature earns credit',
+    description:
+      "The plant's patch of nature earns credit for what it shared. Its AI companion keeps the record, and a human guardian looks after the credit, like a grown-up managing a kid's savings.",
+    icon: 'tabler:coin',
+  },
+  {
+    date: 'Someday',
+    title: 'People protect what pays',
+    description:
+      'When a living forest earns more than a cut-down one, people have a reason to keep it. That is the idea we are testing.',
+    icon: 'tabler:leaf',
+    ghost: true,
+  },
+  {
+    date: 'Someday',
+    title: 'The organism gets better',
+    description:
+      'Every new version of the living cloud must prove with receipts that it uses less power, space and time. Over time, more work moves to nature — with proof and permission.',
+    icon: 'tabler:trending-down',
+    ghost: true,
+  },
+];
+
+const concepts = [
+  {
+    title: 'The living cloud',
+    icon: 'tabler:cloud',
+    description:
+      'A cloud is a network that listens, checks, thinks and remembers. Ours uses nature and small boxes instead of giant buildings.',
+  },
+  {
+    title: 'The AI organism',
+    icon: 'tabler:atom-2',
+    description: `All the AI companions, boxes, receipts and brain maps working together like one living thing. It grows by using less.<br/>${chip('vision')}`,
+  },
+  {
+    title: 'AI companion',
+    icon: 'tabler:robot',
+    description: `Each forest, reef or field gets its own helper that keeps its records, follows its guardian's choices and speaks up for it. Today it is a simple rule-following program.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Listener',
+    icon: 'tabler:ear',
+    description: `Like a weather station with ears. About $40, sun-powered, never touches anything.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Signal',
+    icon: 'tabler:wave-sine',
+    description: `Anything nature gives off that we can sense from far away: a click, a bird song, a change in the water.<br/>${chip('science')}`,
+  },
+  {
+    title: 'Quorum',
+    icon: 'tabler:users-group',
+    description: `Like a video review in sports: one camera angle isn't enough, several have to agree.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Receipt',
+    icon: 'tabler:receipt',
+    description: `Like a sealed envelope with a fingerprint. Open it, redo the work, and the fingerprint must match.<br/>${chip('live')}`,
+  },
+  {
+    title: 'Connectome',
+    icon: 'tabler:route',
+    description: `A map of every nerve in a small animal's brain, like a subway map. We run these maps on computers.<br/>${chip('live')}`,
+  },
+  {
+    title: 'Guardian',
+    icon: 'tabler:user-shield',
+    description: `A person who looks after a plant, animal group or place, like a coach or a parent. They hold its credit and its choices.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Voice 0',
+    icon: 'tabler:hand-stop',
+    description: `Nature always speaks first and can say no. If it says no, nothing happens, and the 'no' is written down.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Credit',
+    icon: 'tabler:coin',
+    description: `Points nature earns for what it shares, kept like a savings account.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Relay',
+    icon: 'tabler:mail-forward',
+    description: `Boxes pass sealed notes to each other, like passing a note down a row of desks. Only sealed notes can be passed.<br/>${chip('built')}`,
+  },
+  {
+    title: 'Only with permission',
+    icon: 'tabler:key',
+    description: `Sending sound into nature, or saving data with it, needs two yeses: the guardian's and the box owner's.<br/>${chip('consent')}`,
+  },
+  {
+    title: 'The brakes',
+    icon: 'tabler:ban',
+    description: `Some things stay blocked on purpose. Making living things compute. Sending signals through them. Changing them.<br/>${chip('refused')}`,
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <!-- the journey -->
+  <WidgetWrapper containerClass="max-w-3xl pt-8">
+    <Headline
+      tagline="How it works"
+      title="Follow one signal through the living cloud"
+      subtitle="Here is what happens, step by step, from a plant's click to a forest worth protecting. Each step says how much of it works today."
+    />
+    <Timeline items={journey} layout="vertical" />
+  </WidgetWrapper>
+
+  <!-- the words -->
+  <Features2
+    id="words"
+    tagline="The glossary"
+    title="The words, in plain English"
+    subtitle="Every word on this site, explained once — and labeled with how real it is."
+    columns={3}
+    items={concepts}
+  />
+
+  <!-- what the labels mean -->
+  <WidgetWrapper id="labels" isDark containerClass="max-w-4xl">
+    <Headline
+      tagline="The labels"
+      title="What each label means"
+      subtitle="Every claim on this site wears one of these. If something has no label, we don't claim it."
+      classes={{ container: 'max-w-3xl' }}
+    />
+    <div class="space-y-3">
+      {
+        (Object.keys(tiers) as TierKey[]).map((k) => (
+          <div class="flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-black/30 p-4">
+            <Fragment set:html={chip(k)} />
+            <span class="text-muted text-sm">{tiers[k].short}</span>
+          </div>
+        ))
+      }
+    </div>
+  </WidgetWrapper>
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'See the proof', href: '/science', icon: 'tabler:file-check' },
+      { text: 'Join the living cloud', href: '/#join', icon: 'tabler:leaf' },
+    ]}
+  >
+    <Fragment slot="title">Want to go deeper?</Fragment>
+    <Fragment slot="subtitle">
+      The science page has the proof behind every label — and it says plainly where we still lose.
+    </Fragment>
+  </CallToAction>
+</Layout>

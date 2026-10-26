@@ -80,4 +80,7 @@ check-site-budget:
 check-lane-drift:
 	@$(PYTHON3) tools/site/lane_drift.py
 
-.PHONY: test check-custom-budget site check-site-budget check-lane-drift
+check-readability:
+	@$(PYTHON3) tools/site/readability.py
+
+.PHONY: test check-custom-budget site check-site-budget check-lane-drift check-readability

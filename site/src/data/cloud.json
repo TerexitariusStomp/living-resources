@@ -2,18 +2,23 @@
   "stats": [
     {
       "value": "415 → 945 TWh",
-      "label": "conventional-cloud electricity, 2024 → 2030",
-      "note": "IEA Energy & AI, base case"
+      "label": "power used by data centers, 2024 → 2030",
+      "note": "about all of Japan's electricity — IEA"
     },
     {
       "value": "$30–70B",
-      "label": "one hyperscale AI campus",
+      "label": "cost of one giant AI data center",
       "note": "Meta Hyperion $72B / 2.26 GW — Epoch AI"
     },
     {
-      "value": "~2W · ~$40",
+      "value": "20 W",
+      "label": "what a human brain runs on",
+      "note": "vs ~30 million W for the fastest supercomputer — PNAS 2021 · TOP500"
+    },
+    {
+      "value": "~2 W · ~$40",
       "label": "one living-cloud listener",
-      "note": "solar, duty-cycled, guardian-hosted"
+      "note": "sun-powered, hosted by a guardian"
     }
   ],
   "comparison": {
@@ -24,89 +29,167 @@
     ],
     "rows": [
       {
-        "label": "A million units",
-        "values": ["one campus ≈ $30–70B", "≈ $40M total, dispersed"]
+        "label": "Cost",
+        "values": ["one giant AI building: $30–70 billion", "a million listener boxes: about $40 million"]
       },
       {
         "label": "Power",
-        "values": ["415 TWh → ~945 TWh by 2030", "~2W per listener, solar"]
+        "values": ["415 TWh a year, heading to ~945", "about 2 watts a box, from sunlight"]
       },
       {
         "label": "Trust",
-        "values": ["the operator's dashboard", "the receipt — replay it yourself"]
+        "values": ["trust the company's dashboard", "a receipt you can re-check yourself"]
       },
       {
-        "label": "Where value flows",
-        "values": ["one operator", "guardians + ecosystems, per contribution"]
+        "label": "Who benefits",
+        "values": ["one company", "nature and its guardians, for each thing they give"]
       },
       {
-        "label": "Latency · throughput · storage",
-        "description": "the honest column",
-        "values": ["world-class today", "behind today — trajectory below"]
+        "label": "Gets better by",
+        "values": ["bigger buildings, more power", "learning from nature and using less each generation"]
+      },
+      {
+        "label": "Speed",
+        "description": "the honest row",
+        "values": ["fastest at one step at a time", "behind on single steps; nature does far more at once per watt"]
       },
       {
         "label": "Reach",
-        "values": ["whatever is uploaded to it", "the biosphere itself, in place"]
+        "values": ["only what people upload", "the living world itself, right where it is"]
       }
     ]
   },
   "trajectory": [
     {
-      "date": "today",
-      "title": "The witness layer",
-      "description": "15 real nervous-system wirings — mapped from actual organisms by electron microscopy — answer deterministic tasks, and every answer carries a receipt anyone can replay. Compute run <em>over</em> nature's wiring: the first living-cloud service.",
+      "date": "Works today",
+      "title": "Checking",
+      "description": "Computers run 15 real brain maps and give receipts anyone can re-check. This is the living cloud's first working service.",
       "icon": "tabler:certificate",
       "highlight": true
     },
     {
-      "date": "next",
-      "title": "The sensing commons",
-      "description": "EcoCell One listeners near forests, reefs and farms — quorum-witnessed readings, guardian custody, per-contribution credit. Fully built and e2e-tested; the field-validation gate (E0) is what remains.",
+      "date": "Built — field test next",
+      "title": "Listening",
+      "description": "Listener boxes near forests, reefs and farms. Built and tested in the lab. Next step: proving they work outdoors.",
       "icon": "tabler:ear"
     },
     {
-      "date": "research",
-      "title": "Compute by living systems",
-      "description": "Hyper-efficient compute done by nature itself. The organism-compute lane graduates only when an evidence fingerprint lands — the preserved-wiring leg already passes (15/15 relays replay bit-for-bit); the living half stays refused until it earns it.",
+      "date": "Someday",
+      "title": "Thinking, done by nature",
+      "description": "Fast, low-power computing done by living things. Other labs already sell computers built from living nerve cells, which shows living things can compute. We would only work with wild nature, never attach anything, and only with proof and permission.",
       "icon": "tabler:cpu",
       "ghost": true
     },
     {
-      "date": "frontier",
-      "title": "Storage inside living systems",
-      "description": "Data embedded in DNA by non-invasive methods not yet known. The density is field-proven — 215 petabytes per gram; the read/write interface is the open problem, and it enters only with consent.",
+      "date": "Someday",
+      "title": "Remembering in DNA",
+      "description": "One gram of DNA can hold about 215 million gigabytes. Nobody yet knows a gentle way to do this in living nature. Finding one is part of the plan.",
       "icon": "tabler:dna",
       "ghost": true
     }
   ],
-  "thesis": "The thesis: biology already beats silicon on energy per synapse (~1–100 pJ) and storage density (215 PB/g). Whether the other axes follow is the question this project exists to answer — every step ships a receipt.",
+  "organism": {
+    "anatomy": [
+      {
+        "title": "Cells — AI companions",
+        "icon": "tabler:atom-2",
+        "description": "One for each forest, reef or field. Today it is a simple program that keeps records and follows its guardian's choices. Learning its home's patterns comes later.",
+        "tiers": ["built", "vision"]
+      },
+      {
+        "title": "Senses — listener boxes",
+        "icon": "tabler:ear",
+        "description": "They hear birds, bugs and plant clicks, and use AI ears to tell the sounds apart.",
+        "tiers": ["built"]
+      },
+      {
+        "title": "Nerves — agreeing and passing notes",
+        "icon": "tabler:share",
+        "description": "Boxes check with each other before anything counts, and pass sealed notes along.",
+        "tiers": ["built"]
+      },
+      {
+        "title": "Memory — receipts",
+        "icon": "tabler:receipt",
+        "description": "Everything it learns is sealed so anyone can re-check it.",
+        "tiers": ["live"]
+      },
+      {
+        "title": "Brain — brain maps",
+        "icon": "tabler:route",
+        "description": "Maps of real animal nerves, run on regular computers. No animal is involved.",
+        "tiers": ["live"]
+      },
+      {
+        "title": "Metabolism — credit",
+        "icon": "tabler:coin",
+        "description": "Credit flows back to the nature that shared, like food that keeps a body going.",
+        "tiers": ["built"]
+      },
+      {
+        "title": "Immune system — the brakes",
+        "icon": "tabler:shield-lock",
+        "description": "Rules that block anything harmful or anything nature has not agreed to.",
+        "tiers": ["built"]
+      }
+    ],
+    "evolve": [
+      {
+        "date": "Works today",
+        "title": "Learn from nature's designs",
+        "description": "In real brains, each nerve links to only a few others. Copying that idea made our brain maps 46 to 5,900 times smaller than the usual way, and they use about 70 times less energy on big maps.",
+        "icon": "tabler:route",
+        "highlight": true
+      },
+      {
+        "date": "Built → Someday",
+        "title": "Tune itself",
+        "description": "Boxes already sleep most of the day and wake for the dawn and dusk choruses. Next, the organism learns on its own when to listen and what to keep.",
+        "icon": "tabler:moon"
+      },
+      {
+        "date": "Works today → Someday",
+        "title": "Prove every step",
+        "description": "A new version can only take over if its receipts prove it uses less power, space or time. Our energy test already works. It gives the same result every time it runs.",
+        "icon": "tabler:trending-down"
+      },
+      {
+        "date": "Someday",
+        "title": "Move work to nature",
+        "description": "Step by step, jobs can move from computer chips to living systems — only with proof and permission. Nothing is attached and nothing is forced.",
+        "icon": "tabler:leaf",
+        "ghost": true
+      }
+    ]
+  },
+  "thesis": "Nature already beats computers at using little energy and packing data tightly. The big question is whether it can win at speed and size too. Every step we take comes with a receipt.",
   "axes": [
     {
       "axis": "general compute",
-      "today": "simulation on silicon; organism compute refused",
-      "field": "biological synapse ~1–100 pJ/event vs TrueNorth ~26 pJ (<a class=\"underline\" href=\"https://doi.org/10.1126/science.1254642\">Science 2014</a>) and Loihi ~23.6 pJ (<a class=\"underline\" href=\"https://doi.org/10.1109/MM.2018.112130359\">IEEE Micro 2018</a>)",
-      "status": "thesis — evidence building",
+      "today": "simulation on silicon; organism compute is not allowed",
+      "field": "biological synapse ~1–100 pJ/event vs TrueNorth ~26 pJ (<a class=\"underline\" href=\"https://doi.org/10.1126/science.1254642\">Science 2014</a>) and Loihi ~23.6 pJ (<a class=\"underline\" href=\"https://doi.org/10.1109/MM.2018.112130359\">IEEE Micro 2018</a>); per watt, a brain does ~10–10,000× more operations than the fastest supercomputer",
+      "status": "someday — evidence building",
       "good": true
     },
     {
       "axis": "latency",
-      "today": "biological dynamics slower than GHz silicon — reported, not hidden",
-      "field": "no published evidence supports a win here",
-      "status": "unproven — we say so",
-      "good": false
+      "today": "one step at a time, silicon wins — our API answers in milliseconds, on the record",
+      "field": "wetware already reads and writes living neurons in under a millisecond (Cortical Labs CL1, vendor-reported — <a class=\"underline\" href=\"https://www.abc.net.au/news/science/2025-03-05/cortical-labs-neuron-brain-chip/104996484\">ABC 2025</a> · <a class=\"underline\" href=\"https://www.forbes.com/sites/johnkoetsier/2025/06/04/hardware-software-meet-wetware-a-computer-with-800000-human-neurons/\">Forbes 2025</a>); in-place listening has no upload delay, because the sensor sits where the signal is; brains finish complex perception in ~100 ms through parallelism, not clock speed",
+      "status": "someday — evidence building",
+      "good": true
     },
     {
       "axis": "throughput",
-      "today": "worse — measured, on the record",
-      "field": "biological parallelism exists (a brain runs ~86B neurons on ~20 W) but mapping it to useful throughput is unproven",
-      "status": "unproven",
-      "good": false
+      "today": "serial FLOPs: worse — measured, on the record",
+      "field": "a brain handles an estimated 10¹³–10¹⁶ operations/s on ~20 W (<a class=\"underline\" href=\"https://arxiv.org/abs/1602.04019\">Sandberg 2016</a> · <a class=\"underline\" href=\"https://doi.org/10.1073/pnas.2107022118\">PNAS 2021</a>); El Capitan does 1.8×10¹⁸ FLOP/s on 29.7 MW (<a class=\"underline\" href=\"https://www.top500.org/system/180307/\">TOP500</a>) — that is ~10×–10,000× more operations per watt for the brain. Synaptic events are not FLOPs, and turning them into useful work is the open problem",
+      "status": "someday — evidence building",
+      "good": true
     },
     {
       "axis": "storage",
       "today": "the evidence ledger — receipts, not bulk data",
-      "field": "DNA reaches 215 PB/g (<a class=\"underline\" href=\"https://doi.org/10.1126/science.aaj2038\">Erlich, Science 2017</a>) vs conventional media; the non-invasive read/write interface is unknown — and enters only with consent",
-      "status": "density evidenced · interface unknown",
+      "field": "DNA reaches 215 PB/g (<a class=\"underline\" href=\"https://doi.org/10.1126/science.aaj2038\">Erlich, Science 2017</a>) vs conventional media; reading it back already got 3,200× faster (<a class=\"underline\" href=\"https://doi.org/10.1038/s42256-025-01003-z\">Bar-Lev, Nature Machine Intelligence 2025</a>); the non-invasive read/write interface is unknown — and enters only with consent",
+      "status": "someday — density proven, method unknown",
       "good": true
     }
   ]

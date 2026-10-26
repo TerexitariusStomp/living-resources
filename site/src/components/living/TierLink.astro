@@ -1,16 +1,23 @@
 ---
 // SPDX-License-Identifier: AGPL-3.0-or-later
-// Small "how real is this?" pointer into /science anchors.
+// Small "how real is this?" pointer into /science anchors, with an optional
+// plain-language tier chip from src/data/tiers.json.
+import { tierChip, type TierKey } from '~/utils/tiers';
+
 interface Props {
   anchor: string;
   label?: string;
+  tier?: TierKey;
 }
-const { anchor, label = 'how real is this?' } = Astro.props;
+const { anchor, label = 'how real is this?', tier } = Astro.props;
 ---
 
-<a
-  href={`/science#${anchor}`}
-  class="mt-3 inline-flex items-center gap-1 font-mono text-xs text-[#00d992]/80 hover:text-[#00d992]"
->
-  → {label}
-</a>
+<span class="mt-3 inline-flex items-center gap-2">
+  {tier && <Fragment set:html={tierChip(tier)} />}
+  <a
+    href={`/science#${anchor}`}
+    class="inline-flex items-center gap-1 font-mono text-xs text-[#00d992]/80 hover:text-[#00d992]"
+  >
+    → {label}
+  </a>
+</span>
