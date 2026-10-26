@@ -26,10 +26,20 @@
   const whenEl = document.getElementById('fedlive-when') as HTMLElement;
   const listEl = document.getElementById('fedlive-dets') as HTMLElement;
 
+  interface FedSource {
+    name: string;
+    devices?: number;
+  }
+  interface FedDetection {
+    species?: string;
+    station?: string;
+    at?: string;
+  }
+
   fetch('/federation')
     .then((r) => r.json())
     .then((d) => {
-      const bw = (d.sources ?? []).find((s: any) => s.name === 'birdweather');
+      const bw = ((d.sources as FedSource[] | undefined) ?? []).find((s) => s.name === 'birdweather');
       if (bw?.devices) countEl.textContent = Number(bw.devices).toLocaleString();
       else countEl.textContent = '26,000+';
       if (d.generated_at) {
@@ -41,9 +51,9 @@
         listEl.innerHTML = '<li class="text-muted">the network answered but sent no fresh detections</li>';
         return;
       }
-      listEl.innerHTML = dets
+      listEl.innerHTML = (dets as FedDetection[])
         .map(
-          (x: any) => `<li class="flex items-center justify-between gap-3">
+          (x) => `<li class="flex items-center justify-between gap-3">
             <span><b class="text-heading">${x.species ?? 'unknown bird'}</b>
             <span class="text-muted"> heard by station ${x.station ?? '?'}</span></span>
             <span class="text-muted shrink-0">${x.at ? new Date(x.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>

@@ -1,0 +1,32 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Details — a drawer for expanded detail. Same pattern as the collapsible
+// FAQ rows: native <details>/<summary>, no JS. All instances share
+// name="deep-dive" so opening one closes the others.
+
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  title: string;
+  hint?: string;
+}
+const { title, hint } = Astro.props;
+---
+
+<details name="deep-dive" class="group rounded-xl border border-white/10 bg-black/30">
+  <summary
+    class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 outline-offset-4 [&::-webkit-details-marker]:hidden"
+  >
+    <span>
+      <span class="text-heading font-semibold">{title}</span>
+      {hint && <span class="text-muted ml-2 text-sm">{hint}</span>}
+    </span>
+    <Icon
+      name="tabler:chevron-down"
+      class="h-5 w-5 shrink-0 text-[#00d992] transition-transform duration-200 group-open:rotate-180"
+    />
+  </summary>
+  <div class="border-t border-white/10 px-5 py-5">
+    <slot />
+  </div>
+</details>

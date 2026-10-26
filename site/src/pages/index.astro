@@ -14,6 +14,7 @@ import Board3D from '~/components/living/Board3D.astro';
 import Globe from '~/components/living/Globe.astro';
 import WebNode from '~/components/living/WebNode.astro';
 import FedLive from '~/components/living/FedLive.astro';
+import Details from '~/components/living/Details.astro';
 import ValueLoop from '~/components/living/ValueLoop.astro';
 import OrganismMap from '~/components/living/OrganismMap.astro';
 import LaneTable from '~/components/living/LaneTable.astro';
@@ -200,26 +201,6 @@ const concepts = [
     title: 'Credit',
     icon: 'tabler:coin',
     description: `Points nature earns for what it shares, kept like a savings account.<br/>${chips(['built'])}`,
-  },
-  {
-    title: 'Relay',
-    icon: 'tabler:mail-forward',
-    description: `Boxes pass sealed notes to each other, like passing a note down a row of desks. Only sealed notes can be passed.<br/>${chips(['built'])}`,
-  },
-  {
-    title: 'Only with permission',
-    icon: 'tabler:key',
-    description: `Sending sound into nature, or saving data with it, needs two yeses: the guardian's and the box owner's.<br/>${chips(['consent'])}`,
-  },
-  {
-    title: 'The brakes',
-    icon: 'tabler:ban',
-    description: `Some things stay blocked on purpose. Making living things compute. Sending signals through them. Changing them.<br/>${chips(['refused'])}`,
-  },
-  {
-    title: 'Federated',
-    icon: 'tabler:world-share',
-    description: `Heard by another network's boxes — bird trackers, river gauges, sea floats. Their numbers, labeled as theirs.<br/>${chips(['federated'])}`,
   },
   {
     title: 'Realm',
@@ -439,22 +420,11 @@ const field: Row[] = [
       classes={{ container: 'max-w-4xl' }}
     />
     <Features2 columns={2} classes={{ container: 'pb-0 md:pb-0 lg:pb-0' }} items={jobs} />
-    <div class="mx-auto mt-4 max-w-3xl">
-      <Headline
-        tagline="One signal's journey"
-        title="Follow a plant's click through the living cloud"
-        subtitle="Step by step, from a thirsty tomato plant to a forest worth protecting. Each step says how much of it works today."
-        classes={{ title: 'text-2xl md:text-3xl' }}
-      />
-      <Timeline items={journey} layout="vertical" />
+    <div class="mx-auto mt-8 max-w-3xl">
+      <Details title="Follow one signal's journey" hint="7 steps, click to expand">
+        <Timeline items={journey} layout="vertical" />
+      </Details>
     </div>
-    <Features2
-      tagline="The glossary"
-      title="The words, in plain English"
-      subtitle="Every word on this page, explained once — and labeled with how real it is."
-      columns={3}
-      items={concepts}
-    />
   </WidgetWrapper>
 
   <!-- 3 — live: hear it, see it, try it -->
@@ -474,17 +444,9 @@ const field: Row[] = [
         <Headline
           tagline="Job 1 · Listen — the ears"
           title="A $40 box that listens without touching"
-          subtitle="It sits near living things, never on them. Nothing sticks to a plant or animal. Nothing goes into the soil. It listens, and sends what it hears to the cloud."
+          subtitle="It hears birds, insects and plant clicks, sees the weather nearby — and talks back only when nature's guardian and the box's owner both say yes. It sits near living things, never on them."
           classes={{ container: 'md:mx-0 md:text-left mb-6', title: 'text-2xl md:text-3xl' }}
         />
-        <ul class="text-muted space-y-2 text-base">
-          <li><b class="text-heading">Hears</b> — birds, insects, plant clicks</li>
-          <li><b class="text-heading">Sees</b> — a camera, the weather, the soil nearby</li>
-          <li><b class="text-heading">Never touches</b> — built into the design</li>
-          <li>
-            <b class="text-heading">Talks back</b> — only when nature's guardian and the box's owner both say yes
-          </li>
-        </ul>
         <TierLink anchor="truth-listener" tier="built" />
       </div>
       <Board3D />
@@ -511,92 +473,79 @@ const field: Row[] = [
         subtitle="Our boxes are not the only ones. Bird trackers, river gauges, sea floats and whole observatories are already out there. We can carry their notes — each one labeled with whose device heard it."
         classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
       />
-      <div class="grid gap-6 md:grid-cols-2">
-        <div class="rounded-xl border border-white/10 bg-black/30 p-5">
-          <h3 class="text-heading mb-3 font-mono text-xs uppercase tracking-wide">
-            They listen — we carry their notes
-          </h3>
-          <ul class="space-y-2 text-sm">
-            {
-              federation.reads.map((r) => (
-                <li class="flex items-start justify-between gap-3">
-                  <span>
-                    <b class="text-heading">{r.name}</b>
-                    <span class="text-muted"> — {r.hears}</span>
-                    <span class="text-muted block text-xs">{r.devices}</span>
-                  </span>
-                  <span
-                    class:list={[
-                      'mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase',
-                      r.status === 'live' && 'border-[#00d992]/40 text-[#00d992]',
-                      r.status === 'verify' && 'border-cyan-400/40 text-cyan-300',
-                      r.status === 'partner' && 'border-violet-400/40 text-violet-300',
-                    ]}
-                  >
-                    {r.statusLabel}
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-        <div class="rounded-xl border border-white/10 bg-black/30 p-5">
-          <h3 class="text-heading mb-3 font-mono text-xs uppercase tracking-wide">
-            They can act — only when the owner says yes
-          </h3>
-          <ul class="space-y-2 text-sm">
-            {
-              federation.writes.map((w) => (
-                <li class="flex items-start justify-between gap-3">
-                  <span>
-                    <b class="text-heading">{w.name}</b>
-                    <span class="text-muted"> — {w.kind}</span>
-                  </span>
-                  <span
-                    class:list={[
-                      'mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase',
-                      w.status === 'open-invitation' && 'border-[#00d992]/40 text-[#00d992]',
-                      w.status === 'opt-in' && 'border-amber-400/40 text-amber-300',
-                      w.status === 'partner' && 'border-violet-400/40 text-violet-300',
-                      w.status === 'human' && 'border-teal-400/40 text-teal-300',
-                    ]}
-                  >
-                    {w.statusLabel}
-                  </span>
-                </li>
-              ))
-            }
-          </ul>
-          <p class="text-muted mt-3 text-xs">
-            Every write still needs the guardian's yes too — and the device owner's key. Nothing here is reachable
-            without it.
+      <div class="mx-auto max-w-4xl">
+        <Details title="The catalogue — every allied network" hint="reads, writes, status">
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="rounded-xl border border-white/10 bg-black/30 p-5">
+              <h3 class="text-heading mb-3 font-mono text-xs uppercase tracking-wide">
+                They listen — we carry their notes
+              </h3>
+              <ul class="space-y-2 text-sm">
+                {
+                  federation.reads.map((r) => (
+                    <li class="flex items-start justify-between gap-3">
+                      <span>
+                        <b class="text-heading">{r.name}</b>
+                        <span class="text-muted"> — {r.hears}</span>
+                        <span class="text-muted block text-xs">{r.devices}</span>
+                      </span>
+                      <span
+                        class:list={[
+                          'mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase',
+                          r.status === 'live' && 'border-[#00d992]/40 text-[#00d992]',
+                          r.status === 'verify' && 'border-cyan-400/40 text-cyan-300',
+                          r.status === 'partner' && 'border-violet-400/40 text-violet-300',
+                        ]}
+                      >
+                        {r.statusLabel}
+                      </span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-black/30 p-5">
+              <h3 class="text-heading mb-3 font-mono text-xs uppercase tracking-wide">
+                They can act — only when the owner says yes
+              </h3>
+              <ul class="space-y-2 text-sm">
+                {
+                  federation.writes.map((w) => (
+                    <li class="flex items-start justify-between gap-3">
+                      <span>
+                        <b class="text-heading">{w.name}</b>
+                        <span class="text-muted"> — {w.kind}</span>
+                      </span>
+                      <span
+                        class:list={[
+                          'mt-0.5 shrink-0 rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase',
+                          w.status === 'open-invitation' && 'border-[#00d992]/40 text-[#00d992]',
+                          w.status === 'opt-in' && 'border-amber-400/40 text-amber-300',
+                          w.status === 'partner' && 'border-violet-400/40 text-violet-300',
+                          w.status === 'human' && 'border-teal-400/40 text-teal-300',
+                        ]}
+                      >
+                        {w.statusLabel}
+                      </span>
+                    </li>
+                  ))
+                }
+              </ul>
+              <p class="text-muted mt-3 text-xs">
+                Every write needs two yeses: the device owner's key and the place's guardian. Each device answers only
+                for what it declared — a watering box waters; it cannot be asked to play sound. Every ask and act leaves
+                a receipt.
+              </p>
+            </div>
+          </div>
+          <p class="text-muted mt-4 font-mono text-xs">
+            {federation.backhaul.map((b) => `${b.name}: ${b.does}`).join(' ')}
           </p>
-        </div>
+        </Details>
       </div>
       <div class="mx-auto mt-6 max-w-3xl">
         <FedLive />
       </div>
-      <div class="mx-auto mt-8 grid max-w-4xl gap-3 text-center sm:grid-cols-4">
-        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
-          <p class="text-heading text-sm font-semibold">1 · the owner's key</p>
-          <p class="text-muted mt-1 text-xs">Every device answers to its owner first. No key, no touch.</p>
-        </div>
-        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
-          <p class="text-heading text-sm font-semibold">2 · the guardian's yes</p>
-          <p class="text-muted mt-1 text-xs">The place's guardian agrees too. Both, or nothing happens.</p>
-        </div>
-        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
-          <p class="text-heading text-sm font-semibold">3 · only what it says it does</p>
-          <p class="text-muted mt-1 text-xs">A watering box waters. It cannot be asked to play sound.</p>
-        </div>
-        <div class="rounded-lg border border-white/10 bg-black/30 px-3 py-3">
-          <p class="text-heading text-sm font-semibold">4 · a receipt, always</p>
-          <p class="text-muted mt-1 text-xs">Every ask and every act is sealed so anyone can re-check it.</p>
-        </div>
-      </div>
-      <p class="text-muted mt-4 text-center font-mono text-xs">
-        {federation.backhaul.map((b) => `${b.name}: ${b.does}`).join(' ')}
-      </p>
       <div class="mx-auto mt-8 max-w-3xl">
         <WebNode
           reads={federation.yourDevice.reads}
@@ -625,34 +574,22 @@ const field: Row[] = [
       classes={{ container: 'pb-0 md:pb-0 lg:pb-0 pt-8 md:pt-8' }}
       items={[
         {
-          title: 'Water & food',
-          description: 'A thirsty field clicks before it wilts. Hearing it early costs less than losing a crop.',
-          icon: 'tabler:droplet',
-        },
-        {
-          title: 'Early warning',
-          description: 'Sick crops, stressed reefs, a wetland gone quiet — heard days before anyone can see it.',
+          title: 'Early warning, cheaper water',
+          description:
+            'A thirsty field clicks before it wilts. Sick crops and stressed reefs show up in sound days before anyone can see them.',
           icon: 'tabler:alert-triangle',
         },
         {
-          title: 'Proof, not promises',
-          description: 'Every claim comes with a receipt. Anyone can check the same number.',
+          title: 'Proof that pays',
+          description:
+            'Every claim comes with a receipt anyone can re-check. Nature earns credit for what it gives. A forest starts to pay for its own protection.',
           icon: 'tabler:file-check',
         },
         {
-          title: 'A paycheck for nature',
-          description: 'Nature earns credit for what it gives. That helps a forest pay for its own protection.',
-          icon: 'tabler:coin',
-        },
-        {
           title: 'Nature can say no',
-          description: "If a living system should not be listened to, it stays unread. Even the 'no' is written down.",
+          description:
+            "Listening, paying back, letting it refuse. If a living system should not be read, it stays unread. Even the 'no' is written down.",
           icon: 'tabler:shield-lock',
-        },
-        {
-          title: 'Living together',
-          description: 'Not taking from nature, not ignoring it. Listening, paying it back, and letting it say no.',
-          icon: 'tabler:leaf',
         },
       ]}
     />
@@ -682,31 +619,35 @@ const field: Row[] = [
           ))
         }
       </div>
-      <div class="mx-auto mt-12 flex max-w-3xl flex-col items-center gap-3">
-        {
-          market.funnel.map((f) => (
-            <div class={`${f.width} rounded-lg border border-white/10 bg-black/30 p-5 text-center`}>
-              <div class="text-muted font-mono text-xs uppercase tracking-wide">{f.tier}</div>
-              <div class="text-heading font-semibold">{f.plain}</div>
-              <div class="font-heading mt-1 text-xl font-bold text-[#00d992]">{f.value}</div>
-              <p class="text-muted mt-1 text-sm">{f.desc}</p>
-              <div class="text-muted mt-1 font-mono text-xs" data-reading="skip">
-                {f.note}
-              </div>
-            </div>
-          ))
-        }
+      <div class="mx-auto mt-8 max-w-3xl">
+        <Details title="How big, and how we'd earn" hint="the funnel and the four-rung plan">
+          <div class="flex flex-col items-center gap-3">
+            {
+              market.funnel.map((f) => (
+                <div class={`${f.width} rounded-lg border border-white/10 bg-black/30 p-5 text-center`}>
+                  <div class="text-muted font-mono text-xs uppercase tracking-wide">{f.tier}</div>
+                  <div class="text-heading font-semibold">{f.plain}</div>
+                  <div class="font-heading mt-1 text-xl font-bold text-[#00d992]">{f.value}</div>
+                  <p class="text-muted mt-1 text-sm">{f.desc}</p>
+                  <div class="text-muted mt-1 font-mono text-xs" data-reading="skip">
+                    {f.note}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <Features2
+            tagline="How the living cloud earns"
+            title="Four rungs, in order"
+            columns={2}
+            classes={{ container: 'pb-0 md:pb-0 lg:pb-0 pt-8' }}
+            items={market.ladder.map((l) => ({
+              title: l.title,
+              description: `${l.desc}<br/>${chips(l.chips as TierKey[])}`,
+            }))}
+          />
+        </Details>
       </div>
-      <Features2
-        tagline="How the living cloud earns"
-        title="Four rungs, in order"
-        columns={2}
-        classes={{ container: 'pb-0 md:pb-0 lg:pb-0 pt-8' }}
-        items={market.ladder.map((l) => ({
-          title: l.title,
-          description: `${l.desc}<br/>${chips(l.chips as TierKey[])}`,
-        }))}
-      />
       <p class="text-muted mx-auto mt-4 max-w-3xl border-l-2 border-orange-400/40 pl-4 text-sm italic">
         We're not claiming this revenue yet — these are the market's own numbers, and the receipts are ours.
       </p>
@@ -714,103 +655,86 @@ const field: Row[] = [
     </div>
   </WidgetWrapper>
 
-  <!-- 5 — the AI organism -->
-  <WidgetWrapper id="organism" isDark containerClass="max-w-6xl">
+  <!-- 5 — the future: one organism, and how it compares -->
+  <WidgetWrapper id="future" isDark containerClass="max-w-6xl">
+    <span id="organism"></span><span id="cloud"></span>
     <Headline
-      tagline="One organism, many parts"
-      title="An AI organism that grows with nature"
-      subtitle="Think of the living cloud as one big living thing made of many small ones. Every forest, reef or field gets its own AI companion that speaks up for it. Together, all the companions form one organism. Each new generation has to prove it uses less than the last."
+      tagline="Where it's going"
+      title="One organism that grows with nature — and how it compares"
+      subtitle="Every forest, reef or field gets an AI helper. Together they form one organism. Each new generation must use less than the last. Today's cloud lives in giant buildings. Ours runs on sunlight, where nature already lives. For the price of one AI building: hundreds of millions of listener boxes."
       classes={{ container: 'max-w-4xl' }}
     />
     <OrganismMap />
-    <Features2
-      tagline="Its body"
-      title="Part by part"
-      columns={2}
-      items={cloud.organism.anatomy.map((a) => ({
-        title: a.title,
-        icon: a.icon,
-        description: `${a.description}<br/>${chips(a.tiers as TierKey[])}`,
-      }))}
-    />
-    <div class="mx-auto mt-14 max-w-3xl">
-      <Headline
-        tagline="How it evolves"
-        title="Each generation uses less"
-        classes={{ title: 'text-2xl md:text-3xl' }}
-      />
-      <Timeline items={cloud.organism.evolve} layout="vertical" />
-      <p class="text-muted mt-8 border-l-2 border-[#00d992]/40 pl-4 text-sm italic">
-        The more it learns from nature, the less it takes from the world. Today it is mostly computers and code — it
-        grows only as fast as the receipts allow.
-      </p>
+    <div class="mx-auto mt-8 max-w-3xl">
+      <Details title="The organism, part by part" hint="anatomy + each generation uses less">
+        <Features2
+          columns={2}
+          items={cloud.organism.anatomy.map((a) => ({
+            title: a.title,
+            icon: a.icon,
+            description: `${a.description}<br/>${chips(a.tiers as TierKey[])}`,
+          }))}
+        />
+        <Timeline items={cloud.organism.evolve} layout="vertical" />
+        <p class="text-muted mt-8 border-l-2 border-[#00d992]/40 pl-4 text-sm italic">
+          The more it learns from nature, the less it takes from the world. Today it is mostly computers and code — it
+          grows only as fast as the receipts allow.
+        </p>
+      </Details>
     </div>
     <div class="mt-6 text-center"><TierLink anchor="truth-organism" tier="vision" /></div>
-  </WidgetWrapper>
-
-  <!-- 6 — the cloud: where we stand -->
-  <WidgetWrapper id="cloud" containerClass="max-w-6xl">
-    <Headline
-      tagline="Job 4 · Remember — and where we're going"
-      title="The cloud is going living"
-      subtitle="Today's cloud runs in giant buildings that use as much power as whole countries. The living cloud runs on sunlight, in the places nature already lives. For the price of one giant AI building, you could build hundreds of millions of listener boxes."
-      classes={{ container: 'max-w-4xl' }}
-    />
-    <div class="mx-auto mb-12 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {
-        cloud.stats.map((s) => (
-          <div class="rounded-lg border border-white/10 bg-black/30 p-5 text-center">
-            <div class="font-heading text-2xl font-bold text-[#00d992]">{s.value}</div>
-            <div class="text-default mt-1 text-sm">{s.label}</div>
-            <div class="text-muted mt-1 font-mono text-xs" data-reading="skip">
-              {s.note}
-            </div>
-          </div>
-        ))
-      }
-    </div>
-    <Comparison
-      mode="versus"
-      firstColumnLabel={cloud.comparison.firstColumnLabel}
-      columns={cloud.comparison.columns}
-      rows={cloud.comparison.rows}
-    />
-    <div class="mx-auto mt-16 max-w-3xl">
-      <Timeline items={cloud.trajectory} layout="vertical" />
-    </div>
-    <div class="mt-16 space-y-3" data-reading="skip">
-      <Headline
-        tagline="The honest scorecard"
-        title="Where the living cloud stands against the conventional one"
-        classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
-      />
-      {
-        cloud.axes.map((a) => (
-          <div class="rounded-lg border border-white/10 bg-black/30 p-5">
-            <div class="flex flex-wrap items-baseline justify-between gap-2">
-              <h3 class="font-semibold text-heading">{a.axis}</h3>
-              <span
-                class:list={[
-                  'font-mono text-xs uppercase tracking-wide',
-                  a.good ? 'text-[#00d992]' : 'text-red-400/80',
-                ]}
-              >
-                {a.status}
-              </span>
-            </div>
-            <div class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
-              <p class="text-muted">
-                <span class="text-default font-mono text-xs uppercase tracking-wide">today — </span>
-                {a.today}
-              </p>
-              <p class="text-muted">
-                <span class="text-default font-mono text-xs uppercase tracking-wide">field — </span>
-                <span set:html={a.field} />
-              </p>
-            </div>
-          </div>
-        ))
-      }
+    <div class="mx-auto mt-10 max-w-3xl">
+      <Details title="The honest scorecard" hint="versus table, axis by axis, and the roadmap">
+        <div class="mb-8 grid gap-4 sm:grid-cols-2">
+          {
+            cloud.stats.map((s) => (
+              <div class="rounded-lg border border-white/10 bg-black/30 p-5 text-center">
+                <div class="font-heading text-2xl font-bold text-[#00d992]">{s.value}</div>
+                <div class="text-default mt-1 text-sm">{s.label}</div>
+                <div class="text-muted mt-1 font-mono text-xs" data-reading="skip">
+                  {s.note}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <Comparison
+          mode="versus"
+          firstColumnLabel={cloud.comparison.firstColumnLabel}
+          columns={cloud.comparison.columns}
+          rows={cloud.comparison.rows}
+        />
+        <div class="mt-8 space-y-3" data-reading="skip">
+          {
+            cloud.axes.map((a) => (
+              <div class="rounded-lg border border-white/10 bg-black/30 p-5">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 class="font-semibold text-heading">{a.axis}</h3>
+                  <span
+                    class:list={[
+                      'font-mono text-xs uppercase tracking-wide',
+                      a.good ? 'text-[#00d992]' : 'text-red-400/80',
+                    ]}
+                  >
+                    {a.status}
+                  </span>
+                </div>
+                <div class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                  <p class="text-muted">
+                    <span class="text-default font-mono text-xs uppercase tracking-wide">today — </span>
+                    {a.today}
+                  </p>
+                  <p class="text-muted">
+                    <span class="text-default font-mono text-xs uppercase tracking-wide">field — </span>
+                    <span set:html={a.field} />
+                  </p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <Timeline items={cloud.trajectory} layout="vertical" />
+      </Details>
     </div>
     <div class="mx-auto mt-8 max-w-3xl">
       <p class="text-muted border-l-2 border-[#00d992]/40 pl-4 text-sm italic">{cloud.thesis}</p>
@@ -862,16 +786,34 @@ const field: Row[] = [
       class="mx-auto mb-10 max-h-64 w-full max-w-3xl rounded-lg border border-white/10 object-cover"
       loading="lazy"
     />
-    <Headline tagline="The labels" title="What each label means" classes={{ title: 'text-2xl md:text-3xl' }} />
-    <div class="mb-14 space-y-3">
+    <Headline
+      tagline="The words and the labels"
+      title="Every word and label, in plain English"
+      classes={{ title: 'text-2xl md:text-3xl' }}
+    />
+    <div class="mb-8 flex flex-wrap items-center gap-x-4 gap-y-2" data-reading="skip">
       {
         (Object.keys(tiers) as TierKey[]).map((k) => (
-          <div class="flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-black/30 p-4">
+          <span class="inline-flex items-center gap-2">
             <Fragment set:html={tierChip(k)} />
-            <span class="text-muted text-sm">{tiers[k].short}</span>
-          </div>
+            <span class="text-muted text-xs">{tiers[k].short}</span>
+          </span>
         ))
       }
+    </div>
+    <div class="mx-auto mb-14 max-w-3xl">
+      <Details title="The words we use" hint="every term, in plain English">
+        <div class="grid gap-3 sm:grid-cols-2">
+          {
+            concepts.map((c) => (
+              <div class="rounded-lg border border-white/10 bg-black/20 p-4">
+                <span class="text-heading font-semibold">{c.title}</span>
+                <p class="text-muted mt-1 text-sm" set:html={c.description} />
+              </div>
+            ))
+          }
+        </div>
+      </Details>
     </div>
     <Headline
       tagline="The honesty map"
@@ -889,50 +831,49 @@ const field: Row[] = [
         ))
       }
     </div>
+    <div class="mx-auto max-w-3xl">
+      <Details title="The evidence" hint="measured by us · demonstrated by the field">
+        <div class="grid gap-6 sm:grid-cols-2" data-reading="skip">
+          {
+            [
+              { title: 'measured — replay-verifiable', color: 'text-[#00d992]', rows: measured },
+              { title: 'demonstrated by the field', color: 'text-amber-300', rows: field },
+            ].map((col) => (
+              <div>
+                <h3 class={`mb-3 font-mono text-sm uppercase tracking-wide ${col.color}`}>{col.title}</h3>
+                <div class="space-y-3">
+                  {col.rows.map((r) => (
+                    <div
+                      class:list={[
+                        'rounded-lg border p-4',
+                        r.bad ? 'border-red-500/20 bg-red-500/5' : 'border-white/10 bg-black/30',
+                      ]}
+                    >
+                      <p class="text-sm text-default" set:html={r.claim} />
+                      <p class="text-muted mt-1 text-xs" set:html={r.note} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+        <p class="text-muted mt-8 font-mono text-xs" data-reading="skip">
+          // the field has shown what is physically possible. our contribution is narrower and checkable: the receipts.
+          full claim table → <a
+            class="text-[#00d992] underline"
+            href="https://github.com/treetable/living-resources/blob/main/docs/SCIENCE.md">docs/SCIENCE.md</a
+          >
+        </p>
+      </Details>
+    </div>
   </WidgetWrapper>
 
-  <!-- 8 — the lanes + the evidence -->
-  <LaneTable id="lanes" mode="plain" tagline="The lanes" title="What the cloud is allowed to do" />
-
-  <WidgetWrapper id="evidence" isDark containerClass="max-w-6xl">
-    <Headline
-      tagline="The evidence"
-      title="Measured by us · demonstrated by the field"
-      subtitle="Our numbers are replay-verifiable from the repo. Field numbers are cited to their papers — and we say which lanes they do and do not support."
-      classes={{ container: 'max-w-4xl' }}
-    />
-    <div class="grid gap-6 md:grid-cols-2" data-reading="skip">
-      {
-        [
-          { title: 'measured — replay-verifiable', color: 'text-[#00d992]', rows: measured },
-          { title: 'demonstrated by the field', color: 'text-amber-300', rows: field },
-        ].map((col) => (
-          <div>
-            <h3 class={`mb-3 font-mono text-sm uppercase tracking-wide ${col.color}`}>{col.title}</h3>
-            <div class="space-y-3">
-              {col.rows.map((r) => (
-                <div
-                  class:list={[
-                    'rounded-lg border p-4',
-                    r.bad ? 'border-red-500/20 bg-red-500/5' : 'border-white/10 bg-black/30',
-                  ]}
-                >
-                  <p class="text-sm text-default" set:html={r.claim} />
-                  <p class="text-muted mt-1 text-xs" set:html={r.note} />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))
-      }
-    </div>
-    <p class="text-muted mt-8 font-mono text-xs" data-reading="skip">
-      // the field has shown what is physically possible. our contribution is narrower and checkable: the receipts. full
-      claim table → <a
-        class="text-[#00d992] underline"
-        href="https://github.com/treetable/living-resources/blob/main/docs/SCIENCE.md">docs/SCIENCE.md</a
-      >
-    </p>
+  <!-- 8 — the lanes -->
+  <WidgetWrapper id="lanes" containerClass="max-w-5xl">
+    <Details title="What the cloud is allowed to do" hint="the lanes — every action, classed">
+      <LaneTable mode="plain" bare />
+    </Details>
   </WidgetWrapper>
 
   <!-- 9 — FAQ -->
@@ -956,16 +897,6 @@ const field: Row[] = [
         title: 'Is the AI organism alive?',
         description:
           'No. It is computers, boxes and code that work together like the parts of a body. It lives alongside nature and learns from it. It never takes over nature, and nature can always say no.',
-      },
-      {
-        title: 'What is a receipt?',
-        description:
-          'A short code that works like a seal. Redo the same work and you get the same code. If anything was changed, the code will not match.',
-      },
-      {
-        title: 'Who gets paid?',
-        description:
-          "The plant, animal group or place earns the credit. Its human guardian looks after it, like a grown-up managing a kid's savings account.",
       },
       {
         title: 'Can I host a listener?',

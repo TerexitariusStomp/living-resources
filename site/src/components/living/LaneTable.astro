@@ -16,16 +16,23 @@ interface Props {
   title?: string;
   tagline?: string;
   subtitle?: string;
+  // bare: render rows only, no WidgetWrapper — for use inside a <details>
+  // drawer, where intersect-once animations would never fire.
+  bare?: boolean;
 }
-const { id, mode = 'plain', title, tagline, subtitle } = Astro.props;
+const { id, mode = 'plain', title, tagline, subtitle, bare = false } = Astro.props;
+
+const footnote =
+  mode === 'tech'
+    ? '// lanes graduate experiment → offer only when their evidence fingerprint lands. Receipts are the product; the rest is a research program with the brakes on.'
+    : 'A lane only earns "works today" when proof lands. The receipt is the product; the rest is research with the brakes on.';
 ---
 
-<WidgetWrapper id={id} containerClass="max-w-5xl">
-  {title && <Headline title={title} tagline={tagline} subtitle={subtitle} />}
-  <div class="font-mono text-sm">
-    {
-      lanes.map((l) => (
-        <div class="grid md:grid-cols-[7rem_11rem_1fr] gap-x-5 gap-y-1 border-b border-white/10 py-3.5">
+{
+  bare ? (
+    <div class="font-mono text-sm">
+      {lanes.map((l) => (
+        <div class="grid gap-x-5 gap-y-1 border-b border-white/10 py-3.5 md:grid-cols-[7rem_11rem_1fr]">
           <span class="text-heading font-semibold">{mode === 'tech' ? l.id : l.plain}</span>
           <span>
             <span
@@ -34,19 +41,33 @@ const { id, mode = 'plain', title, tagline, subtitle } = Astro.props;
               {mode === 'tech' ? l.badge : tiers[l.tier as TierKey].label}
             </span>
           </span>
-          <span class="text-muted leading-relaxed">
-            {mode === 'tech' ? l.desc : (l.plainDesc ?? l.desc)}
-            {mode === 'tech' && <span class="block text-xs opacity-60 mt-1">{l.src}</span>}
-          </span>
+          <span class="text-muted leading-relaxed">{mode === 'tech' ? l.desc : (l.plainDesc ?? l.desc)}</span>
         </div>
-      ))
-    }
-    <p class="text-muted text-xs pt-4">
-      {
-        mode === 'tech'
-          ? '// lanes graduate experiment → offer only when their evidence fingerprint lands. Receipts are the product; the rest is a research program with the brakes on.'
-          : 'A lane only earns "works today" when proof lands. The receipt is the product; the rest is research with the brakes on.'
-      }
-    </p>
-  </div>
-</WidgetWrapper>
+      ))}
+      <p class="text-muted pt-4 text-xs">{footnote}</p>
+    </div>
+  ) : (
+    <WidgetWrapper id={id} containerClass="max-w-5xl">
+      {title && <Headline title={title} tagline={tagline} subtitle={subtitle} />}
+      <div class="font-mono text-sm">
+        {lanes.map((l) => (
+          <div class="grid gap-x-5 gap-y-1 border-b border-white/10 py-3.5 md:grid-cols-[7rem_11rem_1fr]">
+            <span class="text-heading font-semibold">{mode === 'tech' ? l.id : l.plain}</span>
+            <span>
+              <span
+                class={`inline-block rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${tiers[l.tier as TierKey].class}`}
+              >
+                {mode === 'tech' ? l.badge : tiers[l.tier as TierKey].label}
+              </span>
+            </span>
+            <span class="text-muted leading-relaxed">
+              {mode === 'tech' ? l.desc : (l.plainDesc ?? l.desc)}
+              {mode === 'tech' && <span class="mt-1 block text-xs opacity-60">{l.src}</span>}
+            </span>
+          </div>
+        ))}
+        <p class="text-muted pt-4 text-xs">{footnote}</p>
+      </div>
+    </WidgetWrapper>
+  )
+}
