@@ -14,7 +14,7 @@ routine if an equity raise requires it.
 
 | Program | Est. | Status | Next action |
 |---|---|---|---|
-| Wetware verification audits — Cortical Labs | $5–25k/engagement | **SENT** | Email sent to info@corticallabs.com — await reply |
+| Wetware verification audits — Cortical Labs | $5–25k/engagement | **SENT** | Email sent → logged as helpdesk ticket **#03733**, under review by their Info team |
 | Wetware verification audits — FinalSpark | $5–25k/engagement | SUBMITTED | Researchers form on finalspark.com/contact submitted 2026-10-25 — portal confirmed "request received, ~3-day reply window". Watch terexmaps@gmail.com |
 | Bench certification reports (edge-AI / neuromorphic / MRV vendors) | $2–10k/report | drafted | `applications/lane-a-bench-cert.md` — attach to follow-up emails once targets named |
 | Replay-verified compute API | MRR | **LIVE** | `workers/compute-api/` deployed 2026-10-25: `connectome-compute-api.terexmaps.workers.dev` — TS port bit-identical to lif.py (930/930), /task /verdict /verify all live. Free tier; API keys + landing page before paid tiers |
@@ -54,8 +54,8 @@ routine if an equity raise requires it.
 | NSF SBIR Phase I — full proposal | $275k | ~3 windows/yr | drafted | `applications/nsf-sbir.md` — only after pitch invite |
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |
 | Elemental Impact — Project Track | $500k ask | Rolling | **SUBMITTED** | Intake form submitted 2026-10-25 (portal confirmed) — full app + deck; awaits screening |
-| SOSV HAX (Newark) | up to $550k | Rolling | **READY TO SUBMIT** | Form 100% filled incl. LinkedIn + deck link — **user: solve reCAPTCHA → click Submit Application** (tab open) |
-| Carbon13 Venture Accelerator | €150–250k | Cohort (open) | **READY TO SUBMIT** | All 7 sections complete; deck + cap table + tech one-pager uploaded — **user: record+upload founder intro video (required), then submit** (tab open) |
+| SOSV HAX (Newark) | up to $550k | Rolling | **SUBMITTED** | Confirmation email received 2026-10-25 — review ~2 weeks; silence by month-end = pass |
+| Carbon13 Venture Accelerator | €150–250k | Cohort (open) | **READY TO SUBMIT** | Email confirmed; all 7 sections complete; deck + cap table + tech one-pager uploaded — **user: record+upload founder intro video (required), then submit** (tab open) |
 | Canadian Space Agency AO | up to $250k | Periodic | watching | Needs Canadian partner — consortium option |
 
 ## Staging
