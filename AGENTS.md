@@ -18,6 +18,9 @@ License: AGPL-3.0-or-later. SPDX header on every source file.
 ```
 make test                  # e2e suites under guile, or static checks without it
 make check-custom-budget   # first-party LOC vs adopted-OSS seam stubs
+make site                  # build the frontend (site/, AstroWind vendored)
+make check-site-budget     # site custom-code ratio vs everything shipped (<5%)
+make check-lane-drift      # frontend lane rows vs specs.scm/lane-gate.rego
 ```
 
 Tests run directly:
@@ -91,6 +94,17 @@ tests/e2e/       sensing-cell.scm (full pipeline) · refused-lanes.scm
 tools/edge/      classify.py (OpenSoundscape seam + energy-gate fallback)
                  · rns_edge.py (real RNS/LXMF edge daemon)
 tools/e0/        score.py (blinded-validation scorer for field E0)
+tools/e5/        relay_check.py (E5 harness — hop's graduation path)
+tools/site/      budget.py (≤5% custom-code ratio) · lane_drift.py
+                 (frontend rows vs gate vocabulary) · plant_audio.py
+site/            the frontend — AstroWind (MIT, vendored at a pinned commit,
+                 see site/UPSTREAM) Astro app; src/components/living/ holds the
+                 few custom pieces (lane table, console, globe, board3d,
+                 plant audio, value loop, join form); src/data/lanes.json is
+                 the single source of truth for lane portrayal
+workers/compute-api/  Cloudflare Worker — serves site/dist as assets plus
+                 /task /verdict /verify /connectomes /receipts /join APIs
+                 (RECEIPTS + WAITLIST KV)
 ```
 
 ## Conventions

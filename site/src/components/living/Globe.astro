@@ -1,0 +1,119 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Federation globe — cobe (MIT). Markers are places the living cloud could
+// listen (illustrative). "Send a signal" fires the real POST /verdict {all}.
+---
+
+<div class="globe-wrap not-prose">
+  <div class="relative mx-auto max-w-[420px]">
+    <canvas
+      id="globe"
+      class="aspect-square w-full"
+      aria-label="Rotating globe showing example places the living cloud could listen"></canvas>
+    <p class="text-muted mt-1 text-center font-mono text-xs">
+      amazon · coral triangle · boreal taiga · sahel · city park — places the living cloud <em>could</em> listen
+    </p>
+  </div>
+  <div class="mt-6 text-center">
+    <button
+      id="firesignal"
+      class="rounded-full bg-[#00d992] px-6 py-3 font-semibold text-black transition hover:bg-[#00e8a0] disabled:opacity-50"
+    >
+      Send one signal to all fifteen wirings
+    </button>
+    <p id="globe-cap" class="text-muted mt-3 font-mono text-xs">a real call to the live API — not a mockup</p>
+  </div>
+  <div id="globe-chips" class="mt-4 hidden grid-cols-1 gap-2 font-mono text-xs sm:grid-cols-2 md:grid-cols-3"></div>
+</div>
+
+<script>
+  import createGlobe from 'cobe';
+
+  const cv = document.getElementById('globe') as HTMLCanvasElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let phi = 0;
+  try {
+    const globe = createGlobe(cv, {
+      devicePixelRatio: 2,
+      width: 420 * 2,
+      height: 420 * 2,
+      phi: 0,
+      theta: 0.25,
+      dark: 1,
+      diffuse: 1.2,
+      mapSamples: 16000,
+      mapBrightness: 11,
+      mapBaseBrightness: 0.12,
+      baseColor: [0.06, 0.08, 0.07],
+      markerColor: [0, 0.85, 0.57],
+      glowColor: [0, 0.5, 0.36],
+      markers: [
+        { location: [-3.4, -62.2], size: 0.07 }, // amazon
+        { location: [-1.8, 130.5], size: 0.07 }, // coral triangle
+        { location: [60.1, -105.0], size: 0.07 }, // boreal taiga
+        { location: [15.0, -1.0], size: 0.07 }, // sahel
+        { location: [39.7, -104.9], size: 0.05 }, // a city park
+      ],
+    });
+    if (!reduce) {
+      const tick = () => {
+        phi += 0.003;
+        globe.update({ phi });
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+    const fit = () => {
+      const w = cv.offsetWidth;
+      cv.style.width = w + 'px';
+      cv.style.height = w + 'px';
+    };
+    fit();
+    addEventListener('resize', fit);
+  } catch {
+    (cv.parentElement as HTMLElement).innerHTML =
+      '<p class="text-muted text-center font-mono text-xs">globe unavailable — WebGL needed</p>';
+  }
+
+  const btn = document.getElementById('firesignal') as HTMLButtonElement;
+  const chips = document.getElementById('globe-chips') as HTMLElement;
+  const cap = document.getElementById('globe-cap') as HTMLElement;
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    cap.textContent = 'firing one encoded signal at all fifteen substrates…';
+    chips.classList.remove('hidden');
+    chips.classList.add('grid');
+    try {
+      const r = await fetch('/verdict', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          connectome: 'all',
+          features: { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 },
+        }),
+      });
+      const d = await r.json();
+      if (d.error) {
+        cap.textContent = JSON.stringify(d);
+        return;
+      }
+      const ACT: Record<string, string> = { '1': 'affirm', '-1': 'refute', '0': 'abstain' };
+      chips.innerHTML = d.verdicts
+        .map(
+          (v: { connectome: string; action: number; spike_digest?: string }) => `
+        <div class="rounded border border-white/10 bg-black/40 px-3 py-2">
+          <b class="text-heading">${v.connectome}</b>
+          <span class="text-[#00d992]"> · ${ACT[v.action] ?? v.action}</span>
+          <span class="text-muted block truncate">${(v.spike_digest || '').slice(8, 34)}…</span>
+        </div>`
+        )
+        .join('');
+      const uniq = new Set(d.verdicts.map((v: { spike_digest?: string }) => v.spike_digest)).size;
+      cap.textContent = `one signal → ${d.verdicts.length} wirings → ${uniq} distinct answers — each replayable bit-for-bit`;
+    } catch (e) {
+      cap.textContent = 'call failed: ' + e;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>

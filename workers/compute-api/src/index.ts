@@ -17,6 +17,7 @@ interface Env {
     put(k: string, v: string): Promise<void>;
     list(o?: { limit?: number }): Promise<{ keys: { name: string }[] }>;
   };
+  WAITLIST: { put(k: string, v: string): Promise<void> };
 }
 
 const cache = new Map<string, Promise<Connectome>>();
@@ -115,6 +116,36 @@ export default {
       const said = url.pathname.slice("/receipts/".length);
       const v = await env.RECEIPTS.get(said);
       return v ? json(parseCanon(v)) : bad("unknown task_said", 404);
+    }
+
+    // Guardian waitlist — separate KV from the public receipt ledger so PII
+    // never shares a namespace with content-addressed data. No GET route:
+    // nothing can enumerate or read signups back out.
+    if (url.pathname === "/join" && req.method === "POST") {
+      const origin = req.headers.get("origin");
+      if (origin && new URL(origin).host !== url.host)
+        return bad("cross-origin", 403);
+      if (Number(req.headers.get("content-length") ?? 0) > 2048)
+        return bad("body too large");
+      let b: any;
+      try { b = JSON.parse(await req.text()); }
+      catch { return bad("invalid JSON body"); }
+      if (b?.website) return json({ ok: true }); // honeypot: pretend success
+      const email = String(b?.email ?? "").trim().toLowerCase();
+      const roles = ["guardian of a place", "host a listener", "funder",
+                     "scientist", "just curious"];
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254)
+        return bad("valid email required");
+      if (!roles.includes(b?.role)) return bad("unknown role");
+      if (b?.consent !== true) return bad("consent required");
+      const place = b?.place ? String(b.place).slice(0, 120) : undefined;
+      const digest = await crypto.subtle.digest(
+        "SHA-256", new TextEncoder().encode(email));
+      const key = "join:" + [...new Uint8Array(digest)]
+        .map(x => x.toString(16).padStart(2, "0")).join("");
+      await env.WAITLIST.put(key, JSON.stringify({
+        email, role: b.role, place, ts: new Date().toISOString() }));
+      return json({ ok: true });
     }
 
     if (req.method === "POST" &&

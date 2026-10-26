@@ -1,0 +1,110 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Hear a thirsty plant — real ultrasonic clicks from Khait et al., Cell 2023
+// (Dryad CC0 dataset), slowed ~11x so humans can hear them.
+const clips = [
+  { id: 'thirsty', label: 'A thirsty tomato', src: '/audio/plant-thirsty.wav' },
+  { id: 'cut', label: 'A cut tomato', src: '/audio/plant-cut.wav' },
+  { id: 'room', label: 'An empty room', src: '/audio/plant-room.wav' },
+];
+---
+
+<div class="plant-listen not-prose">
+  <div class="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="Recording">
+    {
+      clips.map((c, i) => (
+        <button
+          data-clip={c.id}
+          data-src={c.src}
+          class:list={[
+            'clip-btn rounded-full border px-4 py-1.5 text-sm font-medium transition',
+            i === 0
+              ? 'border-[#00d992] bg-[#00d992]/10 text-[#00d992]'
+              : 'border-white/20 text-muted hover:border-white/40',
+          ]}
+        >
+          {c.label}
+        </button>
+      ))
+    }
+  </div>
+  <div class="rounded-lg border border-white/10 bg-black/40 p-4">
+    <div id="plantwave" class="h-20 w-full"></div>
+    <div class="mt-3 flex items-center gap-4">
+      <button
+        id="plantplay"
+        class="inline-flex items-center gap-2 rounded-full bg-[#00d992] px-5 py-2 font-semibold text-black hover:bg-[#00e8a0]"
+        aria-label="Play recording"
+      >
+        <span id="plantplay-icon">▶</span>
+        <span id="plantplay-label">Play</span>
+      </button>
+      <span id="plantclip-name" class="text-muted font-mono text-xs">tomato · drought-stressed · slowed ~11×</span>
+    </div>
+  </div>
+  <p class="text-muted mt-3 text-xs">
+    Real data: Khait et&nbsp;al., <em>Cell</em> 2023 · recordings from the
+    <a class="underline" href="https://doi.org/10.5061/dryad.jwstqjqf7">Dryad CC0 dataset</a> · the "empty room" control is
+    microphone self-noise — the difference is the point.
+  </p>
+</div>
+
+<script>
+  import WaveSurfer from 'wavesurfer.js';
+
+  const waveEl = document.getElementById('plantwave') as HTMLElement;
+  const playBtn = document.getElementById('plantplay') as HTMLButtonElement;
+  const playIcon = document.getElementById('plantplay-icon') as HTMLElement;
+  const playLabel = document.getElementById('plantplay-label') as HTMLElement;
+  const clipName = document.getElementById('plantclip-name') as HTMLElement;
+  const names: Record<string, string> = {
+    thirsty: 'tomato · drought-stressed · slowed ~11×',
+    cut: 'tomato · cut at the stem · slowed ~11×',
+    room: 'empty pot · microphone noise · slowed ~11×',
+  };
+
+  let ws: WaveSurfer | null = null;
+  function load(src: string) {
+    if (ws) ws.destroy();
+    ws = WaveSurfer.create({
+      container: waveEl,
+      url: src,
+      waveColor: '#2f4f42',
+      progressColor: '#00d992',
+      cursorColor: '#f2eadf',
+      height: 80,
+      barWidth: 2,
+      barGap: 1.5,
+      barRadius: 2,
+      normalize: true,
+    });
+    ws.on('play', () => {
+      playIcon.textContent = '❚❚';
+      playLabel.textContent = 'Pause';
+    });
+    ws.on('pause', () => {
+      playIcon.textContent = '▶';
+      playLabel.textContent = 'Play';
+    });
+    ws.on('finish', () => {
+      playIcon.textContent = '▶';
+      playLabel.textContent = 'Play';
+    });
+  }
+
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.clip-btn');
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      buttons.forEach((x) => {
+        x.classList.remove('border-[#00d992]', 'bg-[#00d992]/10', 'text-[#00d992]');
+        x.classList.add('border-white/20', 'text-muted');
+      });
+      b.classList.add('border-[#00d992]', 'bg-[#00d992]/10', 'text-[#00d992]');
+      b.classList.remove('border-white/20', 'text-muted');
+      clipName.textContent = names[b.dataset.clip ?? ''];
+      load(b.dataset.src ?? '');
+    })
+  );
+  playBtn.addEventListener('click', () => ws && ws.playPause());
+  load('/audio/plant-thirsty.wav');
+</script>

@@ -13,3 +13,6 @@ dist/
 build/
 lanes/
 workers/compute-api/.wrangler/
+
+# generated site audio is committed (CC0 Khait dataset excerpts)
+!site/public/audio/*.wav

@@ -95,8 +95,20 @@ Deployed: `connectome-compute-api.terexmaps.workers.dev`.
 |---|---|
 | `src/lif.ts` | TypeScript port of `lif.py` — same packed int4 blobs, same Q24 fixed point, same digests. 930/930 bit-identical vs the Python runner (`test/diff.mjs`) |
 | `src/blake2s.ts` | vendored unkeyed BLAKE2s-256 (RFC 7693) |
-| `src/index.ts` | routes: `GET /` (landing page) · `GET /info` · `GET /connectomes` · `POST /task` · `POST /verdict` (incl. `"all"`) · `POST /verify` · `GET /receipts` + `/receipts/{said}` (Workers KV ledger) |
-| `public/index.html` | the landing page — vision, live console, quorum run, lane map, evidence |
+| `src/index.ts` | routes: `GET /` (the site) · `GET /info` · `GET /connectomes` · `POST /task` · `POST /verdict` (incl. `"all"`) · `POST /verify` · `GET /receipts` + `/receipts/{said}` (RECEIPTS KV ledger) · `POST /join` (WAITLIST KV waitlist) |
+
+## Frontend — `site/`
+
+AstroWind (MIT) vendored at a pinned commit — `site/UPSTREAM` records
+provenance. Custom code budget: **<5% of everything shipped**
+(`tools/site/budget.py`); adopted dependencies do the rest.
+
+| Path | Role |
+|---|---|
+| `src/data/lanes.json` | single source of truth for lane portrayal; `tools/site/lane_drift.py` fails CI if it diverges from `specs.scm`/`lane-gate.rego` |
+| `src/components/living/` | the custom seam: `LaneTable` `TierLink` `PlantListen` `Board3D` `Globe` `ValueLoop` `JoinForm` `Console` |
+| `src/pages/` | `/` story homepage · `/science` claim tiers · `/developers` API + live console · `/privacy` · `/credits` |
+| `public/packed/` `public/audio/` `public/img/` | connectome blobs · CC0 plant-sound clips (Dryad 10.5061/dryad.jwstqjqf7 via `tools/site/plant_audio.py`) · PD/CC0 imagery |
 
 ## Hardware tooling — `tools/pcb/`
 

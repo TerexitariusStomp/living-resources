@@ -1,0 +1,146 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Live console — POST /task → /verify, /verdict all, receipt ledger.
+// Ported from the original index.html demo.
+---
+
+<div class="console not-prose rounded-lg border border-white/10 bg-black/40 p-5 font-mono text-sm">
+  <div class="flex flex-wrap items-center gap-3">
+    <label class="text-muted">
+      substrate
+      <select
+        id="cx"
+        class="ml-2 rounded-md border border-white/15 bg-black/60 px-3 py-2 text-page focus:border-[#00d992] focus:outline-none"
+      ></select>
+    </label>
+    <button id="run" class="rounded-full bg-[#00d992] px-4 py-2 font-semibold text-black hover:bg-[#00e8a0]">
+      POST /task
+    </button>
+    <button
+      id="verify"
+      disabled
+      class="rounded-full border border-white/20 px-4 py-2 text-muted hover:border-white/40 disabled:opacity-40"
+    >
+      POST /verify →
+    </button>
+    <button id="quorum" class="rounded-full border border-white/20 px-4 py-2 text-muted hover:border-white/40">
+      POST /verdict — all 15
+    </button>
+  </div>
+  <div id="statline" class="mt-3 min-h-5 text-[#00d992]"></div>
+  <div id="quorumgrid" hidden class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3"></div>
+  <div id="qcap" hidden class="text-muted mt-3 text-xs"></div>
+  <pre
+    id="out"
+    class="text-muted mt-4 max-h-96 overflow-auto whitespace-pre-wrap break-all text-xs leading-relaxed"><span>// run a task — the receipt lands here, then replay-verify it. Or fire one signal at all fifteen wirings.</span></pre>
+</div>
+
+<div class="mt-8 rounded-lg border border-white/10 bg-black/40 p-5 font-mono text-sm">
+  <div class="mb-3 flex items-baseline justify-between">
+    <span class="text-heading font-semibold">receipt ledger</span>
+    <span class="text-muted text-xs"
+      >every task_said, content-addressed · <a class="text-[#00d992] underline" href="/receipts">/receipts</a></span
+    >
+  </div>
+  <div id="ledger" class="max-h-72 overflow-auto"><span class="text-muted">loading…</span></div>
+</div>
+
+<script>
+  const out = document.getElementById('out') as HTMLElement;
+  const stat = document.getElementById('statline') as HTMLElement;
+  const cxSel = document.getElementById('cx') as HTMLSelectElement;
+  const verifyBtn = document.getElementById('verify') as HTMLButtonElement;
+  const qGrid = document.getElementById('quorumgrid') as HTMLElement;
+  const qCap = document.getElementById('qcap') as HTMLElement;
+  let lastReceipt: Record<string, unknown> | null = null;
+  const FEATS = { confidence: 0.72, event_rate: 0.35, env_anomaly: 0.18, fleet_agreement: 0.81 };
+
+  async function j(method: string, path: string, body?: unknown) {
+    const r = await fetch(path, {
+      method,
+      headers: body ? { 'content-type': 'application/json' } : {},
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    return r.json();
+  }
+
+  (async () => {
+    const { connectomes } = await j('GET', '/connectomes');
+    for (const c of connectomes as { name: string; nNeurons?: number }[]) {
+      const o = document.createElement('option');
+      const n = c.nNeurons ?? '';
+      o.value = c.name;
+      o.textContent = `${c.name} — ${n ? n.toLocaleString() : ''} neurons`;
+      cxSel.appendChild(o);
+    }
+    cxSel.value = 'celegans';
+    const { receipts } = await j('GET', '/receipts');
+    (document.getElementById('ledger') as HTMLElement).innerHTML = receipts.length
+      ? (receipts as string[])
+          .slice(0, 25)
+          .map(
+            (s) =>
+              `<a class="block truncate border-b border-white/5 py-1.5 text-muted hover:text-[#00d992]" href="/receipts/${s}">${s} <span class="text-[#00d992]">replay →</span></a>`
+          )
+          .join('')
+      : '<span class="text-muted">empty — mint the first receipts above</span>';
+  })().catch((e) => (out.innerHTML = '<span>init error: ' + e + '</span>'));
+
+  (document.getElementById('run') as HTMLButtonElement).onclick = async () => {
+    out.hidden = false;
+    qGrid.hidden = true;
+    qCap.hidden = true;
+    out.textContent = 'running…';
+    stat.textContent = '';
+    const r = await j('POST', '/task', { connectome: cxSel.value, features: FEATS });
+    if (r.error) {
+      out.textContent = JSON.stringify(r);
+      return;
+    }
+    lastReceipt = r.receipt;
+    const rc = lastReceipt as { spike_count: number; trace_digest: string; task_said: string };
+    out.textContent = JSON.stringify(lastReceipt, null, 2);
+    stat.innerHTML =
+      `receipt · ${rc.spike_count.toLocaleString()} spikes · ` +
+      `trace ${rc.trace_digest.slice(8, 26)}… · said ${rc.task_said.slice(8, 26)}…`;
+    verifyBtn.disabled = false;
+  };
+
+  verifyBtn.onclick = async () => {
+    out.textContent = 'replaying…';
+    const r = await j('POST', '/verify', lastReceipt);
+    out.textContent = JSON.stringify(r, null, 2);
+    stat.innerHTML = r.verified
+      ? '✓ verified — replay produced the identical digest'
+      : '<span class="text-red-400">✗ digest mismatch</span>';
+  };
+
+  (document.getElementById('quorum') as HTMLButtonElement).onclick = async () => {
+    out.hidden = true;
+    qGrid.hidden = false;
+    qCap.hidden = false;
+    qGrid.innerHTML = '';
+    stat.textContent = '';
+    qCap.textContent = 'firing one encoded signal at all fifteen substrates…';
+    const r = await j('POST', '/verdict', { connectome: 'all', features: FEATS });
+    if (r.error) {
+      qCap.textContent = JSON.stringify(r);
+      return;
+    }
+    const ACT: Record<string, string> = { '1': 'affirm', '-1': 'refute', '0': 'abstain' };
+    qGrid.innerHTML = r.verdicts
+      .map(
+        (v: { connectome: string; action: number; spike_digest?: string }) => `
+      <div class="rounded border border-white/10 bg-black/40 px-3 py-2">
+        <b class="text-heading">${v.connectome}</b>
+        <span class="text-[#00d992]"> · ${ACT[v.action] ?? v.action}</span>
+        <span class="text-muted block truncate">${(v.spike_digest || '').slice(8, 30)}…</span>
+      </div>`
+      )
+      .join('');
+    const uniq = new Set(r.verdicts.map((v: { spike_digest?: string }) => v.spike_digest)).size;
+    qCap.textContent =
+      `// one signal → ${r.verdicts.length} wirings → ${uniq} distinct response signatures. ` +
+      `topology is the witness — replay any one and the digest must land bit-for-bit.`;
+  };
+</script>

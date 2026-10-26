@@ -30,9 +30,13 @@
     "astro": "^7.3.1",
     "astro-icon": "^1.1.5",
     "astro-seo": "^1.2.0",
+    "cobe": "2.0.1",
     "limax": "4.2.3",
     "lodash.merge": "^4.6.2",
-    "unpic": "^4.2.2"
+    "motion": "14.6.0",
+    "three": "0.186.1",
+    "unpic": "^4.2.2",
+    "wavesurfer.js": "8.0.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
@@ -47,6 +51,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/lodash.merge": "^4.6.9",
     "@types/mdx": "^2.0.14",
+    "@types/three": "0.186.0",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
     "astro-compress": "^2.4.3",

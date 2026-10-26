@@ -1,0 +1,95 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Guardian waitlist — POSTs to /join on the same worker (separate KV).
+const roles = ['guardian of a place', 'host a listener', 'funder', 'scientist', 'just curious'];
+---
+
+<form id="joinform" class="mx-auto max-w-xl text-left not-prose" novalidate>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <label class="block sm:col-span-2">
+      <span class="mb-1 block text-sm font-medium text-heading">Email</span>
+      <input
+        required
+        type="email"
+        name="email"
+        autocomplete="email"
+        placeholder="you@example.org"
+        class="w-full rounded-md border border-white/15 bg-black/40 px-4 py-3 text-page placeholder:text-muted/60 focus:border-[#00d992] focus:outline-none"
+      />
+    </label>
+    <label class="block">
+      <span class="mb-1 block text-sm font-medium text-heading">I am…</span>
+      <select
+        name="role"
+        required
+        class="w-full rounded-md border border-white/15 bg-black/40 px-4 py-3 text-page focus:border-[#00d992] focus:outline-none"
+      >
+        {roles.map((r) => <option value={r}>{r}</option>)}
+      </select>
+    </label>
+    <label class="block">
+      <span class="mb-1 block text-sm font-medium text-heading">Place (optional)</span>
+      <input
+        type="text"
+        name="place"
+        maxlength="120"
+        placeholder="a wetland, a farm, a park…"
+        class="w-full rounded-md border border-white/15 bg-black/40 px-4 py-3 text-page placeholder:text-muted/60 focus:border-[#00d992] focus:outline-none"
+      />
+    </label>
+    <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+    <label class="flex items-start gap-3 sm:col-span-2">
+      <input required type="checkbox" name="consent" class="mt-1 accent-[#00d992]" />
+      <span class="text-muted text-sm">
+        I agree to be contacted about the living cloud — one email when field pilots open, nothing else.
+        <a href="/privacy" class="underline">Privacy</a>.
+      </span>
+    </label>
+  </div>
+  <div class="mt-6 flex items-center gap-4">
+    <button
+      type="submit"
+      class="rounded-full bg-[#00d992] px-8 py-3 font-semibold text-black transition hover:bg-[#00e8a0] disabled:opacity-50"
+    >
+      Join the waitlist
+    </button>
+    <span id="joinmsg" class="font-mono text-sm"></span>
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById('joinform') as HTMLFormElement;
+  const msg = document.getElementById('joinmsg') as HTMLElement;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const f = new FormData(form);
+    const body = {
+      email: f.get('email'),
+      role: f.get('role'),
+      place: f.get('place') || undefined,
+      consent: f.get('consent') === 'on',
+      website: f.get('website') || '',
+    };
+    msg.textContent = 'sending…';
+    try {
+      const r = await fetch('/join', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const d = await r.json();
+      if (r.ok) {
+        msg.textContent = "you're in — welcome.";
+        msg.className = 'font-mono text-sm text-[#00d992]';
+        form.reset();
+      } else {
+        msg.textContent = d.error || 'something refused — check the fields';
+        msg.className = 'font-mono text-sm text-red-400';
+      }
+    } catch {
+      msg.textContent = 'network error — try again';
+      msg.className = 'font-mono text-sm text-red-400';
+    }
+  });
+</script>

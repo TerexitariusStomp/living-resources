@@ -1,0 +1,117 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// The value loop: listen → witness → credit → value → protect → listen.
+// Pure CSS scroll-driven animation (animation-timeline: view()), static fallback.
+import { Icon } from 'astro-icon/components';
+const nodes = [
+  { k: 'listen', d: 'hear it — without touching it', icon: 'tabler:ear' },
+  { k: 'witness', d: 'many listeners agree it happened', icon: 'tabler:checkbox' },
+  { k: 'credit', d: 'the ecosystem earns for what it gives', icon: 'tabler:coin' },
+  { k: 'value', d: 'alive, it is worth more than cut down', icon: 'tabler:trending-up' },
+  { k: 'protect', d: 'people keep more of it standing', icon: 'tabler:leaf' },
+];
+---
+
+<div class="loop not-prose">
+  <div class="loop-track">
+    {
+      nodes.map((n, i) => (
+        <>
+          <div class="loop-node" style={`--i:${i}`}>
+            <span class="loop-ic" aria-hidden="true">
+              <Icon name={n.icon} class="h-6 w-6 text-[#00d992]" />
+            </span>
+            <span class="loop-k">{n.k}</span>
+            <span class="loop-d">{n.d}</span>
+          </div>
+          {i < nodes.length && (
+            <span class="loop-arrow" aria-hidden="true">
+              →
+            </span>
+          )}
+        </>
+      ))
+    }
+    <div class="loop-back" aria-hidden="true">↺ and again</div>
+  </div>
+</div>
+
+<style>
+  .loop-track {
+    display: grid;
+    gap: 0.75rem;
+  }
+  @media (min-width: 900px) {
+    .loop-track {
+      grid-template-columns: repeat(5, 1fr);
+      align-items: stretch;
+    }
+    .loop-back {
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+  }
+  .loop-node {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    background: rgb(0 0 0 / 0.4);
+    border-radius: 0.75rem;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    animation: loopin linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 40%;
+  }
+  .loop-ic {
+    font-size: 1.4rem;
+  }
+  .loop-k {
+    font-family: var(--font-jbm, monospace);
+    font-weight: 600;
+    color: #00d992;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .loop-d {
+    color: var(--aw-color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .loop-arrow {
+    color: #00d992;
+    text-align: center;
+    font-size: 1.25rem;
+    animation: loopin linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 45%;
+  }
+  @media (min-width: 900px) {
+    .loop-arrow {
+      align-self: center;
+      padding: 0;
+    }
+  }
+  .loop-back {
+    color: var(--aw-color-text-muted);
+    font-family: var(--font-jbm, monospace);
+    font-size: 0.8rem;
+    padding-top: 0.5rem;
+  }
+  @keyframes loopin {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .loop-node,
+    .loop-arrow {
+      animation: none;
+    }
+  }
+</style>
