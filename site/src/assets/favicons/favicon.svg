@@ -10,7 +10,7 @@
       }
     </style>
   </defs>
-  <!-- Treetable mark: a leaf whose veins rise into a signal cloud -->
+  <!-- Temple Earth mark: a leaf whose veins rise into a signal cloud -->
   <path class="leaf" d="M32 58C17 54 9 45 11 23 12.4 12.8 20 7.6 32 6.4c12 1.2 19.6 6.4 21 16.6 2 22-6 31-21 35Z"/>
   <path class="veins" d="M32 58v6.8" stroke-width="3.2" fill="none" stroke-linecap="round" style="stroke:#1e2b22"/>
   <path class="veins" d="M32 52V28m0 0-8.4-6.8M32 28l8.4-6.8M32 36l-11-4.4M32 36l11-4.4" stroke-width="3" fill="none" stroke-linecap="round"/>

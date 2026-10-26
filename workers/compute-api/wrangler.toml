@@ -2,7 +2,14 @@
 name = "connectome-compute-api"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
-account_id = "6c0140469651854b2e358517371a03d3"
+account_id = "f6aff821e92502a4c148dfdcbc082a14"
+
+workers_dev = true
+
+routes = [
+  { pattern = "templeearth.cc", custom_domain = true },
+  { pattern = "www.templeearth.cc", custom_domain = true },
+]
 
 [assets]
 directory = "../../site/dist"
@@ -10,11 +17,11 @@ binding = "ASSETS"
 
 [[kv_namespaces]]
 binding = "RECEIPTS"
-id = "d678c1569a8544439e2487d969727863"
+id = "9898f2de3465417fb191f2e68db6f832"
 
 [[kv_namespaces]]
 binding = "WAITLIST"
-id = "2b2508b2488946bf870ec149b00e2f4c"
+id = "16d6453106a74698b45e782b0d984882"
 
 [observability]
 enabled = false

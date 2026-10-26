@@ -17,7 +17,7 @@ export const footerData = {
       links: [
         { text: 'Home', href: getPermalink('/') },
         { text: 'For developers', href: getPermalink('/developers') },
-        { text: 'Pitch deck', href: '/treetable-deck.pdf' },
+        { text: 'Pitch deck', href: '/temple-earth-deck.pdf' },
       ],
     },
     {

@@ -8,7 +8,7 @@ import LaneTable from '~/components/living/LaneTable.astro';
 import { honesty } from '~/data/honesty';
 
 const metadata = { title: 'Developers — the live API' };
-const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/task -H 'content-type: application/json' -d '{"connectome":"celegans","features":{"confidence":0.72,"event_rate":0.35,"env_anomaly":0.18,"fleet_agreement":0.81}}'`;
+const curl = `curl -X POST https://templeearth.cc/task -H 'content-type: application/json' -d '{"connectome":"celegans","features":{"confidence":0.72,"event_rate":0.35,"env_anomaly":0.18,"fleet_agreement":0.81}}'`;
 ---
 
 <Layout metadata={metadata}>
@@ -62,7 +62,8 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
       <p>
         // machinery: agents.scm custody → attest.scm quorum → settlement.scm credit → offers.scm gate · component map → <a
           class="text-leaf underline"
-          href="https://github.com/TerexitariusStomp/living-resources/blob/master/docs/ARCHITECTURE.md">docs/ARCHITECTURE.md</a
+          href="https://github.com/TerexitariusStomp/living-resources/blob/master/docs/ARCHITECTURE.md"
+          >docs/ARCHITECTURE.md</a
         >
       </p>
       <p>
@@ -105,7 +106,7 @@ const curl = `curl -X POST https://connectome-compute-api.terexmaps.workers.dev/
   (document.getElementById('copy') as HTMLButtonElement).onclick = (e) => {
     const btn = e.target as HTMLElement;
     navigator.clipboard.writeText(
-      'curl -X POST https://connectome-compute-api.terexmaps.workers.dev/task -H \'content-type: application/json\' -d \'{"connectome":"celegans","features":{"confidence":0.72,"event_rate":0.35,"env_anomaly":0.18,"fleet_agreement":0.81}}\''
+      'curl -X POST https://templeearth.cc/task -H \'content-type: application/json\' -d \'{"connectome":"celegans","features":{"confidence":0.72,"event_rate":0.35,"env_anomaly":0.18,"fleet_agreement":0.81}}\''
     );
     btn.textContent = 'copied';
     setTimeout(() => (btn.textContent = 'copy'), 1500);

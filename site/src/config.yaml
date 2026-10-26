@@ -1,6 +1,6 @@
 site:
-  name: Treetable — the living cloud
-  site: 'https://connectome-compute-api.terexmaps.workers.dev'
+  name: Temple Earth — the living cloud
+  site: 'https://templeearth.cc'
   base: '/'
   trailingSlash: false
 
@@ -10,13 +10,13 @@ site:
 metadata:
   title:
     default: The living cloud
-    template: '%s — Treetable'
+    template: '%s — Temple Earth'
   description: 'The living cloud: a cloud made of nature. Small boxes listen to forests, reefs and soil without touching them. Every answer gets a receipt, and nature gets the credit.'
   robots:
     index: true
     follow: true
   openGraph:
-    site_name: Treetable — the living cloud
+    site_name: Temple Earth — the living cloud
     images:
       - url: '~/assets/images/default.png'
         width: 1200
