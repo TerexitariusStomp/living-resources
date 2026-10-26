@@ -73,8 +73,7 @@ export const honesty: HonestyRow[] = [
   {
     id: 'truth-cloud-map',
     title: '"One organism that grows with nature"',
-    plain:
-      'One step at a time. Computers still win on speed today — we measured it, and we say so.',
+    plain: 'One step at a time. Computers still win on speed today — we measured it, and we say so.',
     body: `The next-cloud thesis, on the record: one step at a time, silicon wins <em>today</em> — measured and we
       say so. Per watt and at scale, published evidence already favors living systems; turning that into useful work
       is the roadmap above.`,
@@ -109,8 +108,7 @@ export const honesty: HonestyRow[] = [
   {
     id: 'truth-market',
     title: '"Not just proof — sensing, compute and storage by nature"',
-    plain:
-      'Market sizes come from outside researchers. Useful direction, not our measurement. No revenue yet.',
+    plain: 'Market sizes come from outside researchers. Useful direction, not our measurement. No revenue yet.',
     body: `Market sizes are third-party research estimates, cited — not our measurements. Pricing tiers are real
       numbers from our funding docs, but billing isn't wired and no revenue is claimed. The ladder is the plan, in
       order: services → hardware → catalogue → credit rails.`,
