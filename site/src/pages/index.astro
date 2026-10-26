@@ -20,6 +20,7 @@ import TierLink from '~/components/living/TierLink.astro';
 import Comparison from '~/components/widgets/Comparison.astro';
 import Timeline from '~/components/widgets/Timeline.astro';
 import cloud from '~/data/cloud.json';
+import market from '~/data/market.json';
 import tiers from '~/data/tiers.json';
 import { tierChip, type TierKey } from '~/utils/tiers';
 import { SITE, METADATA, I18N } from 'astrowind:config';
@@ -212,6 +213,11 @@ const concepts = [
     icon: 'tabler:ban',
     description: `Some things stay blocked on purpose. Making living things compute. Sending signals through them. Changing them.<br/>${chips(['refused'])}`,
   },
+  {
+    title: 'Market report',
+    icon: 'tabler:chart-line',
+    description: `An estimate of how much people spend on something, written by market researchers. Useful direction, not a measurement.<br/>${chips(['market'])}`,
+  },
 ];
 
 // each section's claim, honestly — technical footnotes, skipped by the readability gate
@@ -295,6 +301,15 @@ const honesty = [
       <b>sparsity</b>, not biological topology. Generational replace-only-if-receipts-show-less is a proposed rule,
       measurable today with E6 replay bundles, not yet enforced. Moving work into living systems stays behind the
       consent and refused lanes.`,
+  },
+  {
+    id: 'truth-market',
+    tier: 'the vision — cited estimates',
+    color: 'text-orange-300',
+    title: '"Proof is a product people already pay for"',
+    body: `Market sizes are third-party research estimates, cited — not our measurements. Pricing tiers are real
+      numbers from our funding docs, but billing isn't wired and no revenue is claimed. The ladder is the plan, in
+      order: services → hardware → catalogue → credit rails.`,
   },
 ];
 
@@ -508,6 +523,61 @@ const field: Row[] = [
       ]}
     />
     <div class="mt-6 text-center"><TierLink anchor="truth-loop" tier="vision" /></div>
+
+    <!-- the market that's forming -->
+    <div class="mt-16">
+      <Headline
+        tagline="The market that's forming"
+        title="Proof is a product people already pay for"
+        subtitle="Checking nature claims is already a market — and it's stuck. Buyers pay for data they can't verify. The living cloud sells the missing thing: proof."
+        classes={{ container: 'max-w-4xl', title: 'text-2xl md:text-3xl' }}
+      />
+      <div class="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          market.stats.map((s) => (
+            <div class="rounded-lg border border-white/10 bg-black/30 p-5 text-center">
+              <div class="font-heading text-2xl font-bold text-orange-300">{s.value}</div>
+              <div class="text-default mt-1 text-sm">{s.label}</div>
+              <div class="mt-2">
+                <Fragment set:html={tierChip('market')} />
+              </div>
+              <div class="text-muted mt-1 font-mono text-xs" data-reading="skip">
+                {s.note}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="mx-auto mt-12 flex max-w-3xl flex-col items-center gap-3">
+        {
+          market.funnel.map((f) => (
+            <div class={`${f.width} rounded-lg border border-white/10 bg-black/30 p-5 text-center`}>
+              <div class="text-muted font-mono text-xs uppercase tracking-wide">{f.tier}</div>
+              <div class="text-heading font-semibold">{f.plain}</div>
+              <div class="font-heading mt-1 text-xl font-bold text-[#00d992]">{f.value}</div>
+              <p class="text-muted mt-1 text-sm">{f.desc}</p>
+              <div class="text-muted mt-1 font-mono text-xs" data-reading="skip">
+                {f.note}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <Features2
+        tagline="How the living cloud earns"
+        title="Four rungs, in order"
+        columns={2}
+        classes={{ container: 'pb-0 md:pb-0 lg:pb-0 pt-8' }}
+        items={market.ladder.map((l) => ({
+          title: l.title,
+          description: `${l.desc}<br/>${chips(l.chips as TierKey[])}`,
+        }))}
+      />
+      <p class="text-muted mx-auto mt-4 max-w-3xl border-l-2 border-orange-400/40 pl-4 text-sm italic">
+        We're not claiming this revenue yet — these are the market's own numbers, and the receipts are ours.
+      </p>
+      <div class="mt-4 text-center"><TierLink anchor="truth-market" tier="market" /></div>
+    </div>
   </WidgetWrapper>
 
   <!-- 5 — the AI organism -->

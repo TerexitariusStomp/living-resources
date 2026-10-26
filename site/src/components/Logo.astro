@@ -7,5 +7,6 @@ import { Icon } from 'astro-icon/components';
   class="self-center ml-2 rtl:ml-0 rtl:mr-2 text-2xl md:text-xl font-bold text-gray-900 whitespace-nowrap dark:text-white"
 >
   <Icon name="tabler:leaf" class="inline-block h-6 w-6 -mt-1 text-[#00d992]" aria-hidden="true" />
-  {SITE?.name}
+  {SITE?.name?.split('—')[0].trim()}
+  <span class="hidden sm:inline">— {(SITE?.name?.split('—')[1] ?? '').trim()}</span>
 </span>

@@ -1,0 +1,72 @@
+{
+  "stats": [
+    {
+      "value": "$4.6B → $14B",
+      "label": "what the world pays to check nature claims (digital MRV)",
+      "note": "Dataintelo, 2025–2034"
+    },
+    {
+      "value": "$4.2B, +28%/yr",
+      "label": "the biodiversity-monitoring market",
+      "note": "Research and Markets, 2025"
+    },
+    {
+      "value": "$1.4B, frozen",
+      "label": "the carbon-credit market — stuck because buyers can't trust credits",
+      "note": "MSCI Carbon Markets, 2024 → $7–35B by 2030 if trust returns"
+    },
+    {
+      "value": "£640 → $40",
+      "label": "an incumbent monitor vs one living-cloud listener",
+      "note": "AudioMoth-class device vs our BOM"
+    }
+  ],
+  "funnel": [
+    {
+      "tier": "TAM",
+      "plain": "Everyone who must prove a nature claim",
+      "value": "~$9B+/yr today",
+      "desc": "The business of checking nature claims — growing 12–28% a year. Nature protection is short about $700 billion a year.",
+      "note": "Dataintelo · Research and Markets · Paulson Institute",
+      "width": "w-full"
+    },
+    {
+      "tier": "SAM",
+      "plain": "Sensing + evidence for nature projects",
+      "value": "~$4B/yr",
+      "desc": "Conservation teams and nature projects already pay for monitoring. They would pay more for proof.",
+      "note": "Research and Markets 2025",
+      "width": "w-4/5"
+    },
+    {
+      "tier": "SOM",
+      "plain": "What we can reach first",
+      "value": "pilot-scale",
+      "desc": "Verification reports, five-node pilot packs, the live compute API. Small revenue, real receipts.",
+      "note": "our pricing, below",
+      "width": "w-3/5"
+    }
+  ],
+  "ladder": [
+    {
+      "title": "Verification services",
+      "desc": "Checkable audit reports for anyone making claims — $2–10k each.",
+      "chips": ["built"]
+    },
+    {
+      "title": "Listener hardware",
+      "desc": "The open-design $40 node — pilot packs (~$250 for five) at cost for early adopters.",
+      "chips": ["built"]
+    },
+    {
+      "title": "Receipt catalogue",
+      "desc": "The live compute API: free tier 100 tasks/mo, Lab $99/mo, Registry $499/mo — billing not yet wired.",
+      "chips": ["live", "vision"]
+    },
+    {
+      "title": "Credit rails",
+      "desc": "A share of the credit nature earns. The long game — only real once ecosystems transact.",
+      "chips": ["vision"]
+    }
+  ]
+}
