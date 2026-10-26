@@ -6,7 +6,8 @@ Status key: `drafted` | `submitted` | `awarded` | `declined` | `watching`
 All application drafts live in `docs/funding/applications/`; the shared
 two-page concept note is `docs/funding/concept-note.md`.
 
-Entity: **Treetable LLC** — US entity confirmed, SAM.gov registered.
+Entity: **Treetable LLC** (public brand: **Temple Earth**,
+templeearth.cc) — US entity confirmed, SAM.gov registered.
 SBIR and federal lanes unblocked today. LLC → C-corp conversion is
 routine if an equity raise requires it.
 
@@ -28,6 +29,10 @@ routine if an equity raise requires it.
 | The Boring Fund | up to $12.5k | ~Aug, annual (2024 closed) | watching | `applications/boring-fund.md` ready — receipt plumbing is squarely "boring but essential" |
 | Con X Tech prizes | varies | Rolling challenges | watching | Monitor challenge board, apply when sensing/MRV challenge posts |
 | GBIF BID (via fiscal host) | €30–60k | Regional calls | **SENT** | Partner-outreach email sent to **sib@humboldt.org.co** (SiB Colombia / Instituto Humboldt — GBIF voting-participant node, publishes AudioMoth→Arbimon→GBIF acoustic datasets) — await reply, then scope BID window |
+| Filecoin Open Grant | up to $50k | Rolling | drafted | `applications/filecoin-open-grant.md` — issue-ready; scope = receipted evidence store on Filecoin/IPLD. Grant-funded adapter ships MIT/Apache-2 (their requirement); commons stays AGPL |
+| Emergent Ventures | $5–50k | Rolling, days-fast | drafted | `applications/emergent-ventures-outline.md` — **outline only: they test for + reject AI-written apps; user writes the 1500 words** |
+| Lacuna Fund (via Global South lead) | varies | Periodic dataset-creation RFPs | drafted | `applications/lacuna-partner-email.md` — requires lead HQ'd in low/middle-income country; pitch SiB Colombia as lead, us as technical partner |
+| Cloudflare for Startups | $10k credits (in-kind) | Rolling | drafted | `applications/cloudflare-startups.md` — BOOTSTRAPPED tier; credits ≠ guaranteed CPU-limit raise, but a Startup Plan would help the medulla/hemibrain verdict ceiling |
 | ~~Schmidt Futures AI-in-Science~~ | — | — | **NOT ELIGIBLE** | Postdoc-only + faculty-mentor required; AI2050 is closed-nomination. No non-academic Schmidt program exists |
 
 ## Lane C — ReFi / community (parallel)
@@ -37,6 +42,9 @@ routine if an equity raise requires it.
 | Gitcoin Regen Coordination round | $1–5k realistic | Quarterly-ish rounds | watching | `applications/gitcoin-regen.md` ready — needs wallet connect + an open round |
 | Regen Network grants | 50/50 cash/REGEN | Waves (old program dormant) | watching | `applications/regen-network.md` ready — verify current grant program status |
 | Greenpill / Ma Earth local rounds | $1–10k | Opportunistic | watching | Attach to the Gitcoin submission |
+| Giveth listing | varies (donations) | Always open | drafted | `applications/giveth-listing.md` — paste-ready; needs a dedicated donation wallet, then publish |
+| Octant | varies | Epoch windows | watching | `applications/public-goods-retro.md` — Giveth listing + visible impact first |
+| Optimism RetroPGF | varies | Periodic rounds | watching | `applications/public-goods-retro.md` — retroactive only; needs demonstrated Superchain-ecosystem impact to score |
 
 ## Lane D — hardware capital (fleet without buying it)
 
@@ -52,6 +60,12 @@ routine if an equity raise requires it.
 | Superorganism (pre-seed) | $250–500k | Rolling | **SENT** | Email sent to hello@superorganism.com — await reply |
 | NSF SBIR Phase I — Project Pitch | first gate | Rolling | **SUBMITTED** | Pitch #00131003 (ET topic, Phase I) — NSF reviews within ~1 month; invite → full proposal |
 | NSF SBIR Phase I — full proposal | $275k | ~3 windows/yr | drafted | `applications/nsf-sbir.md` — only after pitch invite |
+| NOAA SBIR Phase I | ~$175k | FY27 NOFO targeted Nov 1 | drafted | `applications/noaa-sbir.md` — ocean/coastal + MRV framing; finalize against real topic codes when the NOFO posts |
+| USDA NIFA SBIR Phase I | ~$175k | FY27 RFA watch (current NOFO is Phase II only — not eligible) | drafted | `applications/usda-sbir.md` — aquaculture/forest/plant topic mapping ready |
+| Schmidt Marine Technology Partners | $100–400k | Annual (2026 window closed Jun–Jul; next ~spring) | drafted | `applications/schmidt-marine.md` — TRL 3–4→5–6 marine packaging + coastal pilot; confirm for-profit eligibility or fiscal partner |
+| Activate Fellowship | $100k+/yr × 2yr | Annual window | watching | `applications/fellowships-prep.md` — founder fellowship, hard-tech profile fits |
+| CDL (Oceans/Climate/Compute) | equity-free | Annual cycle | watching | `applications/fellowships-prep.md` — objectives-based; CDL-Oceans is the natural stream |
+| Foresight Institute | varies | Rolling/small | watching | `applications/fellowships-prep.md` — verify current program + entity eligibility first |
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |
 | Elemental Impact — Project Track | $500k ask | Rolling | **SUBMITTED** | Intake form submitted 2026-10-25 (portal confirmed) — full app + deck; awaits screening |
 | SOSV HAX (Newark) | up to $550k | Rolling | **SUBMITTED** | Confirmation email received 2026-10-25 — review ~2 weeks; silence by month-end = pass |
@@ -61,11 +75,16 @@ routine if an equity raise requires it.
 ## Staging
 
 ```
-Now ──────────► Lane A outreaches + SBIR draft + Lane B/C submissions
-Month 1–3 ────► First-article: 5 boards funded by first audit
-Month 3–6 ────► Crowd Supply campaign (real photos, real units)
-Month 6–12 ───► WILDLABS + SBIR window → E0 pilot
-Month 12+ ────► Superorganism once receipt volume proves the model
+Now ──────────► Lane A outreaches + submit Filecoin issue + Cloudflare
+                credits + publish Giveth listing; user writes the
+                Emergent Ventures 1500 words
+Month 1–3 ────► First-article: 5 boards funded by first audit;
+                NOAA FY27 NOFO posts (~Nov 1) → finalize + submit
+Month 3–6 ────► Crowd Supply campaign (real photos, real units);
+                Schmidt Marine window reopens ~spring
+Month 6–12 ───► WILDLABS + NSF/USDA SBIR window → E0 pilot
+Month 12+ ────► Superorganism once receipt volume proves the model;
+                RetroPGF/Octant once public impact is demonstrated
 ```
 
 ## Rules for every application
