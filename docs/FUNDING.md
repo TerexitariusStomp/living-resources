@@ -67,10 +67,19 @@ routine if an equity raise requires it.
 | CDL (Oceans/Climate/Compute) | equity-free | Annual cycle | watching | `applications/fellowships-prep.md` — objectives-based; CDL-Oceans is the natural stream |
 | Foresight Institute | varies | Rolling/small | watching | `applications/fellowships-prep.md` — verify current program + entity eligibility first |
 | DOE V-MRV adjacent calls | varies | Periodic | watching | Match when a digital-MRV call opens |
+| EPA SBIR Phase I | ~$100k | Annual (FY26 open→Nov 8) | **NOT A FIT this cycle** | FY26 topics are PFAS/CO/water-reuse/food-waste/battery — nothing matches; watch FY27 (topics rotate) |
+| Colorado OEDIT Advanced Industries Early-Stage | up to $250k | Windows Jan+Jul (next ~Jan 4, 2027) | watching | CO LLC fits HQ rule, but needs **2:1 cash match** — only unlocks post-raise. Multi-industry cap $500k (electronics + energy/natural resources) |
+| Sovereign Tech Fund (DE) | €50k+ | Rolling portal | watching | Open digital base technologies — the receipt/verification/federation commons could qualify; **same caveat as NLnet: funds the FOSS layer, not field deployment**. Min €50k of work; no double-dipping with other public funds on same scope |
+| Keeling Curve Prize | $50k+ | Annual (2026 closed Jan) | watching | GHG-quantification questions are a stretch — watch 2027 with real deployment data |
+| Breakthrough Energy Fellows | varies | Cohort | watching | Hard-tech climate fellowship — verify next cohort window |
+| Z Fellows | $10k | Rolling, ~1wk | watching | Fast founder residency grant — low effort, small check |
+| NVIDIA Inception | credits+tools (in-kind) | Rolling | watching | Free program; GPU/AI credits if ML detection scales up |
+| AWS Activate / Google for Startups | $1k–100k credits (in-kind) | Rolling | watching | Backup cloud credits; Activate self-serve tier is quick |
 | Elemental Impact — Project Track | $500k ask | Rolling | **SUBMITTED** | Intake form submitted 2026-10-25 (portal confirmed) — full app + deck; awaits screening |
 | SOSV HAX (Newark) | up to $550k | Rolling | **SUBMITTED** | Confirmation email received 2026-10-25 — review ~2 weeks; silence by month-end = pass |
 | Carbon13 Venture Accelerator | €150–250k | Cohort (open) | **READY TO SUBMIT** | Email confirmed; all 7 sections complete; deck + cap table + tech one-pager uploaded — **user: record+upload founder intro video (required), then submit** (tab open) |
 | Canadian Space Agency AO | up to $250k | Periodic | watching | Needs Canadian partner — consortium option |
+| DePIN-native funds (EV3, Borderless) | varies | Rolling | watching | The network is literally DePIN-shaped (physical nodes + per-contribution credit) — viable only if we choose to reintroduce crypto framing; deliberately off in conventional apps |
 
 ## Staging
 
