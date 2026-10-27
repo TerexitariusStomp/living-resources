@@ -3,17 +3,17 @@
 
 All free. Order matters for the endorsement-dependent steps.
 
-- [ ] **ORCID iD** — register at orcid.org (2 min). Required by the
-  Springer Editorial Manager submission and most venues.
+- [x] **ORCID iD** — registered 2026-10-26:
+  **0009-0009-7108-919X** (https://orcid.org/0009-0009-7108-919X).
+  Credentials at `~/.local/share/devin/orcid.txt` (outside repo).
 - [ ] **Preprint account** — bioRxiv (no endorsement needed; has a
   direct B2J "PCI Ecology" submission route at the end of its form)
   or arXiv (cs.NI / q-bio.NC; first-time submitters need an
   endorsement code from an established arXiv author — line one up
   early). PCI Ecology accepts bioRxiv, EcoEvoRxiv, arXiv, HAL, Zenodo.
-- [ ] **Zenodo** — sign in with GitHub OAuth and flip the
-  living-resources repo switch (Settings → GitHub). The `paper-v1`
-  release (created 2026-10-26) will mint a DOI automatically on
-  enablement; then update the corpus README cite line with the DOI.
+- [x] **Zenodo** — GitHub OAuth authorized, living-resources switch
+  ON, `paper-v1` release archived: **DOI 10.5281/zenodo.23681503**
+  (cite line updated in `corpus/README.md` and `main.tex`).
 - [ ] **Editorial Manager account** — *Neuroinformatics* portal at
   springer.com/journal/12021 (submission guidelines: "Research
   Article" type; single-blind or double-blind per journal policy —
