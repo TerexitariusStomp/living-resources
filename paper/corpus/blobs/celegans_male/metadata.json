@@ -1,0 +1,13 @@
+{
+  "name": "celegans_male",
+  "nNeurons": 575,
+  "nSynapses": 5305,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 575,
+  "weightsOffset": 11185,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 13838,
+  "nChunks": 1
+}

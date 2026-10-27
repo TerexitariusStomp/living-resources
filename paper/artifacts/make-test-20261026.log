@@ -1,0 +1,6 @@
+guile not found — running static checks (e2e needs guile on PATH)
+scm static check ok: 43 files balanced, SPDX present
+sim ok: UDP delivery verified, task path exercised
+sim ok: 2 chunks spooled, 4 pending after refused flush, emit consent-gate held
+rego policies declared
+static checks passed — install guile to run the e2e suites

@@ -16,3 +16,13 @@ workers/compute-api/.wrangler/
 
 # generated site audio is committed (CC0 Khait dataset excerpts)
 !site/public/audio/*.wav
+
+# LaTeX build intermediates (tectonic)
+paper/*.aux
+paper/*.log
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/_minted-*/

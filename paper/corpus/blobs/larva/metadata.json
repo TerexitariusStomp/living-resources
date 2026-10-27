@@ -1,0 +1,13 @@
+{
+  "name": "larva",
+  "nNeurons": 3016,
+  "nSynapses": 30149,
+  "nSteps": 5,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 3016,
+  "weightsOffset": 63314,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 78389,
+  "nChunks": 4
+}

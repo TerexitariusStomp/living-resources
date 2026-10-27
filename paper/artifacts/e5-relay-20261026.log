@@ -1,0 +1,18 @@
+E5 relay check — 15 connectome(s), features={"confidence": 0.72, "event_rate": 0.35, "env_anomaly": 0.1, "fleet_agreement": 1.0}
+  ok   celegans        in=544a97d57d31d7… trace=d20b3a5e70364c… replay=local
+  ok   celegans_herm   in=544a97d57d31d7… trace=6d0a7fdc427539… replay=local
+  ok   celegans_male   in=544a97d57d31d7… trace=1efebcf75c9d79… replay=local
+  ok   ciona           in=544a97d57d31d7… trace=7cd21429e4bacf… replay=local
+  ok   drosophila      in=544a97d57d31d7… trace=7d389c949e5986… replay=local
+  ok   hemibrain       in=544a97d57d31d7… trace=08ff6fdabd4294… replay=local
+  ok   human           in=544a97d57d31d7… trace=c7cc13bed7b851… replay=local
+  ok   larva           in=544a97d57d31d7… trace=f7dcf1b95fe6c7… replay=local
+  ok   macaque         in=544a97d57d31d7… trace=3519b4437c57a7… replay=local
+  ok   macaque_modha   in=544a97d57d31d7… trace=954bf25c58f79a… replay=local
+  ok   medulla         in=544a97d57d31d7… trace=c76f0480c9f744… replay=local
+  ok   mouse           in=544a97d57d31d7… trace=10a2f267dd125b… replay=local
+  ok   mouse_retina    in=544a97d57d31d7… trace=cfaf174bdbdca6… replay=local
+  ok   platynereis     in=544a97d57d31d7… trace=27877c7ca3a18c… replay=local
+  ok   rat             in=544a97d57d31d7… trace=02d4ff96914149… replay=local
+  signatures: 15 distinct across 15 wirings
+E5 verdict: PASS  bundle_said=blake2s:0864985c18be89b18b9a9d…

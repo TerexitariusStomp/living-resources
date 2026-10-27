@@ -1,0 +1,13 @@
+{
+  "name": "celegans_herm",
+  "nNeurons": 453,
+  "nSynapses": 4878,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 453,
+  "weightsOffset": 10209,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 12648,
+  "nChunks": 1
+}

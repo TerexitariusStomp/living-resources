@@ -1,0 +1,13 @@
+{
+  "name": "hemibrain",
+  "nNeurons": 21636,
+  "nSynapses": 216310,
+  "nSteps": 3,
+  "indptrWidth": 2,
+  "indptrOffset": 0,
+  "indicesOffset": 43272,
+  "weightsOffset": 475892,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 584047,
+  "nChunks": 24
+}

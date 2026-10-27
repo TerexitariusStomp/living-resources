@@ -1,0 +1,13 @@
+{
+  "name": "mouse",
+  "nNeurons": 112,
+  "nSynapses": 6542,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 112,
+  "weightsOffset": 13196,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 16467,
+  "nChunks": 1
+}

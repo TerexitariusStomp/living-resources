@@ -1,0 +1,13 @@
+{
+  "name": "macaque_modha",
+  "nNeurons": 242,
+  "nSynapses": 4090,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 242,
+  "weightsOffset": 8422,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 10467,
+  "nChunks": 1
+}

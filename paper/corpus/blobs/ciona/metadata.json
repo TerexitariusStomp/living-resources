@@ -1,0 +1,13 @@
+{
+  "name": "ciona",
+  "nNeurons": 205,
+  "nSynapses": 2902,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 205,
+  "weightsOffset": 6009,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 7460,
+  "nChunks": 1
+}

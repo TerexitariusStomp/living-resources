@@ -1,0 +1,13 @@
+{
+  "name": "mouse_retina",
+  "nNeurons": 1124,
+  "nSynapses": 90009,
+  "nSteps": 5,
+  "indptrWidth": 2,
+  "indptrOffset": 0,
+  "indicesOffset": 2248,
+  "weightsOffset": 182266,
+  "weightScale": 0.6297754049301147,
+  "totalSize": 227271,
+  "nChunks": 10
+}

@@ -1,0 +1,83 @@
+
+pages
+  ✓ GET / → 200 text/html
+  ✓ brand rendered on page
+  ✓ page <title> set
+  ✓ canonical → templeearth.cc
+  ✓ og:site_name = Temple Earth
+  ✓ no 'Treetable' in rendered HTML
+  ✓ hero line present
+  ✓ details drawers render
+  ✓ join form present
+  ✓ og:image is absolute templeearth.cc URL
+  ✓ og:image fetches 200 + is an image
+  ✓ og:image immutable cache
+  ✓ apple-touch-icon link present
+  ✓ apple-touch-icon fetches 200
+  ✓ svg favicon link present
+  ✓ svg favicon fetches 200
+  ✓ GET / (Accept: json) → service pointer
+  ✓ GET /developers → 200
+  ✓ developers lists /task + /verify
+  ✓ developers links GitHub repo
+  ✓ GET /privacy → 200
+  ✓ GET /credits → 200
+  ✓ privacy contact is hello@templeearth.cc
+  ✓ GET /science → styled 404
+  ✓ GET /how-it-works → styled 404
+  ✓ GET /this-path-grew-over-404 → styled 404
+  ✓ www.templeearth.cc serves the site
+
+assets
+  ✓ GET /robots.txt → 200 (text/plain)
+  ✓ GET /temple-earth-deck.pdf → 200 (application/pdf)
+  ✓ GET /sitemap-index.xml → 200 (application/xml)
+  ✓ deck is a real PDF (>100KB)
+  ✓ legacy deck → 301 to temple-earth-deck.pdf
+
+read APIs
+  ✓ /info lists endpoints
+  ✓ /info source → GitHub repo
+  ✓ /connectomes returns 15 substrates
+  ✓ connectome names unique
+  ✓ /federation lists allied networks
+  ✓ birdweather is live-now with a device count
+  ✓ birdweather has live detections
+  ✓ provenance note present
+  ✓ /receipts returns the ledger
+
+compute chain (task → receipt → verify → tamper)
+  ✓ POST /task → receipt
+  ✓ receipt has blake2s task_said
+  ✓ receipt carries trace_digest + input_said
+  ✓ receipt points at /verify replay
+  ✓ receipt persisted under its content address
+  ✓ POST /verify receipt → verified
+  ✓ input_said recomputes
+  ✓ tampered digest → verified:false
+  ✓ new receipt shows in the ledger (KV list latency)
+  ✓ POST /verdict single → verdict
+  ✓ POST /verdict all → honest JSON 503 (free-plan CPU)
+  ✓ POST /task raw-input mode → receipt
+
+validation + guardrails
+  ✓ task: no connectome → 400
+  ✓ task: unknown connectome → 400
+  ✓ task: garbage body → 400
+  ✓ task: array body → 400
+  ✓ verify: empty → 400
+  ✓ join: bad email → 400
+  ✓ join: unknown role → 400
+  ✓ join: no consent → 400
+  ✓ receipts: unknown said → 404
+  ✓ join honeypot pretends success
+  ✓ join cross-origin → 403
+  ✓ join valid signup → ok
+  ✓ presence oversized body → 400
+  ✓ presence ping → counted
+  ✓ presence GET → valid shape
+  ✓ presence count shared with POST isolate
+  ✓ CORS preflight → allow-origin *
+  ✓ error bodies are {error}
+
+71 passed, 0 failed, 0 soft-warnings — https://templeearth.cc

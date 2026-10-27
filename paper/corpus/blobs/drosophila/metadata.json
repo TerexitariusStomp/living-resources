@@ -1,0 +1,13 @@
+{
+  "name": "drosophila",
+  "nNeurons": 49,
+  "nSynapses": 1950,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 49,
+  "weightsOffset": 3949,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 4924,
+  "nChunks": 1
+}

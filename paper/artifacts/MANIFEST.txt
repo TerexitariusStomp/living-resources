@@ -1,0 +1,25 @@
+# Version manifest — paper-v1
+date: 2026-10-26T21:01:00-06:00
+git: 49e0fdd6f67c7c69fc66686179a13178281d6d61
+python3: Python 3.14.6
+node: v22.23.1
+guile: 3.0.9 (local prefix ~/.local/guile30)
+tectonic: Tectonic 0.17.0
+encoder: lif-sensing-v1
+worker: connectome-compute-api (https://templeearth.cc)
+RAPL: locked — bench tier=estimated for fresh runs
+
+## artifacts
+dcaacaef7785073bbc99a775834dffb710c9229af4556677fdd76ac0a2764f73  paper/artifacts/bench-celegans-20261026.jsonl
+405b171949cf28ad25f87b3a0e176dcbb775eab7d16ad1aae60d5326ecff9917  paper/artifacts/bench-medulla-20261026.jsonl
+17df41e4e2a27a7ea26290ba8601b3762a7638d0524e6c778c33f6f067a288ca  paper/artifacts/e2e-suites-20261026.log
+d1f0eb805aec821ac6fddf1e02fa0bd571a2556a208f2b99d46cd92b89d679b0  paper/artifacts/e5-relay-20261026.log
+c1d3fe4b788874e103750412ce86ddab6bc1bc5adff6185e4cd0cb9217d15413  paper/artifacts/live-worker-e2e-20261026.log
+5c4f179ac3c830d2b6c0c0e7c240088d250c60006d6aa48213753096181dff70  paper/artifacts/make-test-20261026.log
+3e1c16dbefac9766176a9ddc02a30a352d8424f21c8aac792e230f7aee1131ab  paper/artifacts/MANIFEST.txt
+5408d64dd7260f71d7956ae537de49194c52b0d760c16ede927b09af34ff9b58  paper/artifacts/parity-930-20261026.log
+9632d995ccf45e083a94f1c4616d8ac31fe97fcf8789255dfb1951fc22f55673  main.pdf
+caec565e50ac511f327f8011b3eaf5028d19d0e751a178561120550de996eb52  corpus/vectors.jsonl
+1c9d9d27ff8ec0713145fc20df8070d7a7faa57753df6f842ef697de739b0628  corpus/checksums.txt
+d809802a2400741d62a4e0aac3f951816c7b20eae64363818c0bcfc5b749e22a  corpus/SPEC.md
+506881047c03cc1bb140a8d890af741ca9f367bcc92dd55492ccad42b7536f04  corpus/README.md

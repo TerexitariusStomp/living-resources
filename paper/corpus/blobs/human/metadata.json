@@ -1,0 +1,13 @@
+{
+  "name": "human",
+  "nNeurons": 234,
+  "nSynapses": 7076,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 234,
+  "weightsOffset": 14386,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 17924,
+  "nChunks": 1
+}

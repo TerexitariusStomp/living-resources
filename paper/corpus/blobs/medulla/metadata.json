@@ -1,0 +1,13 @@
+{
+  "name": "medulla",
+  "nNeurons": 40000,
+  "nSynapses": 399950,
+  "nSteps": 3,
+  "indptrWidth": 2,
+  "indptrOffset": 0,
+  "indicesOffset": 80000,
+  "weightsOffset": 879900,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 1079875,
+  "nChunks": 44
+}

@@ -1,0 +1,13 @@
+{
+  "name": "platynereis",
+  "nNeurons": 5000,
+  "nSynapses": 49991,
+  "nSteps": 5,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 5000,
+  "weightsOffset": 104982,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 129978,
+  "nChunks": 6
+}

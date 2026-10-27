@@ -1,0 +1,13 @@
+{
+  "name": "macaque",
+  "nNeurons": 93,
+  "nSynapses": 1692,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 93,
+  "weightsOffset": 3477,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 4323,
+  "nChunks": 1
+}

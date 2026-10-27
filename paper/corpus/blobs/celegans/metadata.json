@@ -1,0 +1,13 @@
+{
+  "name": "celegans",
+  "nNeurons": 302,
+  "nSynapses": 3009,
+  "nSteps": 10,
+  "indptrWidth": 1,
+  "indptrOffset": 0,
+  "indicesOffset": 302,
+  "weightsOffset": 6320,
+  "weightScale": 0.1428571492433548,
+  "totalSize": 7825,
+  "nChunks": 1
+}
