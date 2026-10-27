@@ -66,7 +66,5 @@ its blob, compare `spike_digest`, `trace_digest`, `input_said`,
 ## Cite
 
 > Price, T.R. (2026). *WiredReplay-1: a replay-verification corpus of
-> biological wiring diagrams* (v1). Zenodo. DOI pending — minted
-> automatically by Zenodo on the `paper-v1` GitHub release once the
-> repo is enabled at zenodo.org; until then cite release `paper-v1`:
-> github.com/TerexitariusStomp/living-resources/releases/tag/paper-v1
+> biological wiring diagrams* (v1). Zenodo.
+> https://doi.org/10.5281/zenodo.23681503
