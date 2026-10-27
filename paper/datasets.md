@@ -44,13 +44,30 @@ connectome.
   `all_connectomes.json`, and expected-digest test vectors — the corpus
   is verifiable even where blobs are cite-only.
 
-## Open verification items (Phase 0)
+## Provenance verification status (2026-10-26 audit)
+
+- `~/fly-data` itself is the alextitonis/fly.ai data dir (MaleCNS v1.0,
+  CC-BY 4.0); the `connectomes/` npz set was assembled separately for
+  the fly.ai on-chain project. The npz carry fly.ai's synthetic
+  annotation schema (positions/cell_types/groups) layered onto the
+  connectivity — annotations are project-generated, not upstream.
+- `pack_connectomes.py` records no upstream URL per graph; npz headers
+  carry none either. Cellular-scale rows match known published
+  connectomes by size/count (WormWiring, Ryan 2016, Janelia, Jékely,
+  Helmstaedter) and are treated as *published-plausible*.
+- The five mesoscale graphs (drosophila 49, human 234, mouse 112,
+  rat 73, macaque 93) have **unverified upstream provenance**. They
+  ship in the corpus as the project's own derived artifacts
+  (checksum-auditable, research-use-only) and are flagged
+  "provenance pending" in the corpus table — any scientific claim
+  must name them as wiring diagrams of unconfirmed source.
+- Janelia-derived rows (hemibrain, medulla, larva) are CC-BY 4.0 —
+  derived packed blobs redistribute with attribution.
+
+## Open verification items
 
 - [ ] Confirm drosophila(49), human(234), mouse(112), rat(73),
-      macaque(93) upstream datasets — check `weights.npz` headers and
-      any download logs in ~/fly-data or the fly.ai repo
-- [ ] Confirm Janelia terms cover *derived packed* redistribution
-      (CC-BY yes; mark bundle "derived from Janelia hemibrain v1.x,
-      CC-BY 4.0")
+      macaque(93) upstream datasets — the paper/table must keep the
+      "provenance pending" flag until an upstream is identified
 - [ ] Record exact upstream URL/DOI per row for the paper's data
       availability statement

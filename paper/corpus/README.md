@@ -26,26 +26,29 @@ SPEC.md                normative format/encoder/LIF/digest specification
 
 ## Datasets
 
-| name | neurons | resolution | upstream |
-|---|---:|---|---|
-| celegans, celegans_herm, celegans_male | 302–575 | cellular EM | WormWiring (Cook et al. 2019) |
-| ciona | 205 | cellular EM | Ryan et al. 2016 |
-| larva | 3,016 | cellular EM | Janelia Drosophila L1 (CC-BY) |
-| platynereis | 5,000 | cellular EM | Jékely lab (Verasztó et al.) |
-| mouse_retina | 1,124 | cellular EM | Helmstaedter et al. 2013 |
-| hemibrain | 21,636 | cellular EM | Janelia hemibrain v1.x (CC-BY) |
-| medulla | 40,000 | cellular EM | Janelia FIB-SEM optic lobe (CC-BY) |
-| drosophila | 49 | **mesoscale** | coarse fly-brain graph |
-| human | 234 | **mesoscale** | parcellated structural |
-| mouse | 112 | **mesoscale** | interareal matrix |
-| rat | 73 | **mesoscale** | BAMS-class |
-| macaque | 93 | **mesoscale** | CoCoMac-derived |
-| macaque_modha | 242 | **mesoscale** | Modha & Singh 2010 |
+| name | neurons | resolution | upstream | provenance |
+|---|---:|---|---|---|
+| celegans, celegans_herm, celegans_male | 302–575 | cellular EM | WormWiring (Cook et al. 2019) | published-plausible |
+| ciona | 205 | cellular EM | Ryan et al. 2016 | published-plausible |
+| larva | 3,016 | cellular EM | Janelia Drosophila L1 | verified CC-BY |
+| platynereis | 5,000 | cellular EM | Jékely lab (Verasztó et al.) | published-plausible |
+| mouse_retina | 1,124 | cellular EM | Helmstaedter et al. 2013 | published-plausible |
+| hemibrain | 21,636 | cellular EM | Janelia hemibrain v1.x | verified CC-BY |
+| medulla | 40,000 | cellular EM | Janelia FIB-SEM optic lobe | verified CC-BY |
+| macaque_modha | 242 | **mesoscale** | Modha & Singh 2010 | published-plausible |
+| drosophila | 49 | **mesoscale** | *pending identification* | **unverified** |
+| human | 234 | **mesoscale** | *pending identification* | **unverified** |
+| mouse | 112 | **mesoscale** | *pending identification* | **unverified** |
+| rat | 73 | **mesoscale** | *pending identification* | **unverified** |
+| macaque | 93 | **mesoscale** | *pending identification* | **unverified** |
 
-Licensing: blobs derived from CC-BY upstreams are redistributable with
-attribution; for cite-only sources the checksums + pack script +
-upstream citations are the conformance path (regenerate, compare
-hashes). See `../datasets.md` for the per-dataset license tier table.
+Licensing: Janelia-derived blobs (hemibrain, medulla, larva) are CC-BY
+4.0 — redistributable with attribution. Other rows ship as the
+project's own derived packed artifacts (checksum-auditable,
+research-use-only); where upstream is "published-plausible" or
+"unverified," the checksums + pack method + upstream citations are the
+conformance path — regenerate and compare hashes rather than assuming
+redistribution rights. See `../datasets.md` for the audit notes.
 
 ## Validate an implementation
 
