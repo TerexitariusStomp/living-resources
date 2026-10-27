@@ -10,11 +10,10 @@ All free. Order matters for the endorsement-dependent steps.
   or arXiv (cs.NI / q-bio.NC; first-time submitters need an
   endorsement code from an established arXiv author — line one up
   early). PCI Ecology accepts bioRxiv, EcoEvoRxiv, arXiv, HAL, Zenodo.
-- [ ] **Zenodo** — sign in with GitHub OAuth; enable the
-  living-resources repo; the `paper-v1` tag release mints the DOI
-  automatically. Update README/corpus cite line with the minted DOI.
-- [ ] **GitHub release** — create release on tag `paper-v1` after the
-  artifact/corpus commits land (Zenodo picks it up).
+- [ ] **Zenodo** — sign in with GitHub OAuth and flip the
+  living-resources repo switch (Settings → GitHub). The `paper-v1`
+  release (created 2026-10-26) will mint a DOI automatically on
+  enablement; then update the corpus README cite line with the DOI.
 - [ ] **Editorial Manager account** — *Neuroinformatics* portal at
   springer.com/journal/12021 (submission guidelines: "Research
   Article" type; single-blind or double-blind per journal policy —
