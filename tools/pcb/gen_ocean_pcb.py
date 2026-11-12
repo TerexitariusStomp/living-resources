@@ -122,6 +122,7 @@ for name in netnames:
 # in a center grid, passives on the bottom side in a clean grid.
 W, H = 120.0, 90.0
 POS = {}
+grid_pos = {}
 mx, my = 26.0, 14.0
 for ref in sorted(comps):
     if ref.startswith(("U_", "Q_")) or ref == "L_BOOST":
@@ -285,13 +286,7 @@ for layer, net in ((pcbnew.F_Cu, gnd), (pcbnew.In1_Cu, gnd),
             lc = o.COutline(oi)
             pts = [(lc.CPoint(i).x / 1e6, lc.CPoint(i).y / 1e6)
                    for i in range(lc.PointCount())]
-    L2 = vx * vx + vy * vy
-    if L2 == 0:
-        return ((px - ax) ** 2 + (py - ay) ** 2) ** 0.5
-    t = max(0.0, min(1.0, ((px - ax) * vx + (py - ay) * vy) / L2))
-    return ((px - ax - t * vx) ** 2 + (py - ay - t * vy) ** 2) ** 0.5
-
-
+            KEEPS.append(pts)
 def seg_dist(ax, ay, bx, by, cx, cy, dx, dy):
     def ccw(px, py, qx, qy, rx, ry):
         return (ry - py) * (qx - px) - (qy - py) * (rx - px)
@@ -337,35 +332,6 @@ def collect_obstacles():
         except Exception:
             kz.SetLayer(pcbnew.F_Cu)
         board.Add(kz)
-                if p.IsOnLayer(ly):
-                    layers.add(ly)
-            dots.append((cx - dx, cy - dy, cx + dx, cy + dy, wid / 2,
-                         p.GetNetCode(), layers))
-    for t in board.GetTracks():
-        pos = t.GetPosition()
-        if isinstance(t, pcbnew.PCB_VIA):
-            dots.append((pos.x / 1e6, pos.y / 1e6, pos.x / 1e6,
-                         pos.y / 1e6, t.GetWidth() / 2 / 1e6,
-                         t.GetNetCode(), ALL_CU))
-        else:
-            segs.append((t.GetStart().x / 1e6, t.GetStart().y / 1e6,
-                         t.GetEnd().x / 1e6, t.GetEnd().y / 1e6,
-                         t.GetWidth() / 2 / 1e6, t.GetNetCode(),
-                         t.GetLayer()))
-    return dots, segs
-
-
-CLR = 0.12  # extra keepout margin in mm for hand stitches
-
-
-def via_ok(dots, segs, x, y, netcode, vr=0.225):
-    for ax, ay, bx, by, r, nc, layers in dots:
-        if nc != netcode and pt_seg_dist(x, y, ax, ay, bx, by) < r + vr + CLR:
-            return False
-    for ax, ay, bx, by, w, nc, ly in segs:
-        if nc != netcode and pt_seg_dist(x, y, ax, ay, bx, by) < w + vr + CLR:
-            return False
-    return True
 
 
 for fp in board.GetFootprints():
@@ -382,17 +348,15 @@ print("pcb", PCB, "| dsn", DSN, ok)
 
 def pt_seg_dist(px, py, ax, ay, bx, by):
     vx, vy = bx - ax, by - ay
-    v.SetViaType(pcbnew.VIATYPE_THROUGH)
-    v.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
-    v.SetWidth(MM(0.45))
-    v.SetDrill(MM(0.2))
-    v.SetNetCode(netcode)
-    board.Add(v)
-    if GRID is not None:
-        stamp_item(GRID, (x, y, x, y, 0.25, netcode, ALL_CU))
-    return v
+    L2 = vx * vx + vy * vy
+    if L2 == 0:
+        return ((px - ax) ** 2 + (py - ay) ** 2) ** 0.5
+    t = max(0.0, min(1.0, ((px - ax) * vx + (py - ay) * vy) / L2))
+    return ((px - ax - t * vx) ** 2 + (py - ay - t * vy) ** 2) ** 0.5
 
 
+def add_via(x, y, netcode):
+    v = pcbnew.PCB_VIA(board)
 def add_track(ax, ay, bx, by, layer, netcode, w=0.25):
     t = pcbnew.PCB_TRACK(board)
     t.SetStart(pcbnew.VECTOR2I(MM(ax), MM(ay)))
@@ -471,7 +435,6 @@ def in_bounds(x, y):
     return 1 < x < W - 1 and 1 < y < H - 1
 
 
-def pad_surface(pad):
 def collect_obstacles():
     """Obstacle primitives in board mm.
 
@@ -543,6 +506,17 @@ def collect_obstacles():
 RECTS = []   # pad rectangles, populated by collect_obstacles()
 HOLES = []   # drill holes (cx,cy,r,netcode)
 
+CLR = 0.22            # net clearance used by the router, mm
+VIA_D = 0.6            # stitch via diameter, mm
+VIA_DRILL = 0.3        # stitch via drill, mm
+VIA_R = VIA_D / 2      # copper radius used for clearance checks
+H2H = 0.55             # hole-edge to hole-edge clearance + margin
+EDGE_M = 0.8           # min copper distance to board edge, mm
+GS = 0.5               # raster cell pitch, mm
+GNX, GNY = int(W / GS) + 2, int(H / GS) + 2
+GRID = None            # built lazily by build_grid()
+
+
 def new_grid():
     return {ly: [[-1] * GNY for _ in range(GNX)] for ly in CU_LAYERS}
 
@@ -556,6 +530,73 @@ def stamp_item(grid, item):
     x0 = int((min(ax, bx) - rad) / GS)
     x1 = int((max(ax, bx) + rad) / GS) + 1
     y0 = int((min(ay, by) - rad) / GS)
+def pt_rect_dist(px, py, cx, cy, hx, hy, ca, sa):
+    """Point to rotated-rect distance (0 inside)."""
+    dx, dy = px - cx, py - cy
+    lx = dx * ca + dy * sa
+    ly = -dx * sa + dy * ca
+    ox = max(0.0, abs(lx) - hx)
+    oy = max(0.0, abs(ly) - hy)
+    return (ox * ox + oy * oy) ** 0.5
+
+
+def seg_rect_dist(ax, ay, bx, by, cx, cy, hx, hy, ca, sa):
+    """Segment to rotated-rect distance (0 on overlap)."""
+    d = min(pt_rect_dist(ax, ay, cx, cy, hx, hy, ca, sa),
+            pt_rect_dist(bx, by, cx, cy, hx, hy, ca, sa))
+    if d == 0.0:
+        return 0.0
+    cs = [(cx + sx * ca - sy * sa, cy + sx * sa + sy * ca)
+          for sx, sy in ((hx, hy), (hx, -hy), (-hx, hy), (-hx, -hy))]
+    for i in range(4):
+        x1, y1 = cs[i]
+        x2, y2 = cs[(i + 1) % 4]
+        d = min(d, seg_dist(ax, ay, bx, by, x1, y1, x2, y2))
+    return d
+
+
+def pt_poly_dist(x, y, poly):
+    """Point to polygon distance (0 inside)."""
+    inside = False
+    d = 1e9
+    n = len(poly)
+    for i in range(n):
+        x1, y1 = poly[i]
+        x2, y2 = poly[(i + 1) % n]
+        d = min(d, pt_seg_dist(x, y, x1, y1, x2, y2))
+        if (y1 > y) != (y2 > y) and \
+                x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            inside = not inside
+    return 0.0 if inside else d
+
+
+def seg_poly_dist(ax, ay, bx, by, poly):
+    """Segment to polygon distance (0 on overlap/inside)."""
+    if pt_poly_dist(ax, ay, poly) == 0.0 or \
+            pt_poly_dist(bx, by, poly) == 0.0:
+        return 0.0
+    d = 1e9
+    n = len(poly)
+    for i in range(n):
+        x1, y1 = poly[i]
+        x2, y2 = poly[(i + 1) % n]
+        d = min(d, seg_dist(ax, ay, bx, by, x1, y1, x2, y2))
+    return d
+
+
+def in_keeps(x, y):
+    """True when (x,y) falls inside a copper keepout polygon."""
+    for poly in KEEPS:
+        if pt_poly_dist(x, y, poly) < CLR:
+            return True
+    return False
+
+
+def pad_layers(pad):
+    return [ly for ly in CU_LAYERS if pad.IsOnLayer(ly)]
+
+
+
 def via_ok(dots, segs, x, y, netcode, vr=VIA_R):
     if in_keeps(x, y):
         return False
@@ -615,22 +656,6 @@ def add_via(x, y, netcode):
     v.SetViaType(pcbnew.VIATYPE_THROUGH)
     v.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
     v.SetWidth(MM(VIA_D))
-        if nc != netcode and ly == layer and \
-                seg_dist(ax, ay, bx, by, sx, sy, ex, ey) < w + tw / 2 + CLR:
-            return False
-    for cx, cy, hx, hy, ca, sa, nc, layers in RECTS:
-        if nc != netcode and layer in layers and \
-                seg_rect_dist(ax, ay, bx, by, cx, cy, hx, hy,
-                              ca, sa) < tw / 2 + CLR:
-            return False
-    return True
-
-
-def add_via(x, y, netcode):
-    v = pcbnew.PCB_VIA(board)
-    v.SetViaType(pcbnew.VIATYPE_THROUGH)
-    v.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
-    v.SetWidth(MM(VIA_D))
     v.SetDrill(MM(VIA_DRILL))
     v.SetNetCode(netcode)
     board.Add(v)
@@ -668,8 +693,6 @@ def islands(netcode, conn):
 def via_candidates(px, py, smd, pad=None, rr_max=10.0):
     import math
     cands = [(px, py)] if smd else []
-    if pad is not None:
-        # prefer escaping outward along the pad's long axis
     if pad is not None:
         # prefer escaping outward along the pad's long axis
         sz = pad.GetSize()
@@ -714,36 +737,20 @@ def try_plane_via(pad, dots, segs, ncode):
     smd = pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD
 
 
-def stamp_item(grid, item):
-    """Mark cells covered by one obstacle (dot- or seg-tuple)."""
-    ax, ay, bx, by, r, nc, layers = item
-    if isinstance(layers, int):
-        layers = (layers,)
-    rad = r + 0.125 + CLR
-    x0 = int((min(ax, bx) - rad) / GS)
-    x1 = int((max(ax, bx) + rad) / GS) + 1
-    y0 = int((min(ay, by) - rad) / GS)
-    y1 = int((max(ay, by) + rad) / GS) + 1
-    for ly in layers:
-        g = grid[ly]
-        for cx in range(max(0, x0), min(GNX - 1, x1) + 1):
-            px = cx * GS
-            for cy in range(max(0, y0), min(GNY - 1, y1) + 1):
-def via_sites(pad, dots, segs, ncode, limit=20):
-    """First `limit` via positions reachable from pad by a clear stub.
-
-    """
-    px, py = pad_xy(pad)
-    player = pad_surface(pad)
-    smd = pad.GetAttribute() == pcbnew.PAD_ATTRIB_SMD
-    out, seen = [], set()
     for cx, cy in via_candidates(px, py, smd, pad):
-        if (round(cx, 2), round(cy, 2)) in seen:
+        if not in_bounds(cx, cy):
             continue
-        dots.append((cx, cy, cx, cy, VIA_R, ncode, ALL_CU))
+        if not via_ok(dots, segs, cx, cy, ncode):
+            continue
+        if (cx, cy) != (px, py) and not track_ok(
+                dots, segs, px, py, cx, cy, ncode, player):
+            continue
+        put_via(dots, cx, cy, ncode)
+        if (cx, cy) != (px, py):
+            add_track(px, py, cx, cy, player, ncode)
+            segs.append((px, py, cx, cy, 0.125, ncode, player))
         return True
     return False
-
 
 def via_sites(pad, dots, segs, ncode, limit=20):
     """First `limit` via positions reachable from pad by a clear stub.
@@ -899,49 +906,11 @@ def via_fits_cell(cx, cy, ncode):
     return True
 
 
-def grid_route(starts, goals, ncode, margin=50, goal_states=None):
+def grid_route(starts, goals, ncode, margin=50, goal_states=None,
+               start_layers=None):
     """Multi-layer 4-dir A*: state (cx,cy,layer); layer change = via.
 
     starts/goals are lists of (cx,cy) cells (each valid on all layers).
-    goal_states, if given, is a set of (cx,cy,layer) triples — the path
-    must then END on one of those exact states.
-    Returns [(cx,cy,layer), ...] or None.
-    """
-    import heapq
-    allx = [s[0] for s in starts] + [g0[0] for g0 in goals]
-    ally = [s[1] for s in starts] + [g0[1] for g0 in goals]
-    xlo = max(0, min(allx) - margin)
-    xhi = min(GNX - 1, max(allx) + margin)
-    ylo = max(0, min(ally) - margin)
-    yhi = min(GNY - 1, max(ally) + margin)
-    goalset = {(g0[0], g0[1]) for g0 in goals}
-    gstates = set(goal_states) if goal_states else None
-    openh = []
-    came, gs = {}, {}
-    for s in starts:
-        for ly in CU_LAYERS:
-            st = (s[0], s[1], ly)
-            gs[st] = 0.0
-            came[st] = None
-            heapq.heappush(openh, (0.0, st))
-    layers = list(CU_LAYERS)
-    while openh:
-        _, cur = heapq.heappop(openh)
-        if (cur in gstates) if gstates is not None \
-                else ((cur[0], cur[1]) in goalset):
-            path = []
-            while cur is not None:
-                path.append(cur)
-                cur = came[cur]
-            return path[::-1]
-        cx, cy, ly = cur
-        # same-layer steps
-        for d in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nx_, ny_ = cx + d[0], cy + d[1]
-            if not (xlo <= nx_ <= xhi and ylo <= ny_ <= yhi):
-                continue
-            n2 = (nx_, ny_, ly)
-            v = GRID[ly][nx_][ny_]
     goal_states, if given, is a set of (cx,cy,layer) triples — the path
     must then END on one of those exact states.  start_layers, if given,
     maps a start cell to the layers it may be seeded on — otherwise a
@@ -1044,29 +1013,6 @@ def try_grid_cluster(pad, cluster, dots, segs, ncode):
     if GRID is None:
         return False
     a_sites = via_sites(pad, dots, segs, ncode, limit=12)
-    if not a_sites:
-    a_sites = via_sites(pad, dots, segs, ncode, limit=12)
-    px0, py0 = pad_xy(pad)
-    padcell = (round(px0 / GS), round(py0 / GS))
-    starts = [(round(x / GS), round(y / GS)) for x, y in a_sites]
-    if padcell not in starts:
-        starts.append(padcell)          # walk out of a pad moat on its own layer
-    if not a_sites and padcell not in starts:
-        return False
-    goals, gstates, cell_pad, cell_pt = [], set(), {}, {}
-    px, py = pad_xy(pad)
-    for q in cluster:
-        gx, gy = pad_xy(q)
-        gc = (round(gx / GS), round(gy / GS))
-def try_grid_cluster(pad, cluster, dots, segs, ncode):
-    """Attach an island pad to the nearest reachable cluster pad.
-
-    Goals are the cluster pads' own cells qualified by the layers each
-    pad lives on; the last hop is a short same-net stub onto the pad.
-    """
-    if GRID is None:
-        return False
-    a_sites = via_sites(pad, dots, segs, ncode, limit=12)
     px0, py0 = pad_xy(pad)
     padcell = (round(px0 / GS), round(py0 / GS))
     starts = [(round(x / GS), round(y / GS)) for x, y in a_sites]
@@ -1103,10 +1049,41 @@ def try_grid_cluster(pad, cluster, dots, segs, ncode):
             continue
         gc = (round(ax_ / GS), round(ay_ / GS))
         goals.append(gc)
+        cell_pt[gc] = (ax_, ay_)
+        for ly in layers:
+            gstates.add((gc[0], gc[1], ly))
+    for ax_, ay_, bx_, by_, w, nc, ly in segs:
+        if nc != ncode or (near_island(ax_, ay_) and
+                           near_island(bx_, by_)):
+            continue
+        for ex_, ey_ in ((ax_, ay_), (bx_, by_)):
+            gc = (round(ex_ / GS), round(ey_ / GS))
+            goals.append(gc)
+            cell_pt[gc] = (ex_, ey_)
+            gstates.add((gc[0], gc[1], ly))
+    player = pad_surface(pad)
+    path = grid_route(starts, goals, ncode, goal_states=gstates,
+                      start_layers={padcell: (player,)})
+    if not path:
+        return False
+    # emit: pad stub onto the first cell if the start was a via site,
+    # per-segment tracks, vias where the path changes layer
+    s0 = path[0]
+    if (s0[0], s0[1]) != padcell:
+        put_via(dots, s0[0] * GS, s0[1] * GS, ncode)
+        add_track(px0, py0, s0[0] * GS, s0[1] * GS, player, ncode)
+        segs.append((px0, py0, s0[0] * GS, s0[1] * GS,
+                     0.125, ncode, player))
+    for c0, c1 in zip(path, path[1:]):
+        if (c0[0], c0[1]) == (c1[0], c1[1]):
+            put_via(dots, c0[0] * GS, c0[1] * GS, ncode)
+            continue
         add_track(c0[0] * GS, c0[1] * GS,
                   c1[0] * GS, c1[1] * GS, c0[2], ncode)
         segs.append((c0[0] * GS, c0[1] * GS,
                      c1[0] * GS, c1[1] * GS, 0.125, ncode, c0[2]))
+    sb = path[-1]
+
     # final hop: same-net stub from the goal cell onto the pad/copper
     gcell = (sb[0], sb[1])
     q = cell_pad.get(gcell)
@@ -1126,49 +1103,6 @@ def try_grid_cluster(pad, cluster, dots, segs, ncode):
 
 ESC = {}            # pad uuid -> escape-via (x,y) or None
 VIAS_PLACED = set()  # rounded (x,y) of stitch vias already on board
-
-
-def put_via(dots, x, y, ncode):
-    """add_via unless a stitch via already sits at this spot."""
-            done = try_route(pad, tpad, dots, segs, ncode,
-                             a_sites, b_sites) or \
-                try_grid(pad, tpad, dots, segs, ncode,
-                         a_sites[:6], b_sites[:6])
-            progress += done
-        print("residue", it, "stitched", progress)
-        if progress == 0:
-            break
-    report = {}
-    for w in work:
-        ids = set(x.m_Uuid.AsString()
-                  for x in conn.GetConnectedItems(w[2]))
-        if w[3].m_Uuid.AsString() not in ids:
-            report[w[0]] = report.get(w[0], 0) + 1
-    return report
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def put_via(dots, x, y, ncode):
@@ -1231,31 +1165,29 @@ def try_route(pad, tpad, dots, segs, ncode, a_sites=None, b_sites=None):
                                         ncode, rlayer)
                                for k in range(len(path) - 1)):
                         continue
-    RECTS.clear(); RECTS.extend(r)
-    HOLES.clear(); HOLES.extend(h)
-    work = []          # [name, ncode, pad, tpad, done]
-    for net in board.GetNetsByName().values():
-        name = net.GetNetname()
-        if not name or name.startswith("unconnected"):
-            continue
-        ncode = net.GetNetCode()
-        clus = islands(ncode, conn)
-        if len(clus) < 2:
-            continue
-        main = max(clus, key=len)
-        for c in clus:
-            if c is main:
-                continue
-            for pad in c:
-                px, py = pad_xy(pad)
-                tpad = min(main, key=lambda q:
-                           (pad_xy(q)[0] - px) ** 2 +
-                           (pad_xy(q)[1] - py) ** 2)
-                work.append([name, ncode, pad, tpad, False, main])
-    print("island pads:", len(work))
-    # route signals first while the board is clear, then plane fanout;
-    # shortest hops first so long routes aren't blocked early
-    def wdist(w):
+                    # emit: pad stubs, via pair, routed segments
+                    put_via(dots, ax, ay, ncode)
+                    put_via(dots, bx, by, ncode)
+                    if (ax, ay) != (px, py):
+                        add_track(px, py, ax, ay, player, ncode)
+                        segs.append((px, py, ax, ay,
+                                     0.125, ncode, player))
+                    if (bx, by) != (tx, ty):
+                        add_track(tx, ty, bx, by, tlayer, ncode)
+                        segs.append((tx, ty, bx, by,
+                                     0.125, ncode, tlayer))
+                    for k in range(len(path) - 1):
+                        add_track(path[k][0], path[k][1],
+                                  path[k + 1][0], path[k + 1][1],
+                                  rlayer, ncode)
+                        segs.append((path[k][0], path[k][1],
+                                     path[k + 1][0], path[k + 1][1],
+                                     0.125, ncode, rlayer))
+                    return True
+    return False
+
+
+
 def stitch():
     planes = {"GND", "+3V3"}
     conn = board.GetConnectivity()
@@ -1306,8 +1238,10 @@ def stitch():
         progress = 0
         for w in work:
             if w[4]:
-        for z in board.Zones():
                 continue
+            name, ncode, pad, tpad = w[0], w[1], w[2], w[3]
+            ids = set(x.m_Uuid.AsString()
+                      for x in conn.GetConnectedItems(pad))
             ka = pad.m_Uuid.AsString()
             ea = ESC.get(ka)
             a_sites = [ea] if ea else \
@@ -1342,7 +1276,7 @@ def stitch():
                 try_plane_via(pad, dots, segs, ncode)
             w[4] = w[4] or done
             progress += done
-        print("residue", it, "stitched", progress)
+        print("residue", rnd, "stitched", progress)
         if progress == 0:
             break
     # drop stitch vias/tracks that join nothing across layers — dangling
@@ -1363,31 +1297,6 @@ def stitch():
         for t in dead:
             board.Remove(t)
         conn = board.GetConnectivity()
-    for z in board.Zones():
-        z.SetIsFilled(False)
-    try:
-        pcbnew.ZONE_FILLER(board).Fill(board.Zones())
-    except Exception:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     # drop stitch vias/tracks that join nothing across layers — dangling
     # copper is a DRC violation and can sever pour islands
     conn = board.GetConnectivity()
@@ -1475,96 +1384,6 @@ def stitch():
     return report
 
 
-ses = os.environ.get("SES")
-if (ses and os.path.exists(ses)) or os.environ.get("STITCH"):
-    if ses and os.path.exists(ses):
-    # drop stitch vias/tracks that join nothing across layers — dangling
-    # copper is a DRC violation and can sever pour islands
-    conn = board.GetConnectivity()
-    for _ in range(3):
-        dead = []
-        for t in list(board.GetTracks()):
-            if not isinstance(t, pcbnew.PCB_VIA):
-                continue
-            lys = set()
-            for x in conn.GetConnectedItems(t):
-                if x.m_Uuid.AsString() == t.m_Uuid.AsString():
-                    continue
-                if isinstance(x, pcbnew.PCB_VIA):
-                    lys.update(CU_LAYERS)
-                elif isinstance(x, pcbnew.PAD):
-                    lys.update(ly for ly in CU_LAYERS if x.IsOnLayer(ly))
-                else:
-                    lys.add(x.GetLayer())
-            if len(lys & set(CU_LAYERS)) < 2:
-                dead.append(t)
-        if not dead:
-            break
-        for t in dead:
-            board.Remove(t)
-        conn = board.GetConnectivity()
-    # dead-end tracks: an end that meets no pad/track/via/pour is dangling
-    all_zones = list(board.Zones())
-    for _ in range(4):
-        dead = []
-        items = [t for t in board.GetTracks()
-                 if not isinstance(t, pcbnew.PCB_VIA)]
-        for t in items:
-            ly = t.GetLayer()
-            for pt in (t.GetStart(), t.GetEnd()):
-                ex, ey = pt.x / 1e6, pt.y / 1e6
-                covered = False
-                for o in board.GetTracks():
-                    if o is t or o.GetNetCode() != t.GetNetCode():
-                        continue
-                    bb = o.GetBoundingBox()
-                    if bb.Contains(pt):
-                        covered = True
-                        break
-                if not covered:
-                    for fp in board.GetFootprints():
-                        hit = False
-                        for p in fp.Pads():
-                            if p.GetNetCode() == t.GetNetCode() and \
-                                    p.GetBoundingBox().Contains(pt):
-                                hit = True
-                                break
-                        if hit:
-                            covered = True
-                            break
-                if not covered:
-                    for z in all_zones:
-                        if z.GetNetCode() != t.GetNetCode():
-                            continue
-                        try:
-                            if z.HitTestFilledArea(ly, pt):
-                                covered = True
-                                break
-                        except Exception:
-                            pass
-                if not covered:
-                    dead.append(t)
-                    break
-        if not dead:
-            break
-        for t in dead:
-            board.Remove(t)
-    final_cleanup()
-    for z in board.Zones():
-        z.SetIsFilled(False)
-    try:
-        pcbnew.ZONE_FILLER(board).Fill(board.Zones())
-    except Exception:
-        pass
-    conn = board.GetConnectivity()
-    report = {}
-    L2 = dx * dx + dy * dy
-    if L2 == 0:
-        return ((px - ax) ** 2 + (py - ay) ** 2) ** 0.5
-    t = max(0, min(1, ((px - ax) * dx + (py - ay) * dy) / L2))
-    return ((px - ax - t * dx) ** 2 + (py - ay - t * dy) ** 2) ** 0.5
-
-
 def _xy(p):
     for a in ("x", "X"):
         if hasattr(p, a):
@@ -1579,139 +1398,190 @@ def _xy(p):
 
 
 def final_cleanup():
-    # merge co-located same-net vias (dedup rounding misses in stitch)
-    vias = [t for t in board.GetTracks() if isinstance(t, pcbnew.PCB_VIA)]
-    seen = {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    """Post-route copper hygiene — all decisions geometric.
+
+    SWIG proxies go stale inside mutation loops (reusing a connectivity
+    or zone object across board.Remove() crashes pcbnew), so nothing
+    here calls GetConnectivity: every removal is connectivity-safe by
+    construction — a via touching same-net copper on fewer than two
+    layers, or a track with a free end, cannot be a bridge.
+    """
+    # merge co-located same-net vias (dedup rounding misses in stitch):
+    # two same-net vias <0.7 mm apart bridge the same layers at nearly
+    # the same point, so dropping one cannot split the net
+    for _ in range(8):
+        vias = [t for t in board.GetTracks()
+                if isinstance(t, pcbnew.PCB_VIA)]
+        done = False
+        for i in range(len(vias)):
+            vi = vias[i]
+            xi, yi = _xy(vi.GetPosition())
+            for vj in vias[i + 1:]:
+                if vj.GetNetCode() != vi.GetNetCode():
+                    continue
+                xj, yj = _xy(vj.GetPosition())
+                if (xi - xj) ** 2 + (yi - yj) ** 2 < 0.7 ** 2:
+                    board.Remove(vj)
+                    done = True
+                    break
+            if done:
+                break
+        if not done:
+            break
+    # dangling vias: a via touching same-net copper on fewer than two
+    # copper layers joins nothing — dead copper, DRC violation
+    for _ in range(6):
+        dead = []
+        vias = [t for t in board.GetTracks()
+                if isinstance(t, pcbnew.PCB_VIA)]
+        items = [t for t in board.GetTracks()
+                 if not isinstance(t, pcbnew.PCB_VIA)]
+        for v in vias:
+            vx, vy = _xy(v.GetPosition())
+            vr = v.GetWidth() / 2 / 1e6 + 0.05
+            lys = set()
+            for o in items:
+                if o.GetNetCode() != v.GetNetCode():
+                    continue
+                s1, s2 = _xy(o.GetStart()), _xy(o.GetEnd())
+                if min((s1[0] - vx) ** 2 + (s1[1] - vy) ** 2,
+                       (s2[0] - vx) ** 2 + (s2[1] - vy) ** 2) < vr ** 2:
+                    lys.add(o.GetLayer())
+            for v2 in vias:
+                if v2 is v or v2.GetNetCode() != v.GetNetCode():
+                    continue
+                x2, y2 = _xy(v2.GetPosition())
+                if (x2 - vx) ** 2 + (y2 - vy) ** 2 < (vr + 0.3) ** 2:
+                    lys.update(CU_LAYERS)
+            for fp in board.GetFootprints():
+                for p in fp.Pads():
+                    if p.GetNetCode() == v.GetNetCode() and \
+                            p.GetBoundingBox().Contains(v.GetPosition()):
+                        lys.update(ly for ly in CU_LAYERS
+                                   if p.IsOnLayer(ly))
+            if len(lys & set(CU_LAYERS)) < 2:
+                dead.append(v)
+        if not dead:
+            break
+        for v in dead:
+            board.Remove(v)
+    # dead-end tracks: an end that meets no same-net pad/track/via is
+    # dangling; deleting a leaf can never split a net, so repeat until
+    # the whole dead branch is gone
+    for _ in range(200):
+        dead = []
+        items = [t for t in board.GetTracks()
+                 if not isinstance(t, pcbnew.PCB_VIA)]
+        vias = [t for t in board.GetTracks()
+                if isinstance(t, pcbnew.PCB_VIA)]
+        for t in items:
+            ly = t.GetLayer()
+            for pt in (t.GetStart(), t.GetEnd()):
+                covered = False
+                for o in items:
+                    if covered or o is t or \
+                            o.GetNetCode() != t.GetNetCode() or \
+                            o.GetLayer() != ly:
+                        continue
+                    for p2 in (o.GetStart(), o.GetEnd()):
+                        if p2.x == pt.x and p2.y == pt.y:
+                            covered = True
+                            break
+                if not covered:
+                    for v in vias:
+                        if v.GetNetCode() != t.GetNetCode():
+                            continue
+                        vx, vy = _xy(v.GetPosition())
+                        if (vx - pt.x / 1e6) ** 2 + \
+                                (vy - pt.y / 1e6) ** 2 < \
+                                (v.GetWidth() / 2 / 1e6) ** 2:
+                            covered = True
+                            break
+                if not covered:
+                    for fp in board.GetFootprints():
+                        if covered:
+                            break
+                        for p in fp.Pads():
+                            if p.GetNetCode() == t.GetNetCode() and \
+                                    p.GetBoundingBox().Contains(pt):
+                                covered = True
+                                break
+                if not covered:
+                    dead.append(t)
+                    break
+        if not dead:
+            break
+        for t in dead:
+            board.Remove(t)
+
+
+def debug_via(x, y, ncode, dots, segs):
+    """Print which obstacles reject a via at (x,y) — DEBUG_POST aid."""
+    for ax, ay, bx, by, r, nc, layers in dots:
+        if nc != ncode and pt_seg_dist(x, y, ax, ay, bx, by) \
+                < r + VIA_R + CLR:
+            print("  via blocked by dot", round(ax, 2), round(ay, 2),
+                  "net", nc)
+    for ax, ay, bx, by, w, nc, ly in segs:
+        if nc != ncode and pt_seg_dist(x, y, ax, ay, bx, by) \
+                < w + VIA_R + CLR:
+            print("  via blocked by seg", round(ax, 2), round(ay, 2),
+                  "ly", ly, "net", nc)
+
+
+def debug_via_scan(x, y, ncode, dots, segs):
+    """Sweep a 4 mm box reporting legal via sites — DEBUG_POST aid."""
+    found = []
+    iy = ix = 0
+    while iy < 50:
+        cx, cy = x - 4 + ix * 0.16, y - 4 + iy * 0.16
+        ix += 1
+        if ix >= 50:
+            ix, iy = 0, iy + 1
+        if in_bounds(cx, cy) and via_ok(dots, segs, cx, cy, ncode):
+            found.append((round(cx, 2), round(cy, 2)))
+    print("  legal sites near", round(x, 2), round(y, 2), ":", found[:8])
+
+
+def post_attach():
+    """Attach island pads left over after stitch() on the saved board.
+
+    Runs after SaveBoard so the connectivity audit reads committed
+    copper only — in-run SWIG handles went stale mid-mutation and could
+    crash pcbnew. Rebuilds obstacles + the routing grid fresh.
+    """
+    global GRID, ESC, VIAS_PLACED
+    ESC, VIAS_PLACED = {}, set()
+    for t in board.GetTracks():
+        if isinstance(t, pcbnew.PCB_VIA):
+            VIAS_PLACED.add((round(t.GetPosition().x / 1e6, 3),
+                             round(t.GetPosition().y / 1e6, 3)))
+    dots, segs, rects, holes = collect_obstacles()
+    RECTS.clear(); RECTS.extend(rects)
+    HOLES.clear(); HOLES.extend(holes)
+    GRID = build_grid(dots, segs)
+    for _round in range(8):
+        conn = board.GetConnectivity()
+        todo = []
+        for net in board.GetNetsByName().values():
+            name = net.GetNetname()
+            if not name or name.startswith("unconnected"):
+                continue
+            ncode = net.GetNetCode()
+            clus = islands(ncode, conn)
+            if len(clus) < 2:
+                continue
+            main = max(clus, key=len)
+            for c in clus:
+                if c is main:
+                    continue
+                for pad in c:
+                    todo.append((pad, main, ncode))
+        if not todo:
+            break
+        progress = 0
+        for pad, main, ncode in todo:
+            if try_grid_cluster(pad, main, dots, segs, ncode):
                 progress += 1
             elif os.environ.get("DEBUG_POST"):
                 px, py = pad_xy(pad)
@@ -1729,6 +1599,7 @@ def final_cleanup():
             pass
     final_cleanup()
     pcbnew.SaveBoard(PCB, board)
+
 
 
 def silk_cleanup():
