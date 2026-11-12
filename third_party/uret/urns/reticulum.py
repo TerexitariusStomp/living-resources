@@ -101,70 +101,70 @@ class Reticulum:
                     "type": "UDPInterface",
                     "name": "WiFi UDP",
                     "enabled": True,
-           ...[2645 chars truncated]...", [])
+                    "listen_ip": "0.0.0.0",
+                    "listen_port": 4242,
+                    "forward_ip": "255.255.255.255",
+                    "forward_port": 4242,
+                }
+            ],
+        }
 
+    def _file_exists(self, path):
+        try:
+            os.stat(path)
+            return True
+        except OSError:
+            return False
 
+    @staticmethod
+    def _ensure_dir(path):
+        try:
+            os.mkdir(path)
+        except OSError:
+            pass
 
+    # Map interface type names to their module files.
+    # Add new interfaces here: "TypeName": "module_name"
+    _INTERFACE_MAP = {
+        "UDPInterface":       "udp",
+        "SerialInterface":    "serial",
+        "E32Interface":       "e32",
+        "LoRaInterface":      "lora",
+        "TCPClientInterface": "tcp",
+    }
 
+    def _resolve_board(self, iface_config):
+        """Merge a named board pinout preset into an interface config.
 
+        An interface may set "board": "<name>" to pull a hardware pinout from
+        the "lora_boards" registry (see firmware/lora_boards.py). Preset values
+        are applied first; any key set explicitly on the interface overrides the
+        preset. Returns the config unchanged if no board is referenced."""
+        board = iface_config.get("board")
+        if not board:
+            return iface_config
+        preset = self.config.get("lora_boards", {}).get(board)
+        if preset is None:
+            log("Unknown board preset: " + str(board), LOG_ERROR)
+            return iface_config
+        merged = {}
+        merged.update(preset)
+        merged.update(iface_config)   # explicit interface keys win
+        return merged
 
+    def setup_interfaces(self):
+        """Initialize network interfaces from config. Call after WiFi is connected.
+        Only the modules for configured interfaces are imported."""
+        Transport.transport_enabled = self.config.get("enable_transport", False)
+        if Transport.transport_enabled:
+            log("Transport mode enabled", LOG_NOTICE)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # Time sync (for nodes with no RTC/NTP). Learn wall-clock time once per
+        # boot from a trusted peer's announce/message timestamp.
+        ts_cfg = self.config.get("time_sync", {})
+        Transport.time_sync_enabled = ts_cfg.get("enabled", False)
+        Transport.time_sync_trusted = set(
+            h.lower() for h in ts_cfg.get("trusted_nodes", [])
         )
         Transport.time_sync_min_sources = ts_cfg.get("min_sources", 2)
         Transport.time_sync_tolerance = ts_cfg.get("tolerance", 120)
@@ -238,3 +238,77 @@ class Reticulum:
               "(" + app_name + "." + aspect + ")")
 
     async def run(self):
+        """Main async event loop. Run with asyncio.run(reticulum.run())"""
+        import uasyncio as asyncio
+
+        tasks = [
+            asyncio.create_task(Transport.job_loop()),
+        ]
+
+        # Start interface poll loops
+        for iface in self.interfaces:
+            if hasattr(iface, 'poll_loop'):
+                tasks.append(asyncio.create_task(iface.poll_loop()))
+
+        if self.probe_destination is not None:
+            tasks.append(asyncio.create_task(self._probe_announce_loop()))
+
+        log("Event loop running with " + str(len(tasks)) + " tasks", LOG_VERBOSE)
+        await asyncio.gather(*tasks)
+
+    async def _probe_announce_loop(self):
+        """Initial + periodic announce for the probe destination."""
+        import uasyncio as asyncio
+
+        await asyncio.sleep(0.5)
+        try:
+            self.probe_destination.announce()
+            log("Probe announced", LOG_NOTICE)
+        except Exception as e:
+            log("Probe initial announce error: " + str(e), LOG_ERROR)
+        gc.collect()
+
+        interval = self.config.get("probe", {}).get("announce_interval", 60 * 60)
+        if interval <= 0:
+            return
+        while True:
+            await asyncio.sleep(interval)
+            try:
+                self.probe_destination.announce()
+                log("Probe re-announced", LOG_VERBOSE)
+            except Exception as e:
+                log("Probe re-announce error: " + str(e), LOG_ERROR)
+            gc.collect()
+
+    def shutdown(self):
+        """Clean shutdown - persist state and close interfaces"""
+        log("Shutting down µReticulum", LOG_NOTICE)
+        if Transport.persist_path is not None:
+            try:
+                Transport.save_path_table(Transport.persist_path)
+            except Exception:
+                pass
+        Transport.stop()
+        Identity.persist_data()
+        for iface in self.interfaces:
+            if hasattr(iface, 'close'):
+                try:
+                    iface.close()
+                except:
+                    pass
+
+    @staticmethod
+    def get_instance():
+        return Reticulum._instance
+
+    @staticmethod
+    def should_use_implicit_proof():
+        return Reticulum._use_implicit_proof
+
+    def get_first_hop_timeout(self, destination_hash):
+        return Reticulum.DEFAULT_PER_HOP_TIMEOUT
+
+    @staticmethod
+    def exit_handler():
+        if Reticulum._instance:
+            Reticulum._instance.shutdown()

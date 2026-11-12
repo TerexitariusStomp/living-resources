@@ -1,0 +1,7 @@
+urns/ vendors uRNS — MicroPython Reticulum (MIT) — from
+https://github.com/varna9000/micropython-reticulum
+
+Pin: firmware/urns/ @ master (499293e8d73aac2598759b6dc71a3f519d7ab1e7)
+Files: lxmf.py · reticulum.py · crypto/aes.py · crypto/hashes.py
+Re-vendored 2026-11-12 after /tmp loss; byte-matched against salvaged
+session-history views.
