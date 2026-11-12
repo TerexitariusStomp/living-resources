@@ -77,6 +77,8 @@ between them.
 
 Every refusal is a `<refusal>` record — `lane`, `reason`, `detail` —
 never silence. OPA mirrors the gate in `deploy/policies/living/`.
+Every refusal is a `<refusal>` record — `lane`, `reason`, `detail` —
+never silence. OPA mirrors the gate in `deploy/policies/living/`.
 
 ## 6. Bidirectionality
 

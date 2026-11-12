@@ -47,6 +47,29 @@ boot.
   real RNS/LXMF).
 - RNS path: the node's LXMF frames discover the edge by announce —
   both sides need a shared transport interface.
+- **Mesh path (single-MCU, `docs/RNODE-MESH.md`):** deploy
+  `third_party/uret/` contents (`urns/`, `lora_boards.py`, `*.mpy`) and
+  `third_party/bme280/bme280_float.py` to the flash root beside
+  `main.py` + `lxmf_node.py`, wire the E32 module
+  to D6/D7 (E32 TXD→GPIO44, RXD→GPIO43, GND; M0/M1 strapped or jumpered),
+  then write `/sd/lxmf.json`:
+  `{"edge_dest": "<edge LXMF dest hash>", "node_name": "node-shore-03",
+    "transport": false}`
+  (omit `wake_windows` for 24/7 continuous — the default; add
+  `"wake_windows": [[4,10],[17,21]]` only for power-limited sites)
+  First boot creates `/sd/rns/identity` — record the node's announced
+  hash from the edge log in the cell registry. `main.py` auto-dispatches
+  to `lxmf_node.run_mesh_node()` on-node; absent the uret stack it falls
+  back to the UDP loop.
+
+## 5b — Env heads (PM/H2S)
+
+- SPS30 → J4/I2C bus (addr 0x69) + 5 V from J9; H2S → D10 ADC (or UART
+  for the electrochemical variant). Both feed `poll_env()` → `.env`
+  spool files → `ENV1` frames (≤200 B) on UDP or inside LXMF content.
+  Edge: `udp-demux` routes ENV1 to `on-reading` (never the detection
+  listener); `rns_edge.py` strips the tag and writes `"kind":"env"`
+  records — downstream filters on `kind`, they are not detections.
 
 ## 6 — Bench check
 
@@ -55,6 +78,12 @@ uplink frames. Confirm a detection lands in the edge ledger.
 
 ## 7 — Field commissioning
 
-Mount per `ENCLOSURE.md`, heads through glands, power on. First
-receipt in the ledger = commissioned. Record node id, site, guardian
-and consent scope in the cell's subject registry.
+Mount per `ENCLOSURE.md` (hazard matrix applies — IP67 box, conformal
+coat, ≥3 m antenna pole inland of tamarisk, desiccant inside), heads
+through glands, power on. First receipt in the ledger = commissioned.
+Record node id, site, guardian and consent scope in the cell's subject
+registry.
+
+**Charge-temp rule:** TP4056 has no battery thermistor — do not leave
+a node charging when BME280 reads below ~5 °C ambient (LiPo plating
+damage). Winter playa nights can hit that; check before leaving a unit

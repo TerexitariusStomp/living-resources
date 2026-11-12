@@ -75,12 +75,27 @@ Thin parse-only seams — they never classify (the ≤5% custom rule).
 | `ttn.scm` | TTN webhook uplinks → records; downlinks → LoRaWAN actuators | `federated` + backhaul |
 | `webnode.scm` | browser session → cell-decl + `web-visitor` records | `federated` reads, `emit` writes |
 
-## Firmware — `firmware/node/main.py`
+## Firmware — `firmware/node/`
 
 EcoCell universal node (MicroPython, XIAO ESP32-S3 class). Implemented:
-I2S 48 kHz/16-bit capture → SD spool → LXMF uplink → duty-cycle sleep;
-every lane's electronics populated incl. consent-gated `EmitLane`
-(`ConsentRequired` without a token). LXMF uplink is a stub at the seam.
+I2S 48 kHz/16-bit capture → encrypted SD spool → LXMF uplink →
+continuous capture/mesh polling (windowed sleep is opt-in); every lane's
+electronics populated incl. consent-gated `EmitLane` (`ConsentRequired`
+without a token). Uplink carriers: chunked UDP/AUD1 (WiFi path, built)
+and `lxmf_node.py` — the single-MCU Reticulum mesh loop carrying tagged
+records and bounded AUC1 clips until durable ACK.
+
+| File | Role | Status |
+|---|---|---|
+| `main.py` | capture/spool/flush/emit/tasks + `Sps30`/`H2SReader`/`Bme280Env`/`Bh1750`/`_vbat_read`/`poll_env` + `_fit_env` (ENV1 ≤200 B shed) + `run_mesh()` dispatch | built — E0 pending |
+| `lxmf_node.py` | µReticulum mesh loop: E32 UART config, LXMRouter, async capture/flush/tasks, `/sd/lxmf.json` provisioning | built — untested on hardware |
+
+Vendored third-party (NOT first-party, excluded from the custom budget):
+`third_party/uret/` — µReticulum (MIT) RNS/LXMF stack + Xtensa `.mpy`
+crypto accelerators + `lora_boards.py`; `third_party/bme280/` —
+robert-hh BME280 driver (MIT-style, Bosch compensation math). Deploy
+copies both to the flash root beside `main.py`; see each `UPSTREAM`
+file and `docs/RNODE-MESH.md`.
 
 ## Policy mirrors — `deploy/policies/living/`
 
@@ -93,13 +108,15 @@ every lane's electronics populated incl. consent-gated `EmitLane`
 
 | File | Role |
 |---|---|
-| `edge/classify.py` | edge classifier loop — OpenSoundscape seam + energy-gate fallback |
-| `edge/rns_edge.py` | real RNS/LXMF edge daemon |
+| `edge/classify.py` | central audio annotation service — YAMNet ONNX/OpenSoundscape/BirdNET backends, separate acoustic/context scores, thresholded abstention → human-review JSONL |
+| `edge/durable_ingest.py` | content-addressed ingest: chunk reassembly, hash verification, dedupe, fsynced receipts, ACK generation |
+| `edge/udp_edge.py` | central WiFi UDP ingest daemon — audio + telemetry ACK server plus TSK1 downlink delivery |
+| `edge/task_queue.py` | append-only operator task queue: named retry-until-RES1 delivery and live broadcast holds |
+| `edge/rns_edge.py` | real RNS/LXMF edge daemon with durable-receipt replies and task delivery |
 | `e0/score.py` | blinded E0 validation scorer — never shows which chunk was which during capture |
 | `e5/relay_check.py` | E5 graduation harness — relays an encoded observation through every packed connectome, checks replay determinism (local + optional deployed-verifier legs) and input→output provenance digests, emits a SAIDed bundle. Honest bound: preserved wiring only; the refused `hop` lane is untouched |
 | `connectome/lif.py` | deterministic Q24 LIF inference over packed int4 CSR connectomes; canonical input SAIDs |
 | `connectome/bench.py` | evidenced efficiency vs dense/sparse machine baselines (measured, incl. unfavorable cells) |
-
 ## Worker API — `workers/compute-api/`
 
 Deployed: `connectome-compute-api.terexmaps.workers.dev`.
@@ -140,7 +157,7 @@ provenance. Custom code budget: **<5% of everything shipped**
 |---|---|
 | `lanes/c4d-reservoir.py` | `pass` placeholder — the v3 wild-consortium reservoir-compute research lane; not backend |
 | `*guardian-verify*` (`agents.scm`) | checks a transparent placeholder tuple — real SAID signature verification lands at that seam |
-| firmware LXMF uplink | stub at the `reticulum.scm` seam |
+| firmware LXMF uplink | `lxmf_node.py` built against vendored µReticulum — awaits hardware E0 |
 
 ## Coverage rule
 

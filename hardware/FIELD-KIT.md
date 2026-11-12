@@ -79,9 +79,14 @@ toward J12 = boosted battery.
 | Extra I2C | J4 | any 3.3 V I2C module — bus is on-board | 1–4 |
 | C4D electrodes | J6 | two-pin stainless/carbon electrode pair — **non-contact, near-substrate placement** | 2 |
 | Emit 40 kHz | J10 | piezo T/R pair | 2 |
+| PM2.5 SPS30 | J4 (I2C) + 5V from J9 | Sensirion SPS30 — addr 0x69; verify 3.3V I2C tolerance (`docs/ENV-HEADS.md`) | ~40 |
+| H2S (optional) | D10 ADC or UART | SPEC 3SP_H2S_A4 or MQ-136 + 100k/200k divider — indicative grade | 4–90 |
+| LoRa radio v1 | D6/D7 UART + antenna | EBYTE E32-900T20D (915 MHz, SX1276) — µReticulum-native (`docs/RNODE-MESH.md`) | ~13 |
 
 BME280 + BH1750 + AD7746 are already on the board as bare ICs — no
-modules needed for those lanes.
+modules needed for those lanes. The E22-900M22S footprint on the
+integrated PCB is **not** µReticulum-compatible yet (no E22 driver);
+hand-builds use the E32 on D6/D7 instead — see `docs/RNODE-MESH.md`.
 
 ## E — Power input (J11)
 

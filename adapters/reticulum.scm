@@ -7,7 +7,9 @@
 ;;; understands, and handed to the caller's sink. The WiFi path is a real
 ;;; socket — udp-socket/udp-demux/run-udp-listener — speaking the node's
 ;;; frame tags directly; the LXMF path remains a boundable seam on
-;;; *reticulum-transport* for when MicroReticulum is on the host.
+;;; *reticulum-transport* for when MicroReticulum is on the host. Durable
+;;; deletion authority lives in tools/edge/durable_ingest.py — this seam
+;;; parses only; it must not clear node custody.
 ;;;
 ;;; THE PACKET. A detection packet is tens of bytes on the LoRa path —
 ;;; species, confidence, timestamp, node-id, plus the SAIDs the edge adds:
@@ -61,20 +63,26 @@
           (values (utf8->string (bytevector-copy buf 0 4))
                   (bytevector-copy buf 4 n))))))
 
-(define* (udp-demux listener tag body #:key (on-audio (lambda (n b) b)))
+(define* (udp-demux listener tag body #:key (on-audio (lambda (n b) b))
+                                          (on-reading (lambda (r) r)))
   "Route one frame by tag. DET1 bodies parse through mic.scm into the
-   listener; AUD1 bodies go to on-audio as (name . pcm). Anything else is
-   a refused value, never a drop."
+   listener; AUD1 bodies go to on-audio as (name . pcm); ENV1 bodies —
+   env scalars (pm/h2s), NOT detections — go to on-reading as a string
+   so they never enter the quorum gate. Anything else is a refused
+   value, never a drop."
   (cond
    ((equal? tag "DET1")
     (let ((p (parse-detection-line (utf8->string body))))
       (if (eq? 'det (car p))
           (listener (cdr p))
           (cons 'refused '((reason . malformed-detection))))))
+   ((or (equal? tag "ENV1") (equal? tag "RES1") (equal? tag "GAP1"))
+    (on-reading (utf8->string body)))
    ((equal? tag "AUD1")
-    (let ((nlen (bytevector-u8-ref body 0)))
+    (let* ((nlen (bytevector-u8-ref body 0))
+           (payload-at (+ 1 nlen 4 32)))      ;; idx/total + content hash
       (on-audio (utf8->string (bytevector-copy body 1 (+ 1 nlen)))
-                (bytevector-copy body (+ 1 nlen)
+                (bytevector-copy body payload-at
                                  (bytevector-length body)))))
    (else
     (cons 'refused `((reason . unknown-frame-tag) (tag . ,tag))))))
@@ -82,6 +90,7 @@
 (define* (run-udp-listener #:key (port 4242)
                           (listener (make-edge-listener))
                           (on-audio (lambda (n b) b))
+                          (on-reading (lambda (r) r))
                           (max-frames #f))
   "The edge's receive loop: recv → demux → sink. MAX-FRAMES bounds it for
    tests; #f runs until the process dies — the ear doesn't sleep."
@@ -91,7 +100,9 @@
           (begin (close-port sock) seen)
           (begin
             (let-values (((tag body) (udp-recv-frame sock)))
-              (when tag (udp-demux listener tag body #:on-audio on-audio)))
+              (when tag (udp-demux listener tag body
+                                     #:on-audio on-audio
+                                     #:on-reading on-reading)))
             (loop (+ 1 seen)))))))
 
 

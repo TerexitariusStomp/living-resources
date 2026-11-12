@@ -1,7 +1,8 @@
 # ENCLOSURE — deployment forms
 
-One chassis, four forms. All share the rule set: nothing attaches to an
-organism, nothing in soil, no anchor moorings, no flash/IR.
+One electronics core, five forms. All share the rule set: nothing
+attaches to an organism, nothing in soil, no anchor moorings, no
+unconsented light/IR.
 
 ## Form A — Garden (terrestrial)
 
@@ -42,6 +43,28 @@ organism, nothing in soil, no anchor moorings, no flash/IR.
   the bottom but is the *only* tolerated cable form; prefer Form B
   where a dock exists.
 
+## Form E — Stealth-subsurface (primary ocean deployment)
+
+- **Submerged body:** pressure-rated housing carrying the electronics,
+  battery, sensors and speaker — invisible in turbid water. Hydrophone,
+  CTD, camera and emit/playback transducers are wet-side and replaceable
+  without opening the pressure hull where practicable.
+- **Surface tether float:** carries only what cannot work underwater —
+  the RF antenna, GPS module and a small solar patch — disguised as
+  ordinary floating biota: a bird profile (grebe/coot silhouette at the
+  Salton Sea; gull/cormorant or similar at reef sites) or a matted
+  vegetation/algae clump matched to the site's normal surface. Never
+  debris — visible trash invites collection; ordinary wildlife does not.
+- **Tether:** carries antenna feed + GPS + optional solar power + a
+  mechanical strain member; neutrally buoyant or sinking so no floating
+  line marks the site; anti-fouling sleeve; strain-relieved at both ends.
+- **Link budget precedence:** telemetry link > six-month autonomy >
+  playback duty > read functionality > minimal cost > stealth — stealth
+  is the shock absorber, never the others.
+- **No lights, no branding, matte natural coloring, no exposed
+  hardware.** GPS tracking and remote wipe/lock are the fallback, not
+  the first line of anti-theft defense.
+
 ## The emit-head rule
 
 The 40 kHz transducer is mounted on every unit (inside the enclosure,
@@ -55,6 +78,11 @@ drives it.
 - Salt water corrodes: conformal-coat the board or pot it — an unpotted
   box in a marine splash zone fails in months.
 - Biofouling covers hydrophone faces over weeks — schedule cleaning or
-  use anti-foul sleeves on the lead section.
+  use anti-foul sleeves on the lead section. In brine-shrimp-laden
+  hypersaline water the CTD needs fouling-resistant geometry and a
+  defined cleaning/calibration cadence; the camera dome needs the same.
 - Mooring legality varies — existing-structure piggyback is the safest
   permit path; deadweight in public water may need notice.
+- A submerged body is not "IP68" — specify actual depth/pressure,
+  temperature, salinity, UV, wave/current and service-life envelopes,
+  and qualify pressure/leak to the deployment margin.

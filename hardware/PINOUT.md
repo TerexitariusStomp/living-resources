@@ -67,3 +67,23 @@ added for stereo/direction: wire it to the **same I2S bus as the
 onboard mic with L/R tied opposite** — check the expansion schematic
 for the onboard mic's I2S pins and mirror them; do not allocate new
 header pins.
+
+## Ocean heads — the map above is the terrestrial baseline
+
+The ocean-capable unit adds hardware the current carrier does not
+route: an external high-rate SPI ADC + anti-alias front-end for the
+hydrophone, an inductive CTD interface, an underwater camera head with
+gated illumination, a GPS/PPS path, a playback DAC/amp/projector chain,
+and solar/battery power-gating rails. Those additions exceed the free
+D0–D10 map on this XIAO revision — the ocean board is a respin, not a
+jumper change. The controlled pin map for the ocean release lives in
+`hardware/release/`; do not reuse this table for an ocean build.
+
+## Environmental heads (Salton Sea build)
+
+| Head | Connects to | Notes |
+|---|---|---|
+| **SPS30 PM** | I2C bus D4/D5, addr 0x69; **5 V power via J9** | shares bus with BME280/BH1750/AD7746 — no address conflict; verify 3.3 V I2C level tolerance (docs/ENV-HEADS.md) |
+| **H2S (MQ-136 / SPEC)** | **D10 (GPIO10, ADC1_CH9)** analog, or UART for electrochemical | MQ-136 0–4 V out needs ~2:1 divider to ≤3.1 V; conflicts only if SPI expansion (D8–D10) is populated — remap to D8/D9 then |
+| **LoRa radio (v1)** | **D6/D7 UART** — E32-900T20D/SX1276 | conflict-free; µReticulum `e32.py` drives it (docs/RNODE-MESH.md) |
+| LoRa (integrated PCB) | SPI bus D8–D10 + CS/BUSY/DIO1/RESET | needs 4 control GPIOs we don't have spare on this pin map — respin decision pending |

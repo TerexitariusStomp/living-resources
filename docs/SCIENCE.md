@@ -18,6 +18,10 @@ says.
 | Packed EM connectomes run deterministic LIF inference | `~/fly-data` + FlyEngine deployed in fly.ai; `tools/connectome/lif.py` reproduces verdicts bit-for-bit | Connectome-witness lane: replayable response signatures as a third evidence class |
 | Packed int4 CSR wiring is algorithmically sparse: ops ≪ equivalent dense transform | counted exactly by `tools/connectome/bench.py` (celegans ~35k ops vs 91k dense MACs; 7.8KB vs 365KB) | Structural-efficiency claim, measured not projected |
 | At ≥~10⁴-neuron scale, LIF-over-wiring uses fewer measured joules than dense fp32 on x86 | RAPL deltas, `bench.py` --all: medulla 0.117 J vs 8.3 J dense (~70×); small connectomes lose — reported | Scale-dependent evidence, not a blanket claim; degree-matched shuffled wiring performs identically — the win is sparsity (known CS), biology's contribution is the specific topology |
+| Many fish and invertebrate larvae respond to particle motion, not just sound pressure | Nedelec et al. 2016, "Particle motion: the missing link in underwater acoustic ecology"; Jones et al., JASA particle-motion measurement | Playback dose is measured as SPL **and** three-axis particle acceleration; pressure-only inference is declared >10 m from source |
+| PSS-78 Practical Salinity is only defined for the 2–42 range | TEOS-10 / UNESCO references; Sea-Bird FAQ | Hypersaline Salton Sea water needs a validated brine method — raw C/T/P plus brine-referenced conversion, never an extrapolated formula |
+| Autonomous cameras can verify acoustic-enrichment response | 2026 Kane'ohe autonomous-camera study — 4–14× larval attraction, <48 h dispersal without suitable habitat | Submerged imaging head is required hardware; attraction is not retention |
+| The Salton Sea hosted the largest sustained natural underwater noise event known | Fish & Cummings 1972 — ~50 dB nighttime ambient rise from the orangemouth corvina breeding chorus | The Sea has its own acoustic-ecology question distinct from reef playback; desert pupfish habitat is an emission exclusion zone |
 
 ## Plausible (worth an experiment, not a lane)
 
@@ -56,3 +60,10 @@ says.
   the core band; partial coverage is declared.
 - Reef sound propagation is geometry-sensitive (2026 review) —
   hydrophone depth and duty-cycle are part of every deployment record.
+- Acoustic enrichment is context-dependent: site, flow, substrate,
+  life stage and background noise dominate outcomes. Sound is not a
+  substitute for suitable habitat or water quality.
+- PSS-78 salinity does not apply to hypersaline Salton Sea water; raw
+  C/T/P plus a validated brine method is required.
+- Desert pupfish habitat is an exclusion zone for any emission — the
+  Sea's only native fish is endangered with ESA protections.

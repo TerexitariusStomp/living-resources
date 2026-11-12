@@ -27,8 +27,10 @@ stays the hand-build/prototype list.
 | 7 | Hydrophone | piezo disc (27–35 mm) + preamp (MAX9814 module or JFET) | 5–8 | `hydro` — reef/fish/shrimp |
 | 8 | Ultrasonic MEMS | ICS-40730 breakout (20–100 kHz) | 4–5 | `ultra` — plant clicks, bats |
 | 9 | C4D front-end | AD7746 capacitance eval module + electrode pair (copper tape/rings) | 5 | `c4d` — biofilm readout |
+| 9b | **PM2.5** | Sensirion SPS30 (I2C 0x69, 5 V via J9) | ~40 | `pm` — dust events; see `docs/ENV-HEADS.md` |
+| 9c | H2S (optional) | SPEC 3SP_H2S_A4 electrochemical **or** MQ-136 + divider | 4–90 | `h2s` — indicative grade only; defer unless requested |
 | 10 | Emit transducer | 40 kHz ultrasonic transducer + logic MOSFET (2N7000/AO3400) + resistor | 3 | `emit` — bio-write, consent-gated |
-| | **Heads subtotal** | | **~17–21** | |
+| | **Heads subtotal** | | **~17–21** (+~44 with PM, +H2S option) | |
 
 ## Enclosure & power (per deployment)
 
@@ -48,7 +50,8 @@ stays the hand-build/prototype list.
 | Shore-dock | dock clamp, 1–2 m hydrophone lead, strain relief | 5 | shore/dock reef |
 | Reef float | closed-cell float, deadweight (~2 kg lead/stone), tether line | 10 | near-shore reef |
 | Offshore | + SWARM satellite modem OR LTE-M module (SIM7000) | 80–120 | far offshore |
-| Range ext. | SX1276 LoRa module ×2 (node + gateway dongle) | 8–10 ea | km-range cells |
+| Range ext. | **E32-900T20D UART LoRa module** (µReticulum-native, D6/D7) | ~12–15 | km-range cells — single-MCU mesh, no companion board (`docs/RNODE-MESH.md`) |
+| Range ext. (alt) | Wio-SX1262 SPI stack or SX1276 module ×2 | 15–25 ea | SPI path needs pin remap — see `docs/RNODE-MESH.md` pin budget |
 
 ## What's NOT in the BOM (by policy)
 

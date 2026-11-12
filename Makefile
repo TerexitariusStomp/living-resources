@@ -67,6 +67,7 @@ else
 	  $(GUILE) --no-auto-compile -L module -L . $$t; \
 	done
 endif
+	@set -e; for t in tools/edge/test_durable_ingest.py tools/edge/test_classify.py; do PYTHONPATH=tools/edge $(PYTHON3) $$t; done
 
 check-custom-budget:
 	@$(PYTHON3) -c 'import os,sys; exts=(".scm",".py",".rego"); roots="$(FIRST_PARTY)".split(); files=[os.path.join(dp,f) for r in roots for dp,_,fs in os.walk(r) for f in fs if f.endswith(exts)]+["AGENTS.md","Makefile"]; total=sum(len(open(f,errors="replace").readlines()) for f in files if os.path.isfile(f)); stubs=sum(len(open(f).readlines()) for f in "$(ADOPTED_STUBS)".split()); custom=total-stubs; print("adopted-stub LOC: %d | custom non-stub LOC: %d | total: %d | budget: %d" % (stubs,custom,total,$(CUSTOM_BUDGET))); sys.exit(1 if custom>$(CUSTOM_BUDGET) else 0)'
