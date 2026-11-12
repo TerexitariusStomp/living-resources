@@ -2,20 +2,12 @@
 # firmware/node/main.py — EcoCell universal field node (MicroPython,
 # XIAO ESP32-S3 class)
 #
-# WHAT THIS FILE IS. The node-side skeleton of the living cell: capture
-# lossless audio on an I2S head, buffer to microSD (store-and-forward is
-# a property of the node, not the link), flush detections and audio
-# windows on scheduled uplinks over Reticulum, and duty-cycle deep-sleep
-# in between. The lanes dict is the whole point of the hardware spec:
-# every device ships every head's electronics — camera, air mic, env
-# sensors, hydrophone front-end, ultrasonic MEMS, C4D, and a live
-# emit path — and lanes are activated by firmware flag or, for emit,
-# by a consent token the edge's lane gate enforces.
-#
-# Runs on MicroPython ESP32-S3; imports are guarded so `python3 -m
-# py_compile` and a desktop --sim pass both work. The classifier does NOT
-# run here — the edge runs OpenSoundscape; the node may run a trivial
-# energy gate to wake for likely-vocal windows (dumb node, smart edge).
+# Node side of the living cell: I2S capture -> microSD spool ->
+# scheduled Reticulum uplink -> duty-cycled sleep. Every device ships
+# every head's electronics; lanes activate by firmware flag, and emit
+# rides the joint consent token the edge's lane gate enforces.
+# Imports are guarded so py_compile and --sim run on desktop; the
+# classifier stays on the edge (dumb node, smart edge).
 
 import time
 
@@ -59,12 +51,9 @@ except ImportError:
 
 
 # ── the lanes ─────────────────────────────────────────────────────────────
-# Universal node: EVERY device ships every head's electronics — there is
-# no variant, no upgrade purchase. enabled = firmware flag for this
-# deployment's role; gated = requires a consent token (guardian + operator)
-# before it may act; nothing on this board is hardware-locked. The emit
-# lane is fully implemented — bio-write rides the same joint consent the
-# edge enforces in module/living/offers.scm.
+# Every device ships every head — enabled = firmware flag; gated = needs
+# the joint guardian+operator consent token the edge enforces
+# (module/living/offers.scm). Nothing is hardware-locked.
 LANES = {
     "cam":   {"enabled": True,  "gated": None,
               "head": "OV2640 onboard", "band": "visible",
@@ -111,19 +100,16 @@ KEEP_FILES = {".pcm": PCM_KEEP_FILES, ".auc": AUC_KEEP_FILES,
 OTHER_KEEP_FILES = 240       # unknown extensions are bounded too
 SPOOL_RESERVE_BYTES = 64 * 1024 * 1024   # never fill the card's last 64 MB
 EDGE_PORT = 5055             # UDP uplink; tools/edge/udp_edge.py listens
-# duty cycle: wake for these wall-clock windows (hour starts, localtime).
-# DEFAULT IS CONTINUOUS — the node reads and writes around the clock;
-# duty-cycled windows are a provisioning option for power-limited sites
-# (set via /sd/lxmf.json "wake_windows" or a downlink "windows" task),
-# never the product default.
+# duty cycle: wake windows by localtime hour start. DEFAULT IS
+# CONTINUOUS — windows are a provisioning option for power-limited
+# sites (/sd/lxmf.json "wake_windows" or a downlink "windows" task).
 WAKE_WINDOWS = ((0, 24),)
 
 
 # ── capture ───────────────────────────────────────────────────────────────
 
 class MicCapture:
-    """I2S capture at 48kHz/16-bit into PCM frames. On the desktop sim the
-    read() returns silence — the buffer shape is identical."""
+    """I2S capture at 48kHz/16-bit; the desktop sim reads silence."""
 
     def __init__(self, sck=8, ws=9, sd=7, rate=SAMPLE_RATE, bits=BITS):
         self.rate, self.bits = rate, bits
@@ -140,11 +126,8 @@ class MicCapture:
         return bytes(nbytes)                       # sim: silence
 
 # ── env heads ─────────────────────────────────────────────────────────────
-# PM (SPS30) and H2S readers — the Salton Sea heads. Both return small
-# dicts that land in one .env JSON line per wake window; absent or
-# faulted heads yield nothing, never invented values. See
-# docs/ENV-HEADS.md for the parts-level caveats (I2C levels, MQ-136
-# cross-sensitivity, indicative grade).
+# PM (SPS30) and H2S readers — the Salton Sea heads; absent/faulted
+# heads yield nothing, never invented values (docs/ENV-HEADS.md).
 
 def _sleep_ms(ms):
     """utime.sleep_ms on-node; time.sleep on the desktop sim."""
@@ -155,8 +138,7 @@ def _sleep_ms(ms):
 
 
 def _sps30_crc8(data):
-    """Sensirion CRC-8 (poly 0x31, init 0xFF) — each data word on the
-    wire carries this byte; a mismatch refuses the frame."""
+    """Sensirion CRC-8 (poly 0x31, init 0xFF); a mismatch refuses the frame."""
     crc = 0xFF
     for b in data:
         crc ^= b
@@ -167,9 +149,7 @@ def _sps30_crc8(data):
 
 
 class Sps30:
-    """Sensirion SPS30 particulate sensor on I2C 0x69 (5 V via J9; see
-    docs/ENV-HEADS.md). read() returns pm1/pm2_5/pm4/pm10 µg/m³ or None
-    on fault — every word is CRC-guarded, a corrupt frame refuses."""
+    """SPS30 on I2C 0x69 (ENV-HEADS.md); read()->pm dict or None on fault."""
 
     ADDR = 0x69
     # start measurement, high-precision float format arg + its CRC
@@ -196,9 +176,7 @@ class Sps30:
 
 
 class Bme280Env:
-    """BME280 temp/humidity/pressure via the vendored driver
-    (third_party/bme280). Returns {"t","rh","p"} or None when the driver
-    or sensor is absent — env context is optional, never invented."""
+    """BME280 via vendored driver; {"t","rh","p"} or None when absent."""
 
     def __init__(self, i2c):
         self._dev = BME280(i2c=i2c) if BME280 else None
@@ -232,12 +210,8 @@ class Bh1750:
 
 
 class H2SReader:
-    """H2S front-end on D10 (GPIO10, ADC1_CH9). Two populated options per
-    docs/ENV-HEADS.md: MQ-136 analog (0–4 V → divider → ADC, ~150 mA
-    heater — indicative grade, cross-sensitive) or SPEC electrochemical
-    (UART — TODO when that variant is populated). Returns voltage-level
-    truth only; ppm conversion needs site R0 calibration and is the
-    edge's job, not the node's."""
+    """H2S on D10 (ADC1_CH9) — MQ-136 analog or SPEC UART (ENV-HEADS.md);
+    returns voltage-level truth; ppm conversion is the edge's job."""
 
     PIN = 10
 
@@ -272,9 +246,7 @@ def _vbat_read():
 
 
 def poll_env(buf):
-    """One env reading per wake window → one .env spool file (ENV1):
-    BME280 pressure/humidity/temp + BH1750 light (env lane) + PM (pm
-    lane) + H2S (h2s lane) + VBAT."""
+    """One env reading per wake window → one ENV1 spool file (env+pm+h2s+vbat)."""
     reading = {"kind": "env", "node": NODE_ID, "ts": int(time.time())}
     if LANES["env"]["enabled"] and _ON_NODE:
         try:
@@ -320,8 +292,7 @@ def poll_env(buf):
 
 
 def _fit_env(reading):
-    """ENV1 rides the same ~200 B budget as DET1. Shed optional detail
-    until the frame fits — core scalars (kind/node/ts) always survive."""
+    """ENV1 fits the ~200 B DET1 budget by shedding optional detail."""
     r = dict(reading)
     for drop in (lambda d: d.pop("lx", None),
                  lambda d: d.pop("h2s", None),
@@ -339,8 +310,7 @@ def _fit_env(reading):
 # ── the SD buffer ─────────────────────────────────────────────────────────
 
 class SDBuffer:
-    """Store-and-forward under /sd/spool. On-device files are AES-256-CBC
-    sealed; the key lives in internal flash, not on the removable card."""
+    """SD store-and-forward; files AES-256-CBC sealed with a flash key."""
 
     def __init__(self, root=SD_MOUNT + "/spool"):
         self.root, self._key = root, None
@@ -483,11 +453,9 @@ class SDBuffer:
         else:
             self._sim = [(n, d) for n, d in self._sim if n != name]
 # ── uplink ────────────────────────────────────────────────────────────────
-# Wire framing, one byte tag + payload — small enough for LoRa, simple
-# enough for UDP. DET1 = detection line; AUD1 = audio chunk (name + PCM);
-# TSK1 = downlink task (cloud-write); LANE = OTA module push. The edge
-# demuxes on the tag. MicroReticulum can replace the socket later — the
-# frame format stays.
+# One byte tag + payload: DET1 detection, AUD1 audio chunk, TSK1 task,
+# LANE OTA push; the edge demuxes on the tag. Socket can become
+# MicroReticulum later — the frame format stays.
 
 TAG_DETECTION  = b"DET1"
 TAG_AUDIO      = b"AUD1"
@@ -517,9 +485,7 @@ def _sha_hex(data):
 
 
 def _frame_for(name, blob):
-    """The logical frame whose sha the edge acks: tag + payload for small
-    frames; the assembled payload itself for audio — the edge hashes the
-    reassembled bytes, not the wire chunks."""
+    """The frame the edge acks: tag+payload, or assembled bytes for audio."""
     if name.endswith(".det"):
         return TAG_DETECTION + blob
     if name.endswith(".env"):
@@ -534,8 +500,7 @@ def _frame_for(name, blob):
 
 
 def apply_ack(msg, buf, link=None):
-    """Edge receipt → durable delete. Only an exact content-sha match
-    clears the spool — a stale or forged ack deletes nothing."""
+    """Only an exact content-sha ack clears the spool."""
     want = msg.get("sha") if isinstance(msg, dict) else None
     want_name = msg.get("name") if isinstance(msg, dict) else None
     if not want and not want_name:
@@ -553,10 +518,7 @@ def apply_ack(msg, buf, link=None):
 
 
 class Uplink:
-    """Best-effort UDP uplink to the edge, with an optional RNode/LoRa
-    serial fallback (`lora`). Frames are tag + payload; sends carry a
-    resend budget keyed on content sha — the SD spool is the durable
-    layer, the socket only drains it."""
+    """UDP uplink with optional RNode serial fallback; spool is durable."""
 
     def __init__(self, edge_host=None, edge_port=EDGE_PORT, lora=None):
         self.edge = (edge_host, edge_port) if edge_host else None
@@ -659,10 +621,9 @@ class Uplink:
 
 
 # ── detection packet ──────────────────────────────────────────────────────
-# The node is dumb: detections arrive either from the edge (after it
-# classifies an audio window) or, later, from a tiny on-device gate. A
-# packet is the same tens of bytes either way — species, confidence,
-# timestamp, node-id; SAIDs and subject get stamped at the edge.
+# The node is dumb: detections come from the edge (or later a tiny
+# on-device gate) as tens of bytes — species, confidence, timestamp,
+# node-id; SAIDs and subject get stamped at the edge.
 
 NODE_ID = "node-7"
 
@@ -685,8 +646,7 @@ class ConsentRequired(Exception):
 
 
 class EmitLane:
-    """40 kHz transducer over PWM + H-bridge. Duty-cycled, minimum-power
-    by default — the consent token may tighten, never loosen, these."""
+    """40 kHz transducer, PWM + H-bridge; consent may tighten, never loosen."""
 
     MAX_ON_MS = 50          # hard ceiling per emission
     MIN_OFF_MS = 950        # ≤5% duty, always
@@ -710,18 +670,9 @@ class EmitLane:
         return burst_ms        # sim: report the clipped burst
 
 class LxmfLane:
-    """Single-MCU Reticulum mesh — the node IS the RNS peer (µReticulum,
-    MIT, vendored under firmware/node/lib/). No companion RNode: the same
-    ESP32-S3 that captures also encrypts/signs/routes LXMF frames over its
-    own LoRa radio, so mesh hops are transport-layer business, not app
-    code. Design of record: docs/RNODE-MESH.md.
-
-    Contract mirrors Uplink/TtnLane: send_detection carries the same
-    tens-of-bytes DET1 frame as msg.content (rns_edge.py strips the tag
-    and JSON-parses); poll_task returns downlink task dicts for
-    handle_task. Until the urns/ stack lands and identities are
-    provisioned (/sd/lxmf.json: edge_dest hash + iface), every call
-    returns the "link down" answer — the SD spool keeps everything."""
+    """Single-MCU Reticulum mesh (µReticulum vendored, docs/RNODE-MESH.md).
+    Same LXMF contract as Uplink; until urns/ lands and /sd/lxmf.json is
+    provisioned every call answers "link down" — the spool keeps all."""
 
     def __init__(self, config=None):
         self.cfg = config or {}              # {"edge_dest": hex, "iface": "e32"|"lora"}
@@ -772,8 +723,7 @@ def data_held():
 
 
 def install_lane_module(name, source, consent=None):
-    """OTA lane module push (a LANE frame): source lands under
-    /sd/lanes/ and the lane registers — consent-gated like every write."""
+    """OTA lane push: source lands in /sd/lanes/, consent-gated as always."""
     if not consent:
         raise ConsentRequired(
             "lane-install rides the joint consent of guardian and operator")
@@ -794,9 +744,7 @@ def install_lane_module(name, source, consent=None):
 
 
 def handle_task(task, emit, buf):
-    """Downlink op dispatch — the write half of the node. The edge gated
-    consent upstream; the node re-verifies the token here, so a stale or
-    spoofed frame never acts. Returns a result dict (spooled as RES1)."""
+    """Downlink op dispatch; re-verifies the consent token, returns RES1."""
     if not isinstance(task, dict):
         return {"ok": False, "reason": "malformed-task"}
     op = task.get("op")
@@ -846,8 +794,7 @@ def in_wake_window(now=None):
 
 
 def _next_window_wait_s():
-    """Seconds until the next wake window opens; None inside a window or
-    under the continuous default."""
+    """Seconds until next wake window; None inside one or when continuous."""
     if in_wake_window():
         return None
     t = time.localtime()
@@ -858,10 +805,8 @@ def _next_window_wait_s():
     first = min(s for s, _ in WAKE_WINDOWS)
     return ((24 * 60 - mins) + first * 60) * 60
 # ── watchdog ──────────────────────────────────────────────────────────────
-# An unattended node that hangs must reboot, not wait for a human. ESP32
-# machine.WDT is the task watchdog — armed once, fed at every loop point
-# and every capture chunk. Timeout sits above the longest single
-# blocking call — a wedge reboots clean into the spool.
+# A hung unattended node reboots, not waits: machine.WDT armed once,
+# fed every loop point; a wedge reboots clean into the spool.
 
 WDT_TIMEOUT_S    = 120       # above the longest single blocking call
 WDT_FEED_SLEEP_S = 30        # chunked sleeps stay under the timeout
