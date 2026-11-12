@@ -104,52 +104,67 @@ class DurableIngest:
             with open(self.receipts, "r") as fh:
                 for line in fh:
                     try:
-                        ...[3059 chars truncated]...frame.startswith(AUDIO_CLIP_TAG):
+                        self.seen.add(json.loads(line)["sha"])
+                    except Exception:
+                        continue
+        self.audio_names = {}
+        if os.path.exists(self.names):
+            try:
+                with open(self.names) as fh:
+                    self.audio_names = json.load(fh)
+            except Exception:
+                self.audio_names = {}
+        self.ledger = open(ledger_path, "a")
 
+    def _receipt(self, item_id):
+        """The durable-receipt boundary: fsynced content ID, then in-memory
+        seen — never the other way around."""
+        self.seen.add(item_id)
+        with open(self.receipts, "a") as fh:
+            fh.write(json.dumps({"sha": item_id}) + "\n")
+            _fsync(fh)
 
+    def _ledger(self, rec):
+        self.ledger.write(json.dumps(rec, separators=(",", ":")) + "\n")
+        _fsync(self.ledger)
 
+    def _commit_blob(self, ext, blob, item_id):
+        path = os.path.join(self.committed, item_id + ext)
+        if not os.path.exists(path):
+            tmp = path + ".tmp"
+            with open(tmp, "wb") as fh:
+                fh.write(blob)
+                _fsync(fh)
+            os.replace(tmp, path)
+        return path
 
+    def _remember_audio(self, name, item_id):
+        self.audio_names[name] = item_id
+        tmp = self.names + ".tmp"
+        with open(tmp, "w") as fh:
+            json.dump(self.audio_names, fh)
+            _fsync(fh)
+        os.replace(tmp, self.names)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def commit_clip(self, frame, source):
+        """AUC1 clip (ADPCM-packed node audio) → committed payload + WAV
+        sidecar; ack carries the payload hash the node can verify."""
+        payload = frame[len(AUDIO_CLIP_TAG):]
+        item_id = sha_hex(payload)
+        if item_id in self.seen:
+            return {"op": "ack", "sha": item_id, "dup": True}
+        parsed = decode_clip(payload)
+        if not parsed:
+            return None
+        meta, pcm = parsed
+        payload = frame[len(AUDIO_CLIP_TAG):]
+        item_id = sha_hex(payload)
+        if item_id in self.seen:
+            return {"op": "ack", "sha": item_id, "dup": True}
+        parsed = decode_clip(payload)
+        if not parsed:
+            return None
+        meta, pcm = parsed
         if "node" not in meta:
             return None
         auc_path = self._commit_blob(
@@ -168,17 +183,6 @@ class DurableIngest:
     def commit_record(self, frame, source):
         """Small tagged record/AUC1 → ACK only after durable commit."""
         if frame.startswith(AUDIO_CLIP_TAG):
-            return self.commit_clip(frame, source)
-        item_id = sha_hex(frame)
-        if item_id in self.seen:
-            return {"op": "ack", "sha": item_id, "dup": True}
-        parsed = parse_frame(frame)
-        if parsed is None:
-            return None
-        kind, rec = parsed
-        rec.update({"item_id": item_id, "source": source,
-                    "edge_ts": time.time()})
-        self._ledger(rec)
             return self.commit_clip(frame, source)
         item_id = sha_hex(frame)
         if item_id in self.seen:

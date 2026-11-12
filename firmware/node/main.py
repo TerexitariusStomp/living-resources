@@ -381,8 +381,6 @@ class SDBuffer:
             if 1 <= pad <= 16 and plain.endswith(bytes([pad]) * pad):
                 return plain[:-pad]
         except Exception:
-                return plain[:-pad]
-        except Exception:
             pass
         return blob                       # pre-encryption legacy file
 
@@ -535,7 +533,7 @@ def _frame_for(name, blob):
     return None
 
 
-def apply_ack(msg, buf, link):
+def apply_ack(msg, buf, link=None):
     """Edge receipt → durable delete. Only an exact content-sha match
     clears the spool — a stale or forged ack deletes nothing."""
     want = msg.get("sha") if isinstance(msg, dict) else None

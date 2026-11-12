@@ -80,7 +80,7 @@ class DurableIngestTest(unittest.TestCase):
         good = audio_frame("w2.pcm", blob, 1, 2, blob[AUDIO_PAYLOAD:])
         bad_first = audio_frame("w2.pcm", blob, 0, 2, b"b" * AUDIO_PAYLOAD)
         self.assertIsNone(self.ingest.receive_audio(good, "udp"))
-        self.assertIsNone(self.ingest.receive_audio(bad_first, "udp...[1070 chars truncated]...ne
+        self.assertIsNone(self.ingest.receive_audio(bad_first, "udp"))
         self.assertFalse(os.listdir(
             os.path.join(self.root, "committed")))
 
