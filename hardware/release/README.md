@@ -61,7 +61,7 @@ Known substitutions vs the ideal BOM:
 | Controlled BOM (MPN + alternates) | `hardware/release/electrical/ecocell-ocean-bom.csv` | **present** — generated from the netlist; MPNs/quoting unverified |
 | CPL with verified origin/rotation | `hardware/release/assembly/` | **missing** — export post-DRC |
 | Assembly drawing | `hardware/release/assembly/` | **missing** |
-| Harness drawings | `hardware/release/harness/` | **missing** |
+| Harness drawings | `hardware/release/HARNESS.md` | **present** — connector pinouts + tether spec from the netlist |
 | Mechanical CAD + STEP + drawings | `hardware/release/mechanical/` | **missing** — pressure hull, optical port, tether, float |
 | Pressure/leak spec | `hardware/release/mechanical/` | **missing** — derive from deployment envelope |
 | Test fixture spec | `hardware/release/TEST-PLAN.md` | **present** |
