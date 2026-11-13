@@ -215,6 +215,14 @@ for ref in sorted(comps):
         bb = fp.GetBoundingBox()
         excl.append((bb.GetLeft() / 1e6, bb.GetTop() / 1e6,
                      bb.GetRight() / 1e6, bb.GetBottom() / 1e6))
+    # footprint rule areas that forbid copper on every layer (the WROOM
+    # antenna keepout) also exclude bottom cells — a passive under it
+    # can never reach pour
+    for z in fp.Zones():
+        if z.GetDoNotAllowTracks() or z.GetDoNotAllowVias():
+            zb = z.GetBoundingBox()
+            excl.append((zb.GetLeft() / 1e6, zb.GetTop() / 1e6,
+                         zb.GetRight() / 1e6, zb.GetBottom() / 1e6))
 
 # pass 2: passives on the bottom, outside major-part exclusion zones
 bot_i = 0
