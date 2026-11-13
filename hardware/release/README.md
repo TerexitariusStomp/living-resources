@@ -66,7 +66,7 @@ Known substitutions vs the ideal BOM:
 | Pressure/leak spec | `hardware/release/PRESSURE-SPEC.md` | **present** — 0.4 MPa working / 0.6 MPa proof envelope; hull FEA + O-ring sizing open |
 | Test fixture spec | `hardware/release/TEST-PLAN.md` | **present** |
 | Unit traveler / calibration record | `hardware/release/UNIT-TRAVELER.md` | **present** |
-| Firmware image + hash | `firmware/node/` build | **partial** — source present; reproducible build/hash pending |
+| Firmware image + hash | `hardware/release/firmware-image.json` | **partial** — source-tree hash recorded; reproducible cross-build pending |
 | Release manifest + checksums | `hardware/release/manifest.json` | **present** |
 | DFM/DFT review record | `hardware/release/` | **missing** — supplier engagement required |
 

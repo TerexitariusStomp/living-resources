@@ -1,0 +1,11 @@
+{
+  "image": "frozen-module-tree",
+  "target": "ESP32-S3 (MicroPython)",
+  "note": "source-tree hash for R0; a reproducible cross-compiled image hash lands with the build pipeline",
+  "files": {
+    "adpcm.py": "cc074ac4bcd8d275",
+    "lxmf_node.py": "331ef08eb9fadda9",
+    "main.py": "20bd6b6ac3645fed"
+  },
+  "tree_sha256": "ab91945b96100a166a58abf9e60da9cddd01059418938e0f0db71134eb88b35d"
+}
