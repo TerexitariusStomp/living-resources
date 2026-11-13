@@ -63,7 +63,7 @@ Known substitutions vs the ideal BOM:
 | Assembly drawing | `hardware/release/assembly/` | **missing** |
 | Harness drawings | `hardware/release/HARNESS.md` | **present** — connector pinouts + tether spec from the netlist |
 | Mechanical CAD + STEP + drawings | `hardware/release/mechanical/` | **missing** — pressure hull, optical port, tether, float |
-| Pressure/leak spec | `hardware/release/mechanical/` | **missing** — derive from deployment envelope |
+| Pressure/leak spec | `hardware/release/PRESSURE-SPEC.md` | **present** — 0.4 MPa working / 0.6 MPa proof envelope; hull FEA + O-ring sizing open |
 | Test fixture spec | `hardware/release/TEST-PLAN.md` | **present** |
 | Unit traveler / calibration record | `hardware/release/UNIT-TRAVELER.md` | **present** |
 | Firmware image + hash | `firmware/node/` build | **partial** — source present; reproducible build/hash pending |
