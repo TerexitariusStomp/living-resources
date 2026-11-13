@@ -57,8 +57,8 @@ Known substitutions vs the ideal BOM:
 | Native KiCad schematic | `hardware/release/electrical/ecocell-ocean.net` | **present** — deterministic netlist emitter (SKiDL source lost in workspace wipe; regenerate `.kicad_sch` pending) |
 | Native KiCad PCB | `hardware/release/electrical/ecocell-ocean.kicad_pcb` | **present** — placed + autorouted; DRC status tracked below |
 | Gerbers + drill (or IPC-2581) | `hardware/release/electrical/` | **missing** — export after DRC is clean |
-| Board stack-up / fab drawing | `hardware/release/electrical/` | **missing** |
-| Controlled BOM (MPN + alternates) | `hardware/release/bom/` | **partial** — `hardware/BOM.md` + `hardware/FIELD-KIT.md` updated; quote-backed MPNs pending |
+| Board stack-up / fab drawing | `hardware/release/FAB-NOTES.md` | **present** — stack-up + CAM notes; fiducials flagged as R0 gap |
+| Controlled BOM (MPN + alternates) | `hardware/release/electrical/ecocell-ocean-bom.csv` | **present** — generated from the netlist; MPNs/quoting unverified |
 | CPL with verified origin/rotation | `hardware/release/assembly/` | **missing** — export post-DRC |
 | Assembly drawing | `hardware/release/assembly/` | **missing** |
 | Harness drawings | `hardware/release/harness/` | **missing** |
