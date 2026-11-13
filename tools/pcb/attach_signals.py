@@ -24,7 +24,11 @@ NX, NY = int(W / GS) + 2, int(H / GS) + 2
 
 # --- obstacles -----------------------------------------------------------
 # obs[layer] = bytearray blocked cells
+# core[layer] = cells that actually contain copper (no clearance margin) —
+# the routing goals: landing a track end on one of these means a real
+# electrical join, not just "close to" the net
 obs = {l: bytearray(NX * NY) for l in CU}
+core = {l: bytearray(NX * NY) for l in CU}
 holes = []               # (x,y,r,netcode) drilled things
 
 
@@ -39,6 +43,19 @@ def stamp(x, y, r, ly, nc):
                 obs[ly][iy * NX + ix] = nc if nc else 1
                 if nc == 0:
                     obs[ly][iy * NX + ix] = 255
+
+
+def stamp_core(x, y, r, ly, nc):
+    """record cells the copper itself covers on ly"""
+    if not nc:
+        return
+    x0, x1 = int((x - r) / GS) - 1, int((x + r) / GS) + 2
+    y0, y1 = int((y - r) / GS) - 1, int((y + r) / GS) + 2
+    for iy in range(max(0, y0), min(NY, y1)):
+        for ix in range(max(0, x0), min(NX, x1)):
+            cx, cy = ix * GS, iy * GS
+            if (cx - x) ** 2 + (cy - y) ** 2 <= (r + 0.01) ** 2:
+                core[ly][iy * NX + ix] = nc
 
 
 def cell_free(ix, iy, ly, nc):
@@ -60,6 +77,7 @@ for t in board.GetTracks():
         r = t.GetWidth(pcbnew.F_Cu) / 2 / 1e6 + CLR + TW2 + GS * 0.71
         for ly in CU:
             stamp(x, y, r, ly, nc if nc else 0)
+            stamp_core(x, y, t.GetWidth(pcbnew.F_Cu) / 2 / 1e6 + 0.05, ly, nc)
         holes.append((x, y, t.GetDrillValue() / 2 / 1e6, nc))
     else:
         s, e = t.GetStart(), t.GetEnd()
@@ -69,6 +87,8 @@ for t in board.GetTracks():
         L = max(1, int(((bx-ax)**2+(by-ay)**2)**0.5 / (GS*0.5)))
         for i in range(L+1):
             stamp(ax+(bx-ax)*i/L, ay+(by-ay)*i/L, r, t.GetLayer(), nc)
+            stamp_core(ax+(bx-ax)*i/L, ay+(by-ay)*i/L,
+                       t.GetWidth() / 2 / 1e6 + 0.05, t.GetLayer(), nc)
 
 for fp in board.GetFootprints():
     for p in fp.Pads():
@@ -80,6 +100,7 @@ for fp in board.GetFootprints():
         for ly in CU:
             if p.IsOnLayer(ly):
                 stamp(cx, cy, r, ly, nc if nc else 0)
+                stamp_core(cx, cy, r - CLR - TW2 - GS * 0.71, ly, nc)
         if p.GetDrillSize().x:
             holes.append((cx, cy, p.GetDrillSize().x/2/1e6, nc))
 
@@ -206,19 +227,34 @@ def via_ok(x, y, nc):
     return True
 
 
-def astar(start, goals, nc, slayers, glayers):
+def astar(start, goals, nc, slayers, glayers, coreset=frozenset()):
     """A* over (ix, iy, layer) with via-gated layer transitions."""
     gset = set(goals)          # (ix, iy, layer)
+    win = gset | coreset       # any reachable own-net copper counts
     dist = {}
     prev = {}
     pq = []
-    for ly in slayers:
-        st = (start[0], start[1], ly)
+    # seed every cell carrying the pad's own net within reach — the
+    # pad-centre cell alone can sit under a foreign stamp and be
+    # completely walled off from the pad's real escape cells
+    seeds = []
+    R = int(1.6 / GS) + 1
+    for dy in range(-R, R + 1):
+        for dx in range(-R, R + 1):
+            ix, iy = start[0] + dx, start[1] + dy
+            if 0 <= ix < NX and 0 <= iy < NY and \
+                    (dx * GS) ** 2 + (dy * GS) ** 2 <= 1.6 ** 2:
+                for ly in slayers:
+                    if obs[ly][iy * NX + ix] == nc:
+                        seeds.append((ix, iy, ly))
+    if not seeds:
+        seeds = [(start[0], start[1], ly) for ly in slayers]
+    for st in seeds:
         dist[st] = 0
         heapq.heappush(pq, (0, st))
     while pq:
         f, (ix, iy, ly) = heapq.heappop(pq)
-        if (ix, iy, ly) in gset:
+        if (ix, iy, ly) in win:
             path = [(ix, iy, ly)]
             cur = (ix, iy, ly)
             while cur in prev:
@@ -290,8 +326,12 @@ for rnd in range(10):
         # pad (bridging a walled-in fine-pitch pad via its own copper), and
         # all same-net track endpoints of the main cluster
         goals = []
+        stubgoals = set()          # goals inside the target pad's stamp —
+                                   # these still need a closing stub to the
+                                   # pad centre; core/track goals do not
         for gly in pad_layers(t):
             goals.append((int(tx/GS), int(ty/GS), gly))
+            stubgoals.add((int(tx/GS), int(ty/GS), gly))
             # every own-net-stamped cell within reach of the pad — bridges a
             # walled-in fine-pitch pad through a via onto its own copper
             R = int(1.6 / GS) + 1
@@ -302,12 +342,29 @@ for rnd in range(10):
                             (dx*GS)**2 + (dy*GS)**2 <= 1.6**2 and \
                             obs[gly][iy*NX+ix] == nc:
                         goals.append((ix, iy, gly))
+                        stubgoals.add((ix, iy, gly))
         for tr in board.GetTracks():
             if tr.GetNetCode() != nc: continue
             for pt in (tr.GetStart(), tr.GetEnd()):
                 goals.append((int(pt.x/1e6/GS), int(pt.y/1e6/GS),
                               tr.GetLayer()))
-        path = astar(scell, goals, nc, pad_layers(p), pad_layers(t))
+        # every cell holding this net's copper is a valid landing —
+        # except the immediate region of any pad this round is trying
+        # to rescue (its own island stamps would fake a connection)
+        excl = [(int(p2.GetPosition().x/1e6/GS),
+                 int(p2.GetPosition().y/1e6/GS)) for p2, _, nc2, _ in todo
+                if nc2 == nc]
+        coreset = set()
+        for ly in CU:
+            g = core[ly]
+            for iy in range(NY):
+                row = iy * NX
+                for ix in range(NX):
+                    if g[row + ix] == nc and not any(
+                            (ix - ex) ** 2 + (iy - ey) ** 2 <= 64
+                            for ex, ey in excl):
+                        coreset.add((ix, iy, ly))
+        path = astar(scell, goals, nc, pad_layers(p), pad_layers(t), coreset)
         if not path:
             print("  unrouted", name, p.GetParentFootprint().GetReference(),
                   p.GetPadName())
@@ -323,7 +380,7 @@ for rnd in range(10):
         if (fx*GS, fy*GS) != (px, py):
             add_track(px, py, fx*GS, fy*GS, fl, nc)
         (lx, ly, ll) = path[-1]
-        if (lx*GS, ly*GS) != (tx, ty):
+        if (lx, ly, ll) in stubgoals and (lx*GS, ly*GS) != (tx, ty):
             add_track(lx*GS, ly*GS, tx, ty, ll, nc)
         done += 1
     print("  attached", done)
