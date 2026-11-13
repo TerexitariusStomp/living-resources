@@ -121,7 +121,30 @@ for name in netnames:
 # Deterministic, collision-free layout: connectors on the perimeter, majors
 # in a center grid, passives on the bottom side in a clean grid.
 W, H = 120.0, 90.0
-POS = {}
+# Explicit layout. The WROOM's 48x21 mm antenna keepout must face the top
+# edge, so U_MCU anchors the top-left quadrant and nothing else may enter
+# x<52, y<20. Connectors sit on the perimeter (rot 90 = pads along X for
+# the bottom-edge row); majors fill a grid clear of the MCU body.
+POS = {
+    "U_MCU": (33.0, 28.0, 0),
+    "J_CAM": (62.0, 8.0, 90), "J_GPS": (85.0, 8.0, 90),
+    "J_LORA": (112.0, 42.0, 0), "J_SD": (110.0, 73.0, 0),
+    "J_DEBUG": (8.0, 50.0, 0), "J_HYDRO": (8.0, 68.0, 90),
+    "J_PIR": (16.0, 80.0, 90), "J_PWR": (28.0, 80.0, 0),
+    "J_BAT": (40.0, 80.0, 0), "J_EMIT": (50.0, 80.0, 0),
+    "J_SPK": (62.0, 80.0, 90), "J_KILL": (73.0, 80.0, 90),
+    "J_CTD": (88.0, 80.0, 0),
+    "L_BOOST": (64.0, 14.0, 0), "Q_EMIT": (83.0, 14.0, 0),
+    "U_ADC": (102.0, 14.0, 0), "U_AFE": (64.0, 31.0, 0),
+    "U_AMP": (83.0, 31.0, 0), "U_BOOST": (102.0, 31.0, 0),
+    "U_CHG": (64.0, 44.0, 0), "U_CTD": (83.0, 44.0, 0),
+    "U_ENV": (102.0, 44.0, 0), "U_EXP": (26.0, 55.0, 0),
+    "U_LDR": (45.0, 55.0, 0),
+    "U_LDO": (64.0, 59.0, 0), "U_MIC": (83.0, 59.0, 0),
+    "U_PRES": (102.0, 59.0, 0), "U_SW_AMP": (26.0, 68.0, 0),
+    "U_SW_CAM": (64.0, 74.0, 0), "U_SW_DAC": (83.0, 70.0, 0),
+    "U_SW_ILLUM": (45.0, 68.0, 0),
+}
 grid_pos = {}
 mx, my = 26.0, 14.0
 for ref in sorted(comps):
@@ -136,7 +159,7 @@ for ref in sorted(comps):
 # --------------------------------------------------------- footprints ----
 # Majors on top at POS; all small passives (R_/C_/D_/L_) go to the bottom
 # side in a clean grid; test points along the top-bottom edge row.
-def overlaps_excl(x, y, excl, margin=2.0):
+def overlaps_excl(x, y, excl, margin=1.0):
     for (x0, y0, x1, y1) in excl:
         if x0 - margin < x < x1 + margin and \
                 y0 - margin < y < y1 + margin:
@@ -149,12 +172,12 @@ bot_cells = []     # candidate bottom-grid cells
 bx, by = 8.0, 8.0
 while by < H - 6:
     bot_cells.append((bx, by))
-    bx += 4.0
+    bx += 4.5
     if bx > W - 8:
-        bx, by = 8.0, by + 3.5
+        bx, by = 8.0, by + 4.0
 
 # pass 1: connectors, ICs, test points — top side, record exclusions
-tp_x = 8.0
+tp_i = 0.0
 for ref in sorted(comps):
     c = comps[ref]
     fpstr = c["fp"]
@@ -173,8 +196,8 @@ for ref in sorted(comps):
         x, y = grid_pos[ref]
         rot = 0
     elif ref.startswith("TP"):
-        x, y, rot = tp_x, H - 8.0, 0
-        tp_x += 7.0
+        x, y, rot = 60.0 + tp_i * 4.4, 22.0, 0
+        tp_i += 1
     else:
         x, y, rot = 10.0, H - 12.0, 0
     fp.SetReference(ref)
@@ -186,9 +209,12 @@ for ref in sorted(comps):
         except Exception:
             pass
     board.Add(fp)
-    bb = fp.GetBoundingBox()
-    excl.append((bb.GetLeft() / 1e6, bb.GetTop() / 1e6,
-                 bb.GetRight() / 1e6, bb.GetBottom() / 1e6))
+    if ref.startswith(("J_", "TP", "MH")):
+        # only through-hole/connecting parts exclude bottom-side cells —
+        # SMD passives are meant to sit under the majors' bodies
+        bb = fp.GetBoundingBox()
+        excl.append((bb.GetLeft() / 1e6, bb.GetTop() / 1e6,
+                     bb.GetRight() / 1e6, bb.GetBottom() / 1e6))
 
 # pass 2: passives on the bottom, outside major-part exclusion zones
 bot_i = 0
