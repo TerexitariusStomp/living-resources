@@ -100,10 +100,14 @@ ds.m_MinClearance = MM(0.2)
 ds.m_TrackMinWidth = MM(0.15)
 ds.m_ViasMinSize = MM(0.5)
 ds.m_ViasMinAnnularWidth = MM(0.1)
-ds.m_MinThroughDrill = MM(0.3)
+ds.m_MinThroughDrill = MM(0.2)   # WROOM-1 thermal-pad PTHs are 0.2 mm
 ds.m_CopperEdgeClearance = MM(0.5)
 ds.m_HoleClearance = MM(0.3)
-ds.m_HoleToHoleMin = MM(0.5)
+ds.m_HoleToHoleMin = MM(0.2)
+try:
+    ds.m_SolderMaskMinWidth = MM(0.1)  # fab-typical mask web
+except AttributeError:
+    pass
 nc = board.GetAllNetClasses()["Default"]
 nc.SetClearance(MM(0.2))
 nc.SetTrackWidth(MM(0.25))
@@ -224,8 +228,11 @@ for ref in sorted(comps):
             excl.append((zb.GetLeft() / 1e6, zb.GetTop() / 1e6,
                          zb.GetRight() / 1e6, zb.GetBottom() / 1e6))
 
-# pass 2: passives on the bottom, outside major-part exclusion zones
-bot_i = 0
+# pass 2: passives on the bottom, largest bbox first for better packing.
+# Cells live in a free set: a cell that fails a big part stays available
+# for a smaller one; placing a part evicts cells inside its bbox (+0.3 mm
+# gap) so courtyards can never overlap.
+pending = []
 for ref in sorted(comps):
     c = comps[ref]
     if not ref.startswith(("R_", "C_", "D_", "L_")):
@@ -238,14 +245,46 @@ for ref in sorted(comps):
     if fp is None:
         print("MISSING FP", ref, fpstr)
         continue
-    while bot_i < len(bot_cells) and \
-            overlaps_excl(bot_cells[bot_i][0], bot_cells[bot_i][1], excl):
-        bot_i += 1
-    if bot_i >= len(bot_cells):
-        x, y, rot = 10.0, H - 12.0, 0
-    else:
-        x, y, rot = bot_cells[bot_i][0], bot_cells[bot_i][1], 0
-    bot_i += 1
+    # pad-union extent + 0.8 mm body/courtyard margin — GetBoundingBox()
+    # would inflate ~8 mm with silk and reference text
+    fext = None
+    for p in fp.Pads():
+        pb = p.GetBoundingBox()
+        e = (pb.GetLeft() / 1e6, pb.GetTop() / 1e6,
+             pb.GetRight() / 1e6, pb.GetBottom() / 1e6)
+        fext = e if fext is None else (min(fext[0], e[0]),
+                                       min(fext[1], e[1]),
+                                       max(fext[2], e[2]),
+                                       max(fext[3], e[3]))
+    fext = (fext[0] - 0.8, fext[1] - 0.8, fext[2] + 0.8, fext[3] + 0.8)
+    pending.append((-(fext[2] - fext[0]) * (fext[3] - fext[1]),
+                    ref, fp, fext))
+pending.sort()
+free_cells = [c_ for c_ in bot_cells if not overlaps_excl(c_[0], c_[1], excl)]
+used = [False] * len(free_cells)
+placed_bot = []
+n_fb = 0
+for _, ref, fp, fext in pending:
+    x = y = None
+    for ci in range(len(free_cells)):
+        if used[ci]:
+            continue
+        cx_, cy_ = free_cells[ci]
+        box = (fext[0] + cx_ - 0.3, fext[1] + cy_ - 0.3,
+               fext[2] + cx_ + 0.3, fext[3] + cy_ + 0.3)
+        if not any(box[0] < p[2] and box[2] > p[0] and
+                   box[1] < p[3] and box[3] > p[1] for p in placed_bot):
+            x, y = cx_, cy_
+            break
+    if x is None:
+        x, y = 10.0 + 5.0 * (n_fb % 18), H - 12.0
+        n_fb += 1
+        box = (fext[0] + x, fext[1] + y, fext[2] + x, fext[3] + y)
+    placed_bot.append(box)
+    for ci in range(len(free_cells)):
+        if not used[ci] and overlaps_excl(free_cells[ci][0],
+                                          free_cells[ci][1], [box], 0.0):
+            used[ci] = True
     fp.SetReference(ref)
     fp.SetValue(c["value"])
     fp.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
@@ -254,6 +293,8 @@ for ref in sorted(comps):
         fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_TOP_BOTTOM)
     except Exception as e:
         print("flip fail", ref, e)
+print("bottom passives placed:", len(placed_bot) - n_fb,
+      "fallback:", n_fb)
 
 # assign nets to pads
 missing = []
