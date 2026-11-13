@@ -140,6 +140,7 @@ POS = {
     "J_CTD": (88.0, 80.0, 0),
     "L_BOOST": (64.0, 14.0, 0), "Q_EMIT": (83.0, 14.0, 0),
     "U_ADC": (102.0, 14.0, 0), "U_AFE": (64.0, 31.0, 0),
+    "C_REFI": (96.15, 13.7, 180),   # REFIO bypass cap, pad 1 faces U_ADC.2
     "U_AMP": (83.0, 31.0, 0), "U_BOOST": (102.0, 31.0, 0),
     "U_CHG": (64.0, 44.0, 0), "U_CTD": (83.0, 44.0, 0),
     "U_ENV": (102.0, 44.0, 0), "U_EXP": (26.0, 55.0, 0),
@@ -181,13 +182,18 @@ while by < H - 6:
         bx, by = 8.0, by + 4.0
 
 # pass 1: connectors, ICs, test points — top side, record exclusions
+# TOP_PASSIVES are decoupling caps pinned to their ICs on the top side:
+# placing them through the bottom grid buries them in dense copper and
+# leaves the bypass loop unroutable (the REFIO island defect).
+TOP_PASSIVES = {"C_REFI"}
+top_placed = set()
 tp_i = 0.0
 for ref in sorted(comps):
     c = comps[ref]
     fpstr = c["fp"]
     if not fpstr or ":" not in fpstr:
         continue                       # power symbols, NC-only symbols
-    if ref.startswith(("R_", "C_", "D_", "L_")):
+    if ref.startswith(("R_", "C_", "D_", "L_")) and ref not in TOP_PASSIVES:
         continue                       # passives handled in pass 2
     lib, name = fpstr.split(":", 1)
     fp = pcbnew.FootprintLoad(os.path.join(FPLIBS, lib + ".pretty"), name)
@@ -213,6 +219,7 @@ for ref in sorted(comps):
         except Exception:
             pass
     board.Add(fp)
+    top_placed.add(ref)
     if ref.startswith(("J_", "TP", "MH")):
         # only through-hole/connecting parts exclude bottom-side cells —
         # SMD passives are meant to sit under the majors' bodies
@@ -235,7 +242,7 @@ for ref in sorted(comps):
 pending = []
 for ref in sorted(comps):
     c = comps[ref]
-    if not ref.startswith(("R_", "C_", "D_", "L_")):
+    if not ref.startswith(("R_", "C_", "D_", "L_")) or ref in top_placed:
         continue
     fpstr = c["fp"]
     if not fpstr or ":" not in fpstr:
@@ -272,10 +279,14 @@ for _, ref, fp, fext in pending:
         cx_, cy_ = free_cells[ci]
         box = (fext[0] + cx_ - 0.3, fext[1] + cy_ - 0.3,
                fext[2] + cx_ + 0.3, fext[3] + cy_ + 0.3)
-        if not any(box[0] < p[2] and box[2] > p[0] and
-                   box[1] < p[3] and box[3] > p[1] for p in placed_bot):
-            x, y = cx_, cy_
-            break
+        # the part's box must clear placed parts AND exclusion zones —
+        # the cell centre alone misses pads that reach into a keepout
+        if any(box[0] < p[2] and box[2] > p[0] and
+               box[1] < p[3] and box[3] > p[1]
+               for p in placed_bot + excl):
+            continue
+        x, y = cx_, cy_
+        break
     if x is None:
         x, y = 10.0 + 5.0 * (n_fb % 18), H - 12.0
         n_fb += 1
@@ -604,7 +615,7 @@ def stamp_item(grid, item):
     ax, ay, bx, by, r, nc, layers = item
     if isinstance(layers, int):
         layers = (layers,)
-    rad = r + 0.125 + CLR
+    rad = r + 0.125 + CLR + GS * 0.71
     x0 = int((min(ax, bx) - rad) / GS)
     x1 = int((max(ax, bx) + rad) / GS) + 1
     y0 = int((min(ay, by) - rad) / GS)
@@ -880,7 +891,7 @@ def stamp_item(grid, item):
     ax, ay, bx, by, r, nc, layers = item
     if isinstance(layers, int):
         layers = (layers,)
-    rad = r + 0.125 + CLR
+    rad = r + 0.125 + CLR + GS * 0.71
     x0 = int((min(ax, bx) - rad) / GS)
     x1 = int((max(ax, bx) + rad) / GS) + 1
     y0 = int((min(ay, by) - rad) / GS)
@@ -939,7 +950,7 @@ def stamp_poly(grid, poly):
 
 def stamp_hole(grid, hx, hy, hr):
     """Drill hole: contested for every net on every layer."""
-    rad = hr + 0.3 + 0.125
+    rad = hr + 0.3 + 0.125 + GS * 0.71
     x0 = int((hx - rad) / GS); x1 = int((hx + rad) / GS) + 1
     y0 = int((hy - rad) / GS); y1 = int((hy + rad) / GS) + 1
     for ly in CU_LAYERS:
@@ -1729,6 +1740,12 @@ if (ses and os.path.exists(ses)) or os.environ.get("STITCH") or \
     except Exception as e:
         print("fill", e)
         board.FillZones()
+    ds = board.GetDesignSettings()
+    ds.m_MinClearance = MM(0.2)
+    ds.m_MinThroughDrill = MM(0.2)
+    ds.m_HoleClearance = MM(0.3)
+    ds.m_HoleToHoleMin = MM(0.2)
+    ds.m_TrackMinWidth = MM(0.15)
     pcbnew.SaveBoard(PCB, board)
     print("routed board saved")
     post_attach()

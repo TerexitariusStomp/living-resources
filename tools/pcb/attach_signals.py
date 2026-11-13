@@ -57,14 +57,14 @@ for t in board.GetTracks():
     nc = netcode(t)
     if isinstance(t, pcbnew.PCB_VIA):
         x, y = t.GetPosition().x / 1e6, t.GetPosition().y / 1e6
-        r = t.GetWidth(pcbnew.F_Cu) / 2 / 1e6 + CLR + TW2
+        r = t.GetWidth(pcbnew.F_Cu) / 2 / 1e6 + CLR + TW2 + GS * 0.71
         for ly in CU:
             stamp(x, y, r, ly, nc if nc else 0)
         holes.append((x, y, t.GetDrillValue() / 2 / 1e6, nc))
     else:
         s, e = t.GetStart(), t.GetEnd()
         ax, ay, bx, by = s.x/1e6, s.y/1e6, e.x/1e6, e.y/1e6
-        r = t.GetWidth() / 2 / 1e6 + CLR + TW2
+        r = t.GetWidth() / 2 / 1e6 + CLR + TW2 + GS * 0.71
         # walk the segment stamping discs
         L = max(1, int(((bx-ax)**2+(by-ay)**2)**0.5 / (GS*0.5)))
         for i in range(L+1):
@@ -76,7 +76,7 @@ for fp in board.GetFootprints():
         bb = p.GetBoundingBox()
         cx, cy = (bb.GetLeft()+bb.GetRight())/2/1e6, (bb.GetTop()+bb.GetBottom())/2/1e6
         r = max(bb.GetRight()-bb.GetLeft(), bb.GetBottom()-bb.GetTop())/2/1e6 \
-            + CLR + TW2
+            + CLR + TW2 + GS * 0.71
         for ly in CU:
             if p.IsOnLayer(ly):
                 stamp(cx, cy, r, ly, nc if nc else 0)
@@ -114,7 +114,7 @@ for z in keep_zones:
                                / max(1e-9, ((pts[(i+1) % n][0]-pts[i][0])**2 +
                                             (pts[(i+1) % n][1]-pts[i][1])**2) ** 0.5)
                                for i in range(n))
-                    if dmin > TW2 + 0.1:
+                    if dmin > TW2 + 0.2 + GS * 0.5:
                         continue
                 for ly in CU:
                     obs[ly][iy*NX+ix] = 255
@@ -123,8 +123,8 @@ for z in keep_zones:
 for iy in range(NY):
     for ix in range(NX):
         x, y = ix*GS, iy*GS
-        if x < EDGE + TW2 or y < EDGE + TW2 or \
-                x > W-EDGE-TW2 or y > H-EDGE-TW2:
+        if x < EDGE + TW2 + GS*0.5 or y < EDGE + TW2 + GS*0.5 or \
+                x > W-EDGE-TW2-GS*0.5 or y > H-EDGE-TW2-GS*0.5:
             for ly in CU:
                 obs[ly][iy*NX+ix] = 255
 
