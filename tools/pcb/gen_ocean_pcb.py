@@ -368,9 +368,12 @@ for z in board.Zones():
         collect_keep(z)
 print("keepout polys:", len(KEEPS))
 
-pcbnew.SaveBoard(PCB, board)
-ok = pcbnew.ExportSpecctraDSN(board, DSN)
-print("pcb", PCB, "| dsn", DSN, ok)
+# POST_ONLY skips the clobbering save so a saved routed board survives —
+# stitch()/post_attach() then re-load it from disk instead.
+if not os.environ.get("POST_ONLY"):
+    pcbnew.SaveBoard(PCB, board)
+    ok = pcbnew.ExportSpecctraDSN(board, DSN)
+    print("pcb", PCB, "| dsn", DSN, ok)
 
 def pt_seg_dist(px, py, ax, ay, bx, by):
     vx, vy = bx - ax, by - ay
@@ -1659,7 +1662,10 @@ def silk_cleanup():
 
 
 ses = os.environ.get("SES")
-if (ses and os.path.exists(ses)) or os.environ.get("STITCH"):
+if os.environ.get("POST_ONLY"):
+    board = pcbnew.LoadBoard(PCB)
+if (ses and os.path.exists(ses)) or os.environ.get("STITCH") or \
+        os.environ.get("POST_ONLY"):
     if ses and os.path.exists(ses):
         print("importing", ses)
         pcbnew.ImportSpecctraSES(board, ses)

@@ -1,0 +1,4 @@
+keepout polys: 1
+pcb /home/shredder/Documents/living-resources/hardware/release/electrical/ecocell-ocean.kicad_pcb | dsn /home/shredder/Documents/living-resources/hardware/release/electrical/ecocell-ocean.dsn True
+island pads: 279
+residue 0 stitched 52

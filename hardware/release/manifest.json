@@ -1,0 +1,20 @@
+{
+  "package": "ecocell-ocean",
+  "level": "R0-in-progress",
+  "note": "Checksums cover generated artifacts present at manifest build; Gerbers/drill/CPL pending clean DRC.",
+  "board": "ecocell-ocean 120x90 4-layer (F.Cu/In1 GND/In2 +3V3/B.Cu)",
+  "generators": {
+    "schematic": "tools/pcb/gen_ocean_sch.py",
+    "pcb": "tools/pcb/gen_ocean_pcb.py"
+  },
+  "artifacts": {
+    "electrical/ecocell-ocean.dsn": "92ddde61e9d42b33",
+    "electrical/ecocell-ocean.kicad_pcb": "1df33d3ff7034fd0",
+    "electrical/ecocell-ocean.kicad_prl": "687333a0690d15a4",
+    "electrical/ecocell-ocean.kicad_pro": "4951467334e74cde",
+    "electrical/ecocell-ocean.net": "5ccd42d1040419e5",
+    "README.md": "9c192e6a1696b334",
+    "TEST-PLAN.md": "8a81a13508aa202a",
+    "UNIT-TRAVELER.md": "b3bb702c51e99b37"
+  }
+}
