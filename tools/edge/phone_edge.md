@@ -41,9 +41,11 @@ python3 tools/edge/classify.py --spool <audio-dir> \
 `uplink.py` is the onward path: it tails the committed ledger and
 POSTs `{"records":[...]}` batches to any HTTPS receiver, persisting a
 byte offset so restarts resend nothing and retries are idempotent on
-the receiver's content-hash dedupe. Point `--target` at whatever
-ingest endpoint exists for the deployment — until a public route
-lands, a receiver you control is the honest answer.
+the receiver's content-hash dedupe. The compute-api exposes
+`POST /ingest` + `GET /ingest` for exactly this shape (content-addressed
+`ingest/` keys in its KV — replays are free); until that route is
+deployed, point `--target` at a receiver you control — nothing is
+silently dropped: retries exhaust → the ledger remains the durable copy.
 
 - `--via` must match the `adapters/backhaul.scm` vocabulary
   (`lora wifi cat1-sat starlink-sat`) so receipts can say which path

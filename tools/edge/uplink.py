@@ -2,8 +2,10 @@
 # tools/edge/uplink.py — edge→cloud onward path for committed records.
 #
 # Tails the durable ledger (the JSONL udp_edge.py commits) and POSTs
-# batches to any HTTPS receiver — the compute-api ingestion route when
-# it lands, a Worker webhook, or a peer edge. Records already carry
+# batches to any HTTPS receiver — the compute-api's POST /ingest route
+# (workers/compute-api, content-addressed ingest/ keys), a Worker
+# webhook, or a peer edge. Keep --batch ≤ 20 against /ingest: the free
+# plan's 50-subrequest cap means 20 records × get+put is the ceiling. Records already carry
 # "via" (the backhaul label udp_edge stamped) so provenance survives
 # the hop. Offset state makes restarts idempotent: lines are sent
 # once, in order; the receiver dedupes on item_id/sha as designed.

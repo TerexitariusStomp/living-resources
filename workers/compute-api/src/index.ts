@@ -70,6 +70,37 @@ const json = (body: any, status = 200): Response =>
 
 const bad = (msg: string, status = 400) => json({ error: msg }, status);
 
+// ── field ingest ──────────────────────────────────────────────────────────
+// Edge→cloud uplink: tools/edge/uplink.py POSTs {"records":[...]} — the
+// committed ledger lines from udp_edge.py, each already carrying its
+// "via" backhaul label and content hash. Records land in the RECEIPTS KV
+// under ingest/<sha256> keys: the key IS the dedupe — replays overwrite
+// the same address, so retries are free and order doesn't matter.
+// Kept out of GET /receipts (task_said space stays pure); GET /ingest
+// serves the latest slice for dashboards.
+
+const INGEST_PREFIX = "ingest/";
+// 20 records × (get+put) = 40 KV ops — under the free plan's 50
+// subrequests/invocation; uplink.py's --batch defaults to 50, so edges
+// should pass --batch 20 against this route.
+const INGEST_MAX_RECORDS = 20;
+const INGEST_MAX_BYTES = 1 << 20;   // 1 MiB — matches edge batch sizing
+
+function stableStringify(v: any): string {
+  if (v === null || typeof v !== "object") return JSON.stringify(v);
+  if (Array.isArray(v)) return "[" + v.map(stableStringify).join(",") + "]";
+  return "{" + Object.keys(v).sort()
+    .map(k => JSON.stringify(k) + ":" + stableStringify(v[k]))
+    .join(",") + "}";
+}
+
+async function sha256Hex(s: string): Promise<string> {
+  const d = await crypto.subtle.digest(
+    "SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(d)]
+    .map(x => x.toString(16).padStart(2, "0")).join("");
+}
+
 // ── federation ────────────────────────────────────────────────────────────
 // The federated lane at the edge: allied networks' devices, provenance-
 // tagged, never claimed as our quorum. Each source carries a status the
@@ -173,6 +204,8 @@ export default {
           "GET /receipts/{task_said}": "fetch a stored receipt for replay",
           "GET /federation": "allied device networks — status, live counts, latest detections",
           "POST /presence": "{session} → ephemeral listener count (in-memory, ~90s window)",
+          "POST /ingest": "{records:[...]} — edge→cloud field uplink; content-addressed under ingest/ keys",
+          "GET /ingest": "latest committed field records (via-tagged provenance)",
         },
         posture: "every result is deterministic and replayable; the computation is the proof",
         source: "https://github.com/TerexitariusStomp/living-resources (AGPL-3.0)",
@@ -185,7 +218,9 @@ export default {
     // task_said, so the catalogue itself is content-addressed.
     if (url.pathname === "/receipts" && req.method === "GET") {
       const l = await env.RECEIPTS.list({ limit: 100 });
-      return json({ receipts: l.keys.map(k => k.name).reverse() });
+      return json({ receipts: l.keys.map(k => k.name)
+        .filter(n => !n.startsWith(INGEST_PREFIX))
+        .reverse() });
     }
     if (url.pathname.startsWith("/receipts/") && req.method === "GET") {
       const said = url.pathname.slice("/receipts/".length);
@@ -265,6 +300,49 @@ export default {
       await env.WAITLIST.put(key, JSON.stringify({
         email, role: b.role, place, ts: new Date().toISOString() }));
       return json({ ok: true });
+    }
+
+    // Field-record ingest — the satellite/cellular onward hop. Each record
+    // is stored under its own content address, so the ACK is just the set
+    // of keys written; uplink.py's offset replay is safe by construction.
+    if (url.pathname === "/ingest" && req.method === "POST") {
+      const len = Number(req.headers.get("content-length") ?? 0);
+      if (len > INGEST_MAX_BYTES) return bad("body too large");
+      let b: any;
+      try { b = JSON.parse(await req.text()); }
+      catch { return bad("invalid JSON body"); }
+      const records = b?.records;
+      if (!Array.isArray(records) || !records.length)
+        return bad("records[] required");
+      if (records.length > INGEST_MAX_RECORDS)
+        return bad("too many records per batch");
+      const keys: string[] = [];
+      for (const rec of records) {
+        if (rec === null || typeof rec !== "object" || Array.isArray(rec))
+          return bad("each record must be a JSON object");
+        const sha = await sha256Hex(stableStringify(rec));
+        const key = INGEST_PREFIX + sha;
+        // put-if-absent keeps first-write provenance; a replayed record
+        // is byte-identical anyway, so overwriting would be a no-op.
+        if ((await env.RECEIPTS.get(key)) === null) {
+          await env.RECEIPTS.put(key, stableStringify(rec));
+          keys.push(key);
+        }
+      }
+      return json({ accepted: records.length, stored: keys.length,
+                    keys });
+    }
+
+    if (url.pathname === "/ingest" && req.method === "GET") {
+      const l = await env.RECEIPTS.list({ limit: 50 });
+      const names = l.keys.map(k => k.name)
+        .filter(n => n.startsWith(INGEST_PREFIX));
+      const records = await Promise.all(names.slice(0, 20)
+        .map(async n => {
+          const v = await env.RECEIPTS.get(n);
+          return v ? JSON.parse(v) : null;
+        }));
+      return json({ records: records.filter(Boolean) });
     }
 
     if (req.method === "POST" &&
