@@ -489,7 +489,7 @@ for rnd in range(4):
                     if dseg(ax_, ay_, bx_, by_, sx, sy) < w+0.125+CLR:
                         rip.append(t)
                         break
-            if len(rip) > 4:
+            if len(rip) > 15:
                 print('  bridge too costly:', name, len(rip), flush=True)
             else:
                 for t in rip:

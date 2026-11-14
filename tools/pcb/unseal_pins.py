@@ -135,10 +135,10 @@ def greedy_escape(px, py, nc, ly):
     return None
 
 
-def flood_pad(seeds, nc):
+def flood_pad(seeds, nc, cap=1200):
     seen = set(seeds)
     dq = collections.deque(seeds)
-    while dq:
+    while dq and len(seen) < cap:
         ix, iy, ly = dq.popleft()
         for nx, ny in ((ix+1, iy), (ix-1, iy), (ix, iy+1), (ix, iy-1)):
             if 0 <= nx < NX and 0 <= ny < NY and \
