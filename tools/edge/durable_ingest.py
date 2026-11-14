@@ -90,9 +90,10 @@ class DurableIngest:
     that is the durable-receipt boundary.
     """
 
-    def __init__(self, root, ledger_path):
+    def __init__(self, root, ledger_path, via=None):
         self.root = root
         self.ledger_path = ledger_path
+        self.via = via
         self.receipts = os.path.join(root, "receipts.jsonl")
         self.names = os.path.join(root, "audio_names.json")
         self.incoming = os.path.join(root, "incoming")
@@ -125,6 +126,8 @@ class DurableIngest:
             _fsync(fh)
 
     def _ledger(self, rec):
+        if self.via and "via" not in rec:
+            rec["via"] = self.via
         self.ledger.write(json.dumps(rec, separators=(",", ":")) + "\n")
         _fsync(self.ledger)
 

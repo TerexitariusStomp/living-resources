@@ -48,6 +48,17 @@ BOM ≈ $35–45. Role change = firmware flag, never a purchase.
 | T3 | node→node mesh | relayed payloads | gaps |
 | T4 | LTE-M / satellite | detections + scheduled snippets | remote, moored float |
 
+T4 is real as of the backhaul seam (`adapters/backhaul.scm`): ordered
+paths `lora → wifi → cat1-sat → starlink-sat`, bound at deployment,
+with per-path payload caps — LPWAN-class transports carry detections
+only, CAT-1/DTC carries snippets, broadband satellite carries full
+media. Node-side, satellite is reached over WiFi exactly like any site
+LAN (`/sd/link.json` orders the on-node transports lora/wifi); the
+satellite leg lives edge-side. Records carry a `via` label
+(`lora|wifi|cat1-sat|starlink-sat`); third-party transports
+(cat1-sat, starlink-sat) produce federated imports — labeled theirs,
+never counted as local-node evidence.
+
 Store-and-forward: LXMF semantics over an SD spool; detections flush
 first, media after. Uplink windows are scheduled; the node deep-sleeps
 between them.
@@ -96,7 +107,7 @@ never silence. OPA mirrors the gate in `deploy/policies/living/`.
 | garden | stake/tree strap | WiFi/LoRa |
 | shore-dock | dock mount, hydrophone lead in water | WiFi/LoRa |
 | reef float | moored deadweight float, hydrophone below | LoRa/satellite |
-| offshore | moored float + satellite | T4 |
+| offshore | moored float + satellite | T4 — starlink-sat or cat1-sat via edge |
 
 Nothing attaches to an organism; nothing enters soil; moorings are
 deadweight or existing structure.

@@ -38,6 +38,14 @@ use listed.
 | libFLAC (ESP-ADF component) | Xiph BSD | audio compression for hydro payloads | ✅ OK |
 | NumPy/SciPy | BSD-3 | edge DSP, particle-motion estimate, TDOA math | ✅ OK |
 | FishSounds / Watkins-MBARI / xeno-canto aquatic | CC per-recording | playback source assets | ⚠ per-recording terms; manifest records license + checksum |
+| ONNX Runtime | MIT | pretrained audio-embedding inference (onnx-embed backend) | ✅ OK |
+| Perch / Google Bioacoustics Model | ⚠ verify | pretrained audio embeddings — primary onnx-embed candidate | ⚠ resolve license + ONNX export before adoption; PANNs (`qiuqiangkong/audioset_tagging_cnn`) is the fallback, also ⚠ |
+| scikit-learn | BSD-3 | unsupervised clustering head over embeddings (planned) | ✅ OK |
+| ModemManager + libqmi/qmicli | GPL-2.0 (tooling, not linked) | CAT-1/DTC modem control on phone/Pi edge | ⚠ verify on target OS; process boundary only |
+| paho-mqtt | EPL-2.0/EDPL | edge↔broker telemetry | ✅ copyleft-compatible |
+| starlink-grpc (community dish bindings) | ⚠ verify per repo | Starlink dish telemetry/status | ⚠ resolve at selection; optional — dish works without it |
+| Termux | ⚠ verify | Linux env on Android for phone_edge variant | ⚠ or plain Linux/Pi image — decide at deployment |
+| exiftool | Artistic/GPL dual | geotagged stills metadata | ✅ tooling |
 
 ## Adoption rule
 

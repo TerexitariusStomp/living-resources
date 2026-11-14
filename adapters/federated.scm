@@ -129,6 +129,8 @@
     (helium        "https://helium.com"                           backhaul live-now       "~370k hotspots; same LoRaWAN shape")
     (meshtastic    "https://meshtastic.org"                       backhaul live-now       "public MQTT + mesh; remote GPIO opt-in")
     (aprs          "https://aprs.fi"                              backhaul public-verify  "~30k stations; API key for api.aprs.fi")
+    (starlink      "https://starlink.com"                         backhaul live-now       "consumer LEO broadband; dish→WiFi edge — full payloads, seconds-scale")
+    (direct-to-cell "https://starlink.com/business/direct-to-cell" backhaul public-verify "carrier DTC IoT; CAT-1/4 modems, snippets cap")
     ;; ── excluded — named, never carried ─────────────────────────────
     (goodnature    "https://goodnature.co.nz"                     write excluded          "lethal pest traps — outside the consent model")
     (felixer       "https://www.thylation.com"                    write excluded          "lethal spray units — same boundary")

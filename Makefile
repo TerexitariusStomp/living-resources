@@ -14,10 +14,10 @@
 
 GUILE     ?= $(shell command -v guile 2>/dev/null)
 PYTHON3   ?= python3
-SCM_TESTS := tests/e2e/sensing-cell.scm tests/e2e/refused-lanes.scm tests/e2e/write-lanes.scm tests/e2e/connectome-witness.scm tests/e2e/federated.scm
-ADOPTED_STUBS := adapters/reticulum.scm adapters/mic.scm adapters/camera.scm adapters/sonar.scm adapters/c4d.scm adapters/weather.scm adapters/connectome.scm adapters/federated.scm adapters/birdweather.scm adapters/sensor-community.scm adapters/raspberry-shake.scm adapters/usgs-water.scm adapters/argo.scm adapters/neon.scm adapters/phenocam.scm adapters/orcasound.scm adapters/safecast.scm adapters/inat.scm adapters/purpleair.scm adapters/ebird.scm adapters/motus.scm adapters/goe.scm adapters/rfcx.scm adapters/frogid.scm adapters/lg-sonic.scm adapters/opensprinkler.scm adapters/farmbot.scm adapters/ttn.scm adapters/husqvarna.scm adapters/reef-pi.scm adapters/webnode.scm
+SCM_TESTS := tests/e2e/sensing-cell.scm tests/e2e/refused-lanes.scm tests/e2e/write-lanes.scm tests/e2e/connectome-witness.scm tests/e2e/federated.scm tests/e2e/backhaul.scm
+ADOPTED_STUBS := adapters/reticulum.scm adapters/mic.scm adapters/camera.scm adapters/sonar.scm adapters/c4d.scm adapters/weather.scm adapters/connectome.scm adapters/federated.scm adapters/birdweather.scm adapters/sensor-community.scm adapters/raspberry-shake.scm adapters/usgs-water.scm adapters/argo.scm adapters/neon.scm adapters/phenocam.scm adapters/orcasound.scm adapters/safecast.scm adapters/inat.scm adapters/purpleair.scm adapters/ebird.scm adapters/motus.scm adapters/goe.scm adapters/rfcx.scm adapters/frogid.scm adapters/lg-sonic.scm adapters/opensprinkler.scm adapters/farmbot.scm adapters/ttn.scm adapters/husqvarna.scm adapters/reef-pi.scm adapters/webnode.scm adapters/backhaul.scm
 FIRST_PARTY := module/living adapters tests/e2e firmware deploy/policies/living
-CUSTOM_BUDGET ?= 4000
+CUSTOM_BUDGET ?= 4200
 
 test:
 ifeq ($(strip $(GUILE)),)

@@ -98,6 +98,8 @@ adapters/        mic · camera · sonar · c4d · reticulum (UDP socket
                  inat — plus key-required/partnership stubs) · thin
                  write seams (opensprinkler, farmbot, husqvarna,
                  reef-pi, lg-sonic) · ttn (LoRaWAN backhaul)
+                 · backhaul (ordered T4 paths: lora wifi cat1-sat
+                 starlink-sat; via-provenance on committed records)
 firmware/node/   main.py — MicroPython universal node: I2S 48kHz/16-bit →
                  SD spool → LXMF uplink (stub) → duty-cycle sleep; all
                  lanes populated incl. consent-gated EmitLane

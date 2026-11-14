@@ -24,8 +24,8 @@ def send_task(sock, addr, task):
         task, separators=(",", ":")).encode(), addr)
 
 
-def run(port, out, store, task_file=None):
-    ingest = DurableIngest(store, out)
+def run(port, out, store, task_file=None, via=None):
+    ingest = DurableIngest(store, out, via=via)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("0.0.0.0", port))
     sys.stderr.write("udp edge up: 0.0.0.0:%d → %s\n" % (port, out))
@@ -57,8 +57,10 @@ def main():
     p.add_argument("--out", required=True, help="committed JSONL ledger")
     p.add_argument("--store", required=True, help="durable ingest dir")
     p.add_argument("--tasks", help="append-only node task JSONL")
+    p.add_argument("--via", help="backhaul label stamped on committed "
+                   "records (lora wifi cat1-sat starlink-sat)")
     a = p.parse_args()
-    run(a.port, a.out, a.store, a.tasks)
+    run(a.port, a.out, a.store, a.tasks, via=a.via)
 
 
 if __name__ == "__main__":

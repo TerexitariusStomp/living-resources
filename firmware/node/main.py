@@ -100,6 +100,13 @@ KEEP_FILES = {".pcm": PCM_KEEP_FILES, ".auc": AUC_KEEP_FILES,
 OTHER_KEEP_FILES = 240       # unknown extensions are bounded too
 SPOOL_RESERVE_BYTES = 64 * 1024 * 1024   # never fill the card's last 64 MB
 EDGE_PORT = 5055             # UDP uplink; tools/edge/udp_edge.py listens
+# backhaul order: detection transport preference, first bound wins —
+# 'lora' RNode serial, 'wifi' UDP. Satellite/LTE is edge-side (a node
+# reaches it over WiFi like any site LAN). /sd/link.json may set
+# {"order": [...], "wake_windows": ...}; default is lora-first.
+LINK_CONFIG   = SD_MOUNT + "/link.json"
+DEFAULT_LINK_ORDER = ("lora", "wifi")
+LINK_TRANSPORTS = ("lora", "wifi")
 # duty cycle: wake windows by localtime hour start. DEFAULT IS
 # CONTINUOUS — windows are a provisioning option for power-limited
 # sites (/sd/lxmf.json "wake_windows" or a downlink "windows" task).
@@ -517,12 +524,29 @@ def apply_ack(msg, buf, link=None):
     return None
 
 
-class Uplink:
-    """UDP uplink with optional RNode serial fallback; spool is durable."""
+def load_link_config(path=LINK_CONFIG):
+    """/sd/link.json → {"order": [...], "wake_windows": ...}; absent or
+    malformed → defaults. Unknown transports are filtered, never honored."""
+    try:
+        with open(path) as fh:
+            cfg = json.load(fh)
+    except Exception:
+        cfg = {}
+    order = [p for p in (cfg.get("order") or [])
+             if p in LINK_TRANSPORTS]
+    return {"order": order or list(DEFAULT_LINK_ORDER),
+            "wake_windows": cfg.get("wake_windows")}
 
-    def __init__(self, edge_host=None, edge_port=EDGE_PORT, lora=None):
+
+class Uplink:
+    """UDP uplink with optional RNode serial fallback; spool is durable.
+    ORDER names detection transports in preference order (link.json)."""
+
+    def __init__(self, edge_host=None, edge_port=EDGE_PORT, lora=None,
+                 order=None):
         self.edge = (edge_host, edge_port) if edge_host else None
         self.lora = lora                       # machine.UART RNode | None
+        self.order = list(order or DEFAULT_LINK_ORDER)
         self._sock = None
         self._inflight = {}                    # content key → retry deadline
         if self.edge:
@@ -581,14 +605,18 @@ class Uplink:
         key = _sha_hex(frame)
         if self._inflight.get(key, 0) > time.time():
             return True
-        if self.lora is not None:
-            try:
-                self.lora.write(frame)
-                self._inflight[key] = time.time() + ACK_RESEND_S
-                return True
-            except Exception:
-                pass                            # fall through to UDP
-        return self._send_once(key, frame)
+        for path in self.order:
+            if path == "lora" and self.lora is not None:
+                try:
+                    self.lora.write(frame)
+                    self._inflight[key] = time.time() + ACK_RESEND_S
+                    return True
+                except Exception:
+                    pass                        # try the next transport
+            elif path == "wifi":
+                if self._send_once(key, frame):
+                    return True
+        return False
 
     def send_frame(self, tag, payload):
         if isinstance(payload, str):
@@ -883,13 +911,17 @@ def flush(buf, up):
             up.send_audio(name, blob)
 
 
-def run(edge_host=None):
+def run(edge_host=None, link_cfg=None):
     if not LANES["mic"]["enabled"]:
         return
     wdt = _wdt_make()
     cap = MicCapture()
     buf = SDBuffer()
-    up = Uplink(edge_host=edge_host)
+    cfg = link_cfg if link_cfg is not None else load_link_config()
+    if cfg.get("wake_windows"):
+        global WAKE_WINDOWS
+        WAKE_WINDOWS = tuple(tuple(w) for w in cfg["wake_windows"])
+    up = Uplink(edge_host=edge_host, order=cfg["order"])
     em = EmitLane()
     while True:
         _wdt_feed(wdt)

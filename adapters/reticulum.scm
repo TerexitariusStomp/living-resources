@@ -64,17 +64,22 @@
                   (bytevector-copy buf 4 n))))))
 
 (define* (udp-demux listener tag body #:key (on-audio (lambda (n b) b))
-                                          (on-reading (lambda (r) r)))
+                                          (on-reading (lambda (r) r))
+                                          (via #f))
   "Route one frame by tag. DET1 bodies parse through mic.scm into the
    listener; AUD1 bodies go to on-audio as (name . pcm); ENV1 bodies —
    env scalars (pm/h2s), NOT detections — go to on-reading as a string
    so they never enter the quorum gate. Anything else is a refused
-   value, never a drop."
+   value, never a drop. VIA is the backhaul label (adapters/backhaul.scm
+   vocabulary: lora wifi cat1-sat starlink-sat) — stamped onto detection
+   alists so the receipt can say which path carried the reading."
   (cond
    ((equal? tag "DET1")
     (let ((p (parse-detection-line (utf8->string body))))
       (if (eq? 'det (car p))
-          (listener (cdr p))
+          (listener (if (and via (not (assq 'via (cdr p))))
+                        (cons (cons 'via via) (cdr p))
+                        (cdr p)))
           (cons 'refused '((reason . malformed-detection))))))
    ((or (equal? tag "ENV1") (equal? tag "RES1") (equal? tag "GAP1"))
     (on-reading (utf8->string body)))
@@ -91,6 +96,7 @@
                           (listener (make-edge-listener))
                           (on-audio (lambda (n b) b))
                           (on-reading (lambda (r) r))
+                          (via #f)
                           (max-frames #f))
   "The edge's receive loop: recv → demux → sink. MAX-FRAMES bounds it for
    tests; #f runs until the process dies — the ear doesn't sleep."
@@ -102,7 +108,8 @@
             (let-values (((tag body) (udp-recv-frame sock)))
               (when tag (udp-demux listener tag body
                                      #:on-audio on-audio
-                                     #:on-reading on-reading)))
+                                     #:on-reading on-reading
+                                     #:via via)))
             (loop (+ 1 seen)))))))
 
 

@@ -115,6 +115,21 @@ def result_record(wav_path, node_id, mic_cal, context, backend_name,
     overriding what the model heard. Low-confidence and scoreless audio
     abstain to needs_review rather than inventing a species."""
     top = scores[0] if scores else None
+    # ISO 7605:2025 ambient-sound metadata — only values the record can
+    # honestly state: format facts from the WAV plus whatever deployment
+    # context was supplied. Self-noise is never invented.
+    ambient = {"standard": "ISO 7605:2025"}
+    try:
+        with wave.open(wav_path, "rb") as w:
+            ambient.update({"sample_rate": w.getframerate(),
+                            "channels": w.getnchannels(),
+                            "duration_s": round(
+                                w.getnframes() / w.getframerate(), 3)})
+    except Exception:
+        pass
+    for k in ("self_noise_db", "deployment", "gain_db"):
+        if context and context.get(k) is not None:
+            ambient[k] = context[k]
     rec = {
         "kind": "detection",
         "node": node_id,
@@ -130,6 +145,7 @@ def result_record(wav_path, node_id, mic_cal, context, backend_name,
         "review_reason": None,
         "provenance": {
             "mic_cal": mic_cal,
+            "ambient": ambient,
             "context": context or {},
             "context_applied": bool(ctx_scores),
             "context_adjusted_scores": ctx_scores,
@@ -273,8 +289,108 @@ class YamNetBackend:
         return []          # scoring requires the tflite runtime; seam only
 
 
+def logmel(waveform, rate, n_mels, fmin, fmax, n_fft=2048, hop=320,
+           win=1024):
+    """float32 mono waveform → log-mel [n_mels, T] for embedding models.
+    Frontend params come from the heads file — config, not code — so a
+    Perch/PANNs-class ONNX model plugs in without new first-party DSP."""
+    import numpy as np
+    x = np.asarray(waveform, dtype=np.float32)
+    if len(x) < win:
+        x = np.pad(x, (0, win - len(x)))
+    n_frames = 1 + (len(x) - win) // hop
+    frames = np.lib.stride_tricks.as_strided(
+        x, shape=(n_frames, win),
+        strides=(x.strides[0] * hop, x.strides[0])).copy()
+    frames *= np.hanning(win).astype(np.float32)
+    spec = np.abs(np.fft.rfft(frames, n=n_fft, axis=1)) ** 2
+    freqs = np.fft.rfftfreq(n_fft, 1.0 / rate)
+    # triangular mel filterbank
+    def hz2mel(f): return 2595.0 * np.log10(1.0 + f / 700.0)
+    def mel2hz(m): return 700.0 * (10.0 ** (m / 2595.0) - 1.0)
+    mels = np.linspace(hz2mel(fmin), hz2mel(fmax), n_mels + 2)
+    pts = mel2hz(mels)
+    fb = np.zeros((n_mels, len(freqs)), dtype=np.float32)
+    for i in range(n_mels):
+        lo, ce, hi = pts[i], pts[i + 1], pts[i + 2]
+        up = (freqs - lo) / max(ce - lo, 1e-9)
+        dn = (hi - freqs) / max(hi - ce, 1e-9)
+        fb[i] = np.maximum(0.0, np.minimum(up, dn))
+    mel = spec @ fb.T
+    return np.log(mel + 1e-6).T.astype(np.float32)   # [n_mels, T]
+
+
+class OnnxEmbedBackend:
+    """Pretrained-embedding seam (Perch/PANNs-class ONNX): embeds the clip
+    with ONNX Runtime, scores cosine similarity against few-shot centroid
+    heads. Model + heads JSON are deployment artifacts — absent either,
+    the backend abstains exactly like the other seams. The heads file:
+    {"sample_rate":16000,"n_mels":64,"fmin":50,"fmax":14000,
+     "heads":{"label":[centroid...]}}."""
+
+    name = "onnx-embed"
+    supports_context = False
+
+    def __init__(self, model_path=None, heads_path=None, min_conf=0.05):
+        self.min_conf = min_conf
+        self.version = None
+        self._sess = None
+        self._heads = []
+        self._fe = {}
+        if not (model_path and heads_path):
+            return
+        try:
+            import onnxruntime as ort
+            self._sess = ort.InferenceSession(model_path)
+            with open(heads_path) as fh:
+                spec = json.load(fh)
+            self._fe = {k: spec[k] for k in
+                        ("sample_rate", "n_mels", "fmin", "fmax")
+                        if k in spec}
+            self._fe.setdefault("sample_rate", 16000)
+            self._fe.setdefault("n_mels", 64)
+            self._fe.setdefault("fmin", 50.0)
+            self._fe.setdefault("fmax", 14000.0)
+            import numpy as np
+            for label, vec in (spec.get("heads") or {}).items():
+                v = np.asarray(vec, dtype=np.float32)
+                n = np.linalg.norm(v)
+                if n > 0:
+                    self._heads.append((label, v / n))
+            self.version = "onnx-embed:" + os.path.basename(model_path)
+        except Exception:
+            self._sess = None
+            self._heads = []
+            self.version = None
+
+    def predict(self, wav_path, context=None):
+        if self._sess is None or not self._heads:
+            return []
+        try:
+            import numpy as np
+            x = wav_waveform(wav_path,
+                             target_rate=self._fe["sample_rate"])
+            mel = logmel(x, self._fe["sample_rate"], self._fe["n_mels"],
+                         self._fe["fmin"], self._fe["fmax"])
+            inp = self._sess.get_inputs()[0]
+            feed = {inp.name: mel[None, :, :].astype(np.float32)}
+            emb = np.asarray(self._sess.run(None, feed)[0]).reshape(-1)
+            n = np.linalg.norm(emb)
+            if n == 0:
+                return []
+            emb = emb / n
+            out = [{"label": label, "species": label,
+                    "score": float(np.dot(emb, c))}
+                   for label, c in self._heads]
+            return sorted((c for c in out if c["score"] >= self.min_conf),
+                          key=lambda c: -c["score"])
+        except Exception:
+            return []
+
+
 def load_backend(kind, model_path=None, min_conf=0.05,
-                 yamnet_labels=None, yamnet_sha256=None):
+                 yamnet_labels=None, yamnet_sha256=None,
+                 heads_path=None):
     if kind == "birdnet":
         return BirdNetBackend(min_conf=min_conf)
     if kind == "opensoundscape":
@@ -282,6 +398,8 @@ def load_backend(kind, model_path=None, min_conf=0.05,
     if kind == "yamnet":
         return YamNetBackend(model_path, yamnet_labels, yamnet_sha256,
                              min_conf)
+    if kind == "onnx-embed":
+        return OnnxEmbedBackend(model_path, heads_path, min_conf)
     return EnergyGateBackend()
 
 
@@ -370,8 +488,12 @@ def main():
     p.add_argument("--review-out", default="review.jsonl")
     p.add_argument("--state", default=".classifier_state.json")
     p.add_argument("--backend", choices=("none", "birdnet", "opensoundscape",
-                                         "yamnet"), default="none")
+                                         "yamnet", "onnx-embed"),
+                   default="none")
     p.add_argument("--opso-model")
+    p.add_argument("--onnx-model")
+    p.add_argument("--onnx-heads",
+                   help="few-shot centroid heads JSON for onnx-embed")
     p.add_argument("--yamnet-model")
     p.add_argument("--yamnet-labels")
     p.add_argument("--yamnet-sha256")
@@ -390,9 +512,13 @@ def main():
     context = {k: v for k, v in {"lat": a.lat, "lon": a.lon,
                                  "week": a.week, "habitat": a.habitat,
                                  "site": a.site}.items() if v is not None}
-    model_path = a.yamnet_model if a.backend == "yamnet" else a.opso_model
+    model_path = (a.yamnet_model if a.backend == "yamnet"
+                  else a.opso_model if a.backend == "opensoundscape"
+                  else a.onnx_model if a.backend == "onnx-embed"
+                  else None)
     backend = load_backend(a.backend, model_path, a.min_conf,
-                           a.yamnet_labels, a.yamnet_sha256)
+                           a.yamnet_labels, a.yamnet_sha256,
+                           heads_path=a.onnx_heads)
     run(a.spool, a.out, a.review_out, a.node, a.mic_cal, a.once, a.poll,
         backend, context, a.threshold, a.state)
 
