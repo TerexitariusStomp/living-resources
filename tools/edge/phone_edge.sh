@@ -56,9 +56,15 @@ Next:
   3. Optional classifier on the committed spool:
        python3 $HERE/classify.py --spool <committed-audio-dir> \\
            --out detections.jsonl --backend none
-  4. Uplink onward: point the edge host at the Playnet gateway, or —
-     on cellular/satellite — run behind whatever NAT/tunnel the link
-     provides; records are content-hashed so retries are idempotent.
+  4. Uplink onward — the real edge→cloud forwarder:
+       python3 $HERE/uplink.py --ledger $EDGE_OUT \\
+           --target https://<receiver>/ingest
+     It tails the committed JSONL ledger and POSTs {"records":[...]} to
+     any HTTPS endpoint (compute-api route, Worker webhook, peer edge),
+     with byte-offset state so restarts are idempotent and records keep
+     their "via" backhaul label. Until a public ingest route lands, point
+     --target at a receiver you control — nothing is silently dropped:
+     retries exhaust → the ledger remains the durable copy.
 
 On Android: run this inside Termux (pkg install python) or a chroot —
 the scripts are plain CPython, no node-only deps.

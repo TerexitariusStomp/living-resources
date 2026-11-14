@@ -32,9 +32,18 @@ record (`via` field on committed records).
 tools/edge/phone_edge.sh            # installs python3, prints next steps
 python3 tools/edge/udp_edge.py --port 5055 \
     --out ledger.jsonl --store store/ --via wifi
+python3 tools/edge/uplink.py --ledger ledger.jsonl \
+    --target https://<receiver>/ingest      # onward HTTPS forwarder
 python3 tools/edge/classify.py --spool <audio-dir> \
     --out detections.jsonl --backend none
 ```
+
+`uplink.py` is the onward path: it tails the committed ledger and
+POSTs `{"records":[...]}` batches to any HTTPS receiver, persisting a
+byte offset so restarts resend nothing and retries are idempotent on
+the receiver's content-hash dedupe. Point `--target` at whatever
+ingest endpoint exists for the deployment — until a public route
+lands, a receiver you control is the honest answer.
 
 - `--via` must match the `adapters/backhaul.scm` vocabulary
   (`lora wifi cat1-sat starlink-sat`) so receipts can say which path

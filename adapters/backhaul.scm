@@ -30,6 +30,8 @@
 
 (define-module (adapters backhaul)
   #:use-module (srfi srfi-1)
+  #:use-module (rnrs bytevectors)
+  #:use-module (ice-9 format)
   #:use-module (living specs)
   #:use-module (adapters federated)
   #:export (*backhaul-order* *backhaul-links* *backhaul-paths*
@@ -37,7 +39,8 @@
             payload-fits? degrade-kind
             path->channel path->federated-source
             choose-backhaul send-via-backhaul
-            uplink->federated-record))
+            uplink->federated-record
+            udp-link serial-link uplink-frame))
 
 
 ;;; ── the order and the links ─────────────────────────────────────────────
@@ -150,6 +153,71 @@
                   `((reason . backhaul-failed)
                     (path . ,path)
                     (detail . "link proc answered #f")))))))))
+
+
+;;; ── real link constructors ──────────────────────────────────────────────
+;;; The seam stays deployment-bound, but the two transports a node/edge
+;;; can actually own are real here: UDP (wifi / site LAN / a satellite
+;;; terminal's LAN) and serial (RNode/LoRa HAT). cat1-sat and
+;;; starlink-sat stay bound at the edge — they are onward paths, not
+;;; radios the node carries.
+;;;
+;;; Link proc contract: (proc '((kind . k)) payload-alist) → reply | #f.
+;;; The wire frame is UPL1 + JSON {kind, path, payload} — the same
+;;; tag-and-body shape the node frame contract uses, so udp-demux can
+;;; route it without a new parser.
+
+(define (uplink-frame path kind payload)
+  "The bytes a link sends: UPL1 tag + one JSON object."
+  (string->utf8
+   (string-append "UPL1"
+                  (format #f "{\"kind\":\"~a\",\"path\":\"~a\",\"payload\":~s}"
+                          kind path payload))))
+
+(define (resolve-inet4 host)
+  "IPv4 network-order int for HOST — dotted quad via inet-pton, name via
+   getaddrinfo's first AF_INET answer. #f when neither resolves."
+  (or (catch #t
+        (lambda () (inet-pton AF_INET host))
+        (lambda _ #f))
+      (catch #t
+        (lambda ()
+          (let lp ((infos (getaddrinfo host #f)))
+            (cond ((null? infos) #f)
+                  ((eqv? (addrinfo:family (car infos)) AF_INET)
+                   (sockaddr:addr (addrinfo:addr (car infos))))
+                  (else (lp (cdr infos))))))
+        (lambda _ #f))))
+
+(define* (udp-link host #:key (port 4242) (path 'wifi))
+  "A real UDP link: resolves HOST once, sends UPL1 frames, #f on failure.
+   The socket is opened lazily per call so a dead link never wedges the
+   caller — send-to is the whole transport. HOST may be a dotted-quad or
+   a name getaddrinfo resolves."
+  (let ((addr #f) (resolved? #f))
+    (lambda (req payload)
+      (let ((kind (or (assq-ref req 'kind) 'detections)))
+        (catch #t
+          (lambda ()
+            (unless resolved?
+              (set! resolved? #t)
+              (set! addr (resolve-inet4 host)))
+            (unless addr (throw 'unbound-host))
+            (let ((s (socket AF_INET SOCK_DGRAM 0)))
+              (dynamic-wind
+                (lambda () #f)
+                (lambda ()
+                  (sendto s (uplink-frame path kind payload)
+                          AF_INET addr port))
+                (lambda () (close-port s))))
+            'sent)
+          (lambda _ #f))))))
+
+(define* (serial-link #:key (path 'lora))
+  "A serial link seam: real UART writes land with the RNode HAT bring-up;
+   until a port is bound the proc honestly answers #f — the caller's
+   choose-backhaul then tries the next path, never a silent drop."
+  (lambda (req payload) #f))
 
 
 ;;; ── provenance ──────────────────────────────────────────────────────────

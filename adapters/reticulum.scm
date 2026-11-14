@@ -81,6 +81,11 @@
                         (cons (cons 'via via) (cdr p))
                         (cdr p)))
           (cons 'refused '((reason . malformed-detection))))))
+   ((equal? tag "UPL1")
+    ;; backhaul uplink frame (adapters/backhaul.scm): an edge-originated
+    ;; record riding a chosen path — goes to on-reading like ENV1, never
+    ;; the detection quorum gate.
+    (on-reading (utf8->string body)))
    ((or (equal? tag "ENV1") (equal? tag "RES1") (equal? tag "GAP1"))
     (on-reading (utf8->string body)))
    ((equal? tag "AUD1")

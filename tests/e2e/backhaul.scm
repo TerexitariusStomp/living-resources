@@ -7,7 +7,8 @@
 ;;; Run: guile --no-auto-compile -L module -L . tests/e2e/backhaul.scm
 
 (use-modules (adapters backhaul) (adapters federated)
-             (srfi srfi-1) (ice-9 format))
+             (srfi srfi-1) (srfi srfi-13) (ice-9 format)
+             (rnrs bytevectors))
 
 (define pass-count 0) (define fail-count 0)
 (define (check label . args)
@@ -103,5 +104,28 @@
        (list (uplink->federated-record 'wifi "n1" 1 '((d . 1)))
              (uplink->federated-record 'lora "n1" 1 '((d . 1))))
        '(#f #f))
+
+(scenario "the udp link is a real socket, not a stub")
+;; bind a listener, send through a real udp-link, read the UPL1 frame
+(define rx (socket AF_INET SOCK_DGRAM 0))
+(setsockopt rx SOL_SOCKET SO_REUSEADDR 1)
+(bind rx AF_INET INADDR_LOOPBACK 0)
+(let* ((port (sockaddr:port (getsockname rx)))
+       (link (udp-link "127.0.0.1" #:port port #:path 'wifi))
+       (reply (link '((kind . detections)) '((species . "x")))))
+  (check "udp-link answers 'sent" reply 'sent)
+  (let* ((buf (make-bytevector 4096))
+         (res (recvfrom! rx buf))
+         (n (if (pair? res) (car res) (car (call-with-values
+                                           (lambda () res) list))))
+         (frame (string-take (utf8->string (bytevector-copy buf)) n)))
+    (check "frame arrives tagged UPL1 with path + kind"
+           (and (> n 4)
+                (string-prefix? "UPL1" frame)
+                (string-contains frame "\"path\":\"wifi\"")
+                (string-contains frame "detections")
+                #t)
+           #t)))
+(close-port rx)
 
 (test-summary!)
