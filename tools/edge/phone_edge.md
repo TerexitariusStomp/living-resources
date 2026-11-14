@@ -33,7 +33,7 @@ tools/edge/phone_edge.sh            # installs python3, prints next steps
 python3 tools/edge/udp_edge.py --port 5055 \
     --out ledger.jsonl --store store/ --via wifi
 python3 tools/edge/uplink.py --ledger ledger.jsonl \
-    --target https://<receiver>/ingest      # onward HTTPS forwarder
+    --target https://templeearth.cc/ingest --batch 20
 python3 tools/edge/classify.py --spool <audio-dir> \
     --out detections.jsonl --backend none
 ```
@@ -41,11 +41,12 @@ python3 tools/edge/classify.py --spool <audio-dir> \
 `uplink.py` is the onward path: it tails the committed ledger and
 POSTs `{"records":[...]}` batches to any HTTPS receiver, persisting a
 byte offset so restarts resend nothing and retries are idempotent on
-the receiver's content-hash dedupe. The compute-api exposes
-`POST /ingest` + `GET /ingest` for exactly this shape (content-addressed
-`ingest/` keys in its KV — replays are free); until that route is
-deployed, point `--target` at a receiver you control — nothing is
-silently dropped: retries exhaust → the ledger remains the durable copy.
+the receiver's content-hash dedupe. The compute-api's live route is
+`POST https://templeearth.cc/ingest` (`GET /ingest` reads the latest
+slice back) — records land under content-addressed `ingest/` keys, so
+replays store nothing. `--batch 20` keeps each call under the free
+plan's subrequest cap; the ledger remains the durable copy if the link
+drops.
 
 - `--via` must match the `adapters/backhaul.scm` vocabulary
   (`lora wifi cat1-sat starlink-sat`) so receipts can say which path
