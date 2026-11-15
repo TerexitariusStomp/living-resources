@@ -193,8 +193,35 @@ def step_export():
     assy = (cq.Workplane('XY').add(tube)
             .add(cap(False).translate((0, 0, -ft)))
             .add(wet_top))
+
+    # chassis sled: board (120x90, M3 holes at 3-inset corners) + battery
+    # on a plate that slides into the 104mm bore. Width 96 keeps 4mm
+    # radial clearance for wire routing past the tray.
+    tw, tl, tt = 96.0, 200.0, 3.0
+    tray = (cq.Workplane('XY').sketch().rect(tw, tl)
+            .circle(tw / 2 - 4, mode='s').finalize().extrude(tt))
+    # board's 90mm side spans tray-x (fits Ø104 bore), 120mm along tray-y
+    hx, hy = (90.0 - 6) / 2, (120.0 - 6) / 2    # 3mm-inset hole pattern
+    hole_pts = [(-hx, -hy), (hx, -hy), (hx, hy), (-hx, hy)]
+    tray = (tray.faces('>Z').workplane().pushPoints(hole_pts).hole(3.2))
+    for px, py in hole_pts:                  # M3 standoff bosses, 9mm
+        tray = tray.union(cq.Workplane('XY').center(px, py)
+                          .circle(4).extrude(9).translate((0, 0, tt)))
+    tray = tray.translate((0, 0, D['tube_id'] / 2 - tt - 18))
+
+    # reference float shell: closed-cell-foam outer form carrying
+    # antenna + GPS + solar top; sized to spec, carved not machined.
+    fw, fl, fh = 140.0, 180.0, 60.0
+    flt = (cq.Workplane('XY')
+           .box(fw, fl, fh, centered=(True, True, False))
+           .edges('|X').fillet(12).edges('>Z').fillet(8))
+    flt = (flt.faces('>Z').workplane().rect(80, 60).cutBlind(-6)
+           .faces('>Z').workplane().center(0, fl / 2 - 15).hole(8)
+           .edges('<<Z').chamfer(1))
+
     for name, solid in (('hull-tube', tube), ('endcap-dry', cap(False)),
-                        ('endcap-wet', cap(True)), ('assembly', assy)):
+                        ('endcap-wet', cap(True)), ('assembly', assy),
+                        ('tray', tray), ('float-ref', flt)):
         cq.exporters.export(solid, os.path.join(OUT, name + '.step'))
         print('wrote', name + '.step')
 

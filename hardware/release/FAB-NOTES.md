@@ -59,3 +59,13 @@ package once exported.
   careful hand reflow — flag for the assembler.
 - LGA-8 sensors (BME280/BMP390) are humidity-sensitive: MSL-3 handling,
   bake if floor life exceeded.
+
+## CPL convention
+
+`ecocell-ocean-cpl.csv` is a KiCad CSV centroid: mm units, board-plot
+origin (bottom-left of the board outline), X right / Y up (bottom-side
+rows show negative Y in the file — verify your importer's Y-handling),
+Rotation 0 = library orientation, CCW positive, `side` = top/bottom.
+FID1–6 rows are fiducial pads, not placements. Spot-check ADS8681 +
+WROOM rotation on the first article — convention unverified against a
+supplier pick file.

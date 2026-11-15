@@ -40,6 +40,22 @@
   keepout deviation.
 - **Quote bundle** — `electrical/ecocell-ocean-fab.zip` (Gerbers +
   drills + CPL + manifest).
-- Open: supplier DFM sign-off + BOM lifecycle, CPL origin/rotation
-  verify, second-reviewer signoff, assembly drawing, float/dome/tether
-  models, bring-up + environmental qualification.
+- **Native schematic closed** — `ecocell-ocean.kicad_sch` regenerated
+  from the shipped netlist by `tools/pcb/net2sch.py` (box symbols + net
+  labels; netlist round-trip verifies 79/79 nets, 0 node diffs). Replaces
+  the lost SKiDL source as the schematic artifact.
+- **Assembly drawing** — `assembly/assy-top.svg` + `assy-bottom.svg`
+  (F/B Fab+Silkscreen+courtyards) + `ASSEMBLY-NOTES.md`.
+- **Mechanical, round 2** — `tray.step` chassis sled (board M3 pattern,
+  96×200, slides in the Ø104 bore) and `float-ref.step` reference foam
+  form; dome + tether gland called out as purchased parts.
+- **BOM lifecycle check** — `BOM-LIFECYCLE.md`: **ICS-43434 + ICS-40730
+  both EOL'd** (TDK PCN-000772, LTB 2026-06-15 NCNR); alternates are
+  PDM-family → options documented. BME280 watch, BMP390 active/16-wk.
+- **Land boards release rigor** — `hardware/pcb/`: fresh 0/0 DRC
+  reports, MANIFEST.sha256 over the whole package, FAB-NOTES.md,
+  node BOM enriched with MPNs, CPL convention documented.
+- Open: supplier DFM sign-off + quote-backed BOM, CPL origin/rotation
+  verify vs supplier pick file, mic-lane EOL decision (LTB buy vs PDM
+  redesign), second-reviewer signoff, bring-up + environmental
+  qualification.

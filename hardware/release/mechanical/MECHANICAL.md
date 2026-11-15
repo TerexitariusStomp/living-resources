@@ -13,10 +13,12 @@ machining/assembly drawing in text form.
 | Pressure tube | `hull-tube.step` / `.scad` / `.stl` | cut-to-length purchase; cast acrylic preferred (see PRESSURE-SPEC) |
 | End cap ×2 | `endcap-dry.step` / `endcap-wet.step` (+ `.scad` source) | **machined** — POM-C/acetal or 316L; STEP is quote-ready |
 | Assembly | `assembly.step` | tube + both caps, verifies fit |
+| Chassis sled | `tray.step` | 96×200×3 plate + 4× M3 standoff bosses — board's 90mm side across the bore, 120mm along; print or machine (POM/FR4) |
+| Reference float | `float-ref.step` | 140×180×60 foam form guide — electronics recess + tether pass-through; **carve, don't machine** |
 | Tie rods ×6 | — | off-the-shelf M6 × L(TBD by stack-up) SS316, per `dimensions.json` PCD |
 | O-rings ×4 | — | AS568-244 Buna-N 70 (98.02 × 3.53 mm), silicone grease |
-| Camera dome | not modeled | flat-port alternative documented in ENCLOSURE; dome port TBD |
-| Surface float / tether | not modeled | encapsulation, not machining — float is shaped closed-cell foam |
+| Camera dome | purchased port | flat-port or acrylic dome (e.g. Blue Robotics 4" dome class) — vendor part, call out at order |
+| Tether gland | purchased | M20 IP68 cable gland ≥5 bar + strain-relief boot on the wet cap M20 bore |
 
 ## End-cap dimension callouts (mm, see dimensions.json)
 
@@ -51,7 +53,6 @@ the margin is understated — FEA optional for R1 refinement, not a
 production gate.
 
 ## Known gaps before production
-- **Camera dome / float / tether** not modeled; float is an
-  encapsulation job (closed-cell foam), dome is a purchased port.
-- Internal stack-up tray (board + battery mounting inside the tube) —
-  needed before tube_len is frozen; 240 mm is the R0 allowance.
+- Internal stack-up verified by `assembly.step` + `tray.step`;
+  tube_len 240 mm remains the R0 allowance — freeze after battery +
+  head wiring is physically mocked.
