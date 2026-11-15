@@ -22,9 +22,9 @@ published D0–D10 map. If a head conflicts, reassign in firmware
 | **D5** | GPIO6 | **I2C SCL** | same | shared bus |
 | **D6** | GPIO43 | **UART TX** | LoRa RNode / sat modem / serial gateway | backhaul |
 | **D7** | GPIO44 | **UART RX** | same | backhaul |
-| **D8** | GPIO7 | **SPI SCK** | spare/expansion | second SD, GPS, display |
-| **D9** | GPIO9 | **SPI MISO** | spare | |
-| **D10** | GPIO10 | **SPI MOSI** | spare | |
+| **D8** | GPIO7 | **ADC1_CH6** | turbidity nephelometer out | water-evidence head (ENV-HEADS.md); SPI SCK if unused |
+| **D9** | GPIO9 | **digital + IRQ** | anemometer reed-switch | water-evidence head; 5 s pulse window per poll; SPI MISO if unused |
+| **D10** | GPIO10 | **ADC1_CH9** | H2S analog out | ENV-HEADS.md; SPI MOSI if unused |
 | 3V3 | — | power | all head VCC | heads are 3.3 V parts |
 | GND | — | ground | all heads | common |
 
@@ -35,8 +35,13 @@ published D0–D10 map. If a head conflicts, reassign in firmware
 | BME280 | 0x76 | `env` — temp/humidity/pressure |
 | BH1750 | 0x23 | `env` — light |
 | AD7746 (C4D) | 0x48 | `c4d` — capacitance → biofilm waves |
+| SPS30 | 0x69 | `pm` — particulates (5 V part — see ENV-HEADS.md level caveat) |
+| EZO-pH | 0x63 | `ph` — measured-grade water pH |
+| EZO-ORP | 0x62 | `orp` — redox |
+| EZO-DO | 0x61 | `do` — dissolved oxygen |
 
-All three share one bus — no address conflicts.
+All share one bus — no address conflicts (EZO defaults; reprogram
+addresses at provisioning if a different carrier collides).
 
 ## Head wiring notes
 

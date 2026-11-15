@@ -15,8 +15,9 @@ silk "XIAO-S3 USB-up" mark.
 1. Hold BOOT, plug USB — the XIAO enumerates as a flash device.
 2. Flash the latest MicroPython ESP32-S3 build:
    `esptool.py --chip esp32s3 write_flash 0 firmware.bin`
-3. Copy `firmware/node/main.py` to the filesystem (mpremote/Thonny/ampy):
-   `mpremote cp firmware/node/main.py :main.py`
+3. Copy the firmware set to the filesystem (mpremote/Thonny/ampy) —
+   `main.py` imports the sensor seam modules:
+   `mpremote cp firmware/node/main.py firmware/node/ezo.py firmware/node/sps30.py :`
 
 ## 3 — Configure identity
 

@@ -49,6 +49,16 @@ try:
 except ImportError:
     BME280 = None                         # sim / stack not deployed
 
+try:
+    from sps30 import Sps30, crc8 as _sps30_crc8   # seam: Sensirion BSD-3 port
+except ImportError:
+    Sps30 = _sps30_crc8 = None
+
+try:
+    from ezo import Ezo                  # seam: Atlas Ezo_I2c_lib MIT port
+except ImportError:
+    Ezo = None
+
 
 # ── the lanes ─────────────────────────────────────────────────────────────
 # Every device ships every head — enabled = firmware flag; gated = needs
@@ -79,6 +89,16 @@ LANES = {
     "h2s":   {"enabled": True,  "gated": None,
               "head": "MQ-136 or SPEC electrochemical", "band": "analog/UART",
               "role": "H2S screening — lagoon-adjacent; indicative grade"},
+    "ph":    {"enabled": True,  "gated": None, "head": "Atlas EZO-pH",
+              "band": "I2C 0x63", "role": "measured pH — lab-calibrated"},
+    "orp":   {"enabled": True,  "gated": None, "head": "Atlas EZO-ORP",
+              "band": "I2C 0x62", "role": "redox — anoxia/sulfide ctx"},
+    "do":    {"enabled": True,  "gated": None, "head": "Atlas EZO-DO",
+              "band": "I2C 0x61", "role": "dissolved O2 — anoxia evidence"},
+    "turb":  {"enabled": True,  "gated": None, "head": "nephelometer",
+              "band": "ADC GPIO7", "role": "TSS proxy — storm events"},
+    "wind":  {"enabled": True,  "gated": None, "head": "reed anemometer",
+              "band": "pulse GPIO8", "role": "dust-source attribution"},
     "emit":  {"enabled": False, "gated": "consent",
               "head": "PWM + H-bridge 40kHz", "band": "emit",
               "role": "bio-write — transducer, consent-gated"},
@@ -144,44 +164,6 @@ def _sleep_ms(ms):
         time.sleep(ms / 1000)
 
 
-def _sps30_crc8(data):
-    """Sensirion CRC-8 (poly 0x31, init 0xFF); a mismatch refuses the frame."""
-    crc = 0xFF
-    for b in data:
-        crc ^= b
-        for _ in range(8):
-            crc = ((crc << 1) ^ 0x31) & 0xFF if crc & 0x80 \
-                  else (crc << 1) & 0xFF
-    return crc
-
-
-class Sps30:
-    """SPS30 on I2C 0x69 (ENV-HEADS.md); read()->pm dict or None on fault."""
-
-    ADDR = 0x69
-    # start measurement, high-precision float format arg + its CRC
-    CMD_MEASURE = b"\x00\x10\x03\x00" + \
-        bytes([_sps30_crc8(b"\x03\x00")])
-    CMD_READ = b"\x03\x00"
-
-    def __init__(self, i2c):
-        self.i2c = i2c
-
-    def read(self):
-        self.i2c.writeto(self.ADDR, self.CMD_MEASURE)
-        _sleep_ms(1100)                       # fan spin-up + first meas
-        self.i2c.writeto(self.ADDR, self.CMD_READ)
-        buf = self.i2c.readfrom(self.ADDR, 60)
-        vals = []
-        for i in range(10):
-            w = buf[6 + i * 3: 6 + i * 3 + 2]
-            if _sps30_crc8(w) != buf[6 + i * 3 + 2]:
-                return None                   # corrupt frame → refuse
-            vals.append(((w[0] << 8) | w[1]) / 10)
-        return {"pm1": vals[0], "pm2_5": vals[1],
-                "pm4": vals[2], "pm10": vals[3]}
-
-
 class Bme280Env:
     """BME280 via vendored driver; {"t","rh","p"} or None when absent."""
 
@@ -216,16 +198,13 @@ class Bh1750:
         return round(((buf[0] << 8) | buf[1]) / 1.2)
 
 
-class H2SReader:
-    """H2S on D10 (ADC1_CH9) — MQ-136 analog or SPEC UART (ENV-HEADS.md);
-    returns voltage-level truth; ppm conversion is the edge's job."""
+class AnalogHead:
+    """ADC head — raw/mv truth only; unit conversion is the edge's job."""
 
-    PIN = 10
-
-    def __init__(self):
+    def __init__(self, pin):
         self._adc = None
         if _ON_NODE:
-            self._adc = machine.ADC(machine.Pin(self.PIN))
+            self._adc = machine.ADC(machine.Pin(pin))
             self._adc.atten(machine.ADC.ATTN_11DB)
 
     def read(self):
@@ -234,6 +213,33 @@ class H2SReader:
         raw = self._adc.read()                   # 0..4095 @ ~3.1 V FS
         return {"raw": raw,
                 "mv": round(raw * 3100 / 4095)}
+
+
+class Anemometer:
+    """Cup/reed anemometer on GPIO8 (XIAO D9 free-pool, PINOUT.md) —
+    reed closures over a 5 s sample; edge converts Hz to m/s."""
+
+    PIN = 8
+    WINDOW_MS = 5000
+
+    def __init__(self):
+        self._pin = None
+        self._n = 0
+        if _ON_NODE:
+            self._pin = machine.Pin(self.PIN, machine.Pin.IN,
+                                    machine.Pin.PULL_UP)
+
+    def _tick(self, _):
+        self._n += 1
+
+    def read(self, window_ms=WINDOW_MS):
+        if self._pin is None:
+            return None
+        self._n = 0
+        self._pin.irq(handler=self._tick, trigger=machine.Pin.IRQ_FALLING)
+        _sleep_ms(window_ms)
+        self._pin.irq(handler=None)
+        return {"pulses": self._n, "ms": window_ms}
 
 
 # (respin/pin budget; see hardware/PCB.md flags). Set to the ADC pin
@@ -276,11 +282,31 @@ def poll_env(buf):
                 reading["pm"] = pm
         except Exception:
             pass
-    if LANES["h2s"]["enabled"] and _ON_NODE:
+    # water-evidence heads (ENV-HEADS.md) — one try per head so a
+    # faulted probe never costs the rest of the bus
+    for lane, pin in (("h2s", 10), ("turb", 7)):
+        if LANES[lane]["enabled"] and _ON_NODE:
+            try:
+                v = AnalogHead(pin).read()
+                if v:
+                    reading[lane] = v
+            except Exception:
+                pass
+    for lane, addr in (("ph", 0x63), ("orp", 0x62), ("do", 0x61)):
+        if LANES[lane]["enabled"] and _ON_NODE:
+            try:
+                i2c = machine.I2C(0, sda=machine.Pin(5),
+                                  scl=machine.Pin(6), freq=100000)
+                v = Ezo(i2c, addr).read()
+                if v is not None:
+                    reading[lane] = v
+            except Exception:
+                pass
+    if LANES["wind"]["enabled"] and _ON_NODE:
         try:
-            h2s = H2SReader().read()
-            if h2s:
-                reading["h2s"] = h2s
+            w = Anemometer().read()
+            if w:
+                reading["wind"] = w
         except Exception:
             pass
     v = _vbat_read()
@@ -301,16 +327,12 @@ def poll_env(buf):
 def _fit_env(reading):
     """ENV1 fits the ~200 B DET1 budget by shedding optional detail."""
     r = dict(reading)
-    for drop in (lambda d: d.pop("lx", None),
-                 lambda d: d.pop("h2s", None),
-                 lambda d: d.pop("pm", None),
-                 lambda d: d.pop("v", None),
-                 lambda d: d.pop("cu", None),
-                 lambda d: d.pop("low", None)):
+    for key in ("lx", "wind", "turb", "h2s", "pm", "orp", "v", "cu",
+                "low", "ph", "do"):
         payload = json.dumps(r, separators=(",", ":")).encode()
         if len(payload) <= DETECTION_MAX_BYTES:
             return payload
-        drop(r)
+        r.pop(key, None)
     return None
 
 
@@ -1032,6 +1054,19 @@ def _sim():
                 b[8] ^= 0xFF
                 return bytes(b)
         assert Sps30(BadI2C()).read() is None
+        # EZO heads: status-1 + ASCII parses; pending status and
+        # non-numeric payloads refuse rather than inventing a value.
+        class EzoI2C:
+            resp = bytes([1]) + b"7.012\x00\x00\x00"
+            def writeto(self, addr, cmd):
+                pass
+            def readfrom(self, addr, n):
+                return self.resp
+        assert Ezo(EzoI2C(), 0x63).read(settle_ms=0) == 7.012
+        for resp in (bytes([254]) + b"\x00" * 15,
+                     bytes([1]) + b"ERR\x00" + b"\x00" * 11):
+            EzoI2C.resp = resp
+            assert Ezo(EzoI2C(), 0x63).read(settle_ms=0) is None
     print("main.py sim: all checks passed")
 
 
