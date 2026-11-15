@@ -42,8 +42,14 @@ package once exported.
 - **Test points** are bare 1.5 mm pads — include in testpoint report for
   the bed-of-nails fixture (see `TEST-PLAN.md`).
 - **Panelization**: none for R0; ship as singletons.
-- **Fiducials**: not placed in R0 — flagged as a known gap; add global
-  + local fiducials before any automated-assembly run.
+- **Fiducials**: placed — 1 mm pad / 2 mm mask, three per populated
+  side. FID1(11,9)/FID2(54,9) top and FID4/FID5 (same XY) bottom sit
+  inside the far ends of the U_MCU antenna keepout — a *declared
+  deviation*: the routed board has no other clear corner sites, the pad
+  is ≥20 mm lateral from the antenna feed, and RF impact must be
+  verified at bring-up. Third points: FID3 top (62,66), FID6 bottom
+  (100,66), in mid-board copper pockets. DRC flags 8 keepout +
+  2 courtyard findings for them — expected, not errors.
 
 ## Assembly-side notes
 

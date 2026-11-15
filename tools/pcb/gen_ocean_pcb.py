@@ -346,6 +346,24 @@ if MH:
         f.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
         board.Add(f)
 
+# Fiducials — 3 per populated side. The routed board leaves no clean
+# corner site: the (11,9)/(54,9) pair sits inside the WROOM footprint
+# keepout's far ends (1 mm pad, ≥20 mm lateral from the antenna feed —
+# deliberate documented deviation, RF-verify at bring-up; see
+# FAB-NOTES.md). The third point per side uses a mid-board pocket.
+FIDUCIALS = ((11, 9, "F"), (54, 9, "F"), (62, 66, "F"),
+             (11, 9, "B"), (54, 9, "B"), (100, 66, "B"))
+for i, (x, y, side) in enumerate(FIDUCIALS):
+    f = pcbnew.FootprintLoad(FPLIBS + "/Fiducial.pretty",
+                             "Fiducial_1mm_Mask2mm")
+    if f is None:
+        continue
+    f.SetReference("FID%d" % (i + 1))
+    f.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
+    if side == "B":
+        f.Flip(f.GetPosition())
+    board.Add(f)
+
 # Plane pours + silk BEFORE DSN export so planes are part of the route space
 gnd = board.FindNet("GND")
 p33 = board.FindNet("+3V3")

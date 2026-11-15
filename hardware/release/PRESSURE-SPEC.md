@@ -53,6 +53,8 @@ qualification — not yet verified by test.
 
 ## Open items before production
 
-- FEA or hand-calc verification of end-cap bending at proof pressure.
+- ~~FEA or hand-calc verification of end-cap bending at proof~~ — done:
+  conservative disc-bending calc in mechanical/MECHANICAL.md; flange
+  set to 12 mm for ~3.5× POM-C margin at proof.
 - O-ring groove dimensions per Parker guide for the chosen tube ID.
 - Long-term salt-fog exposure data on gland bodies (nylon vs SS316).

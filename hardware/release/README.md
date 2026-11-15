@@ -57,18 +57,19 @@ Known substitutions vs the ideal BOM:
 | Native KiCad schematic | `hardware/release/electrical/ecocell-ocean.net` | **present** — deterministic netlist emitter (SKiDL source lost in workspace wipe; regenerate `.kicad_sch` pending) |
 | Native KiCad PCB | `hardware/release/electrical/ecocell-ocean.kicad_pcb` | **verified** — DRC 0 unconnected / 0 errors (`electrical/drc-report.txt`); warnings only |
 | Gerbers + drill (or IPC-2581) | `hardware/release/electrical/fab/ecocell-ocean/` | **present** — 4-layer Gerbers + NPTH/PTH drills, sha256-manifested |
-| Board stack-up / fab drawing | `hardware/release/FAB-NOTES.md` | **present** — stack-up + CAM notes; fiducials flagged as R0 gap |
+| Board stack-up / fab drawing | `hardware/release/FAB-NOTES.md` | **present** — stack-up + CAM notes; fiducials placed (declared keepout deviation) |
 | Controlled BOM (MPN + alternates) | `hardware/release/electrical/ecocell-ocean-bom.csv` | **present** — generated from the netlist; MPNs/quoting unverified |
 | CPL with verified origin/rotation | `hardware/release/electrical/fab/ecocell-ocean-cpl.csv` | **present** — exported from placed PCB; origin/rotation **unverified** against a supplier pick file |
 | Assembly drawing | `hardware/release/assembly/` | **missing** |
+| Fab quote bundle | `electrical/ecocell-ocean-fab.zip` | **present** — zipped Gerbers + drills + CPL + MANIFEST, Seeed-uploadable |
 | Harness drawings | `hardware/release/HARNESS.md` | **present** — connector pinouts + tether spec from the netlist |
-| Mechanical CAD + STEP + drawings | `hardware/release/mechanical/` | **missing** — pressure hull, optical port, tether, float |
-| Pressure/leak spec | `hardware/release/PRESSURE-SPEC.md` | **present** — 0.4 MPa working / 0.6 MPa proof envelope; hull FEA + O-ring sizing open |
+| Mechanical CAD + STEP + drawings | `hardware/release/mechanical/` | **present** — tube + end caps quote-ready STEP + scad source + dimensioned notes; float/dome/tether unmodeled |
+| Pressure/leak spec | `hardware/release/PRESSURE-SPEC.md` | **present** — 0.4 MPa working / 0.6 MPa proof envelope; end-cap bending hand-calc closed, O-ring sizing per Parker done — FEA optional |
 | Test fixture spec | `hardware/release/TEST-PLAN.md` | **present** |
 | Unit traveler / calibration record | `hardware/release/UNIT-TRAVELER.md` | **present** |
 | Firmware image + hash | `hardware/release/firmware-image.json` | **partial** — source-tree hash recorded; reproducible cross-build pending |
 | Release manifest + checksums | `hardware/release/manifest.json` | **present** |
-| DFM/DFT review record | `hardware/release/` | **missing** — supplier engagement required |
+| DFM/DFT review record | `hardware/release/DFM-REVIEW.md` | **present** — self-review vs Seeed/JLCPCB published caps; supplier sign-off + DFT fixture still required |
 
 No artifact may be silently replaced: any change goes through the ECO
 procedure below and bumps the relevant revision.
