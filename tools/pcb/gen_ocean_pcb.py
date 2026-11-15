@@ -87,7 +87,12 @@ for net in nets_sect[1:]:
             padnets[(sexpr_val(node, "ref"), sexpr_val(node, "pin"))] = name
 
 # ------------------------------------------------------------- board -----
-board = pcbnew.NewBoard(PCB)
+# POST_ONLY loads the routed board from PCB below; NewBoard(PCB) would
+# claim that path and make LoadBoard return the empty in-memory board
+# instead of parsing the file (silently wiping it on save).
+board = pcbnew.NewBoard(
+    "/tmp/ecocell-gen-scratch.kicad_pcb"
+    if os.environ.get("POST_ONLY") else PCB)
 try:
     board.SetCopperLayerCount(4)   # F.Cu / In1=GND / In2=+3V3 / B.Cu
 except Exception as e:
@@ -465,28 +470,24 @@ def pad_xy(p):
 
 
 def islands(netcode, conn):
-    """Connected-pad clusters for one net."""
-    pl = []
+    """Connected-pad clusters for one net.
+
+    Pads in the same copper blob get identical GetConnectedItems sets,
+    so the blob's smallest item uuid is a unique cluster key — one
+    connectivity query per pad instead of the old O(clusters^2) scan
+    that rebuilt uuid sets per comparison (minutes per net on a healed
+    board).
+    """
+    groups = {}
     for fp in board.GetFootprints():
         for p in fp.Pads():
-            if p.GetNetCode() == netcode:
-                pl.append(p)
-    clus = [[p] for p in pl]
-    changed = True
-    while changed:
-        changed = False
-        for i in range(len(clus)):
-            ids = set(x.m_Uuid.AsString()
-                      for x in conn.GetConnectedItems(clus[i][0]))
-            for j in range(i + 1, len(clus)):
-                if any(k.m_Uuid.AsString() in ids for k in clus[j]):
-                    clus[i] += clus[j]
-                    del clus[j]
-                    changed = True
-                    break
-            if changed:
-                break
-    return clus
+            if p.GetNetCode() != netcode:
+                continue
+            ids = [x.m_Uuid.AsString()
+                   for x in conn.GetConnectedItems(p)]
+            key = min(ids) if ids else p.m_Uuid.AsString()
+            groups.setdefault(key, []).append(p)
+    return list(groups.values())
 
 
 def via_candidates(px, py, smd, pad=None, rr_max=10.0):
@@ -755,28 +756,24 @@ def add_via(x, y, netcode):
 
 
 def islands(netcode, conn):
-    """Connected-pad clusters for one net."""
-    pl = []
+    """Connected-pad clusters for one net.
+
+    Pads in the same copper blob get identical GetConnectedItems sets,
+    so the blob's smallest item uuid is a unique cluster key — one
+    connectivity query per pad instead of the old O(clusters^2) scan
+    that rebuilt uuid sets per comparison (minutes per net on a healed
+    board).
+    """
+    groups = {}
     for fp in board.GetFootprints():
         for p in fp.Pads():
-            if p.GetNetCode() == netcode:
-                pl.append(p)
-    clus = [[p] for p in pl]
-    changed = True
-    while changed:
-        changed = False
-        for i in range(len(clus)):
-            ids = set(x.m_Uuid.AsString()
-                      for x in conn.GetConnectedItems(clus[i][0]))
-            for j in range(i + 1, len(clus)):
-                if any(k.m_Uuid.AsString() in ids for k in clus[j]):
-                    clus[i] += clus[j]
-                    del clus[j]
-                    changed = True
-                    break
-            if changed:
-                break
-    return clus
+            if p.GetNetCode() != netcode:
+                continue
+            ids = [x.m_Uuid.AsString()
+                   for x in conn.GetConnectedItems(p)]
+            key = min(ids) if ids else p.m_Uuid.AsString()
+            groups.setdefault(key, []).append(p)
+    return list(groups.values())
 
 
 def via_candidates(px, py, smd, pad=None, rr_max=10.0):
@@ -1649,6 +1646,7 @@ def post_attach():
     RECTS.clear(); RECTS.extend(rects)
     HOLES.clear(); HOLES.extend(holes)
     GRID = build_grid(dots, segs)
+    prev_todo = None
     for _round in range(8):
         conn = board.GetConnectivity()
         todo = []
@@ -1668,6 +1666,14 @@ def post_attach():
                     todo.append((pad, main, ncode))
         if not todo:
             break
+        # try_grid_cluster can report success while the emitted route
+        # still misses the cluster (near-miss endpoints, blocked pour
+        # fill) — the same pads then reappear every round.  If the todo
+        # count stopped shrinking, further rounds are pure waste; the
+        # DRC-driven deep_repair pass handles the real leftovers.
+        if prev_todo is not None and len(todo) >= prev_todo:
+            break
+        prev_todo = len(todo)
         progress = 0
         for pad, main, ncode in todo:
             if try_grid_cluster(pad, main, dots, segs, ncode):
@@ -1688,7 +1694,79 @@ def post_attach():
             pass
     final_cleanup()
     pcbnew.SaveBoard(PCB, board)
+    deep_repair()
 
+
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+TOOL = os.path.join(REPO, "tools", "pcb")
+DRC_WORK = os.path.join(os.path.dirname(PCB), "work")
+
+
+def _sh(cmd, **kw):
+    import subprocess
+    print("+", " ".join(cmd), flush=True)
+    return subprocess.run(cmd, **kw)
+
+
+def _unconnected(path):
+    import json
+    try:
+        d = json.load(open(path))
+    except Exception:
+        return -1
+    return len(d.get("unconnected_items", []))
+
+
+def deep_repair(rounds=6):
+    """Converge the routed board to zero unconnected items.
+
+    stitch()/post_attach() heal pad clusters but are blind to pour
+    islands (GetConnectedItems treats a whole zone fill as one node)
+    and give up silently.  This stage drives the committed repair
+    toolchain — cluster_heal's union-find over fill outlines,
+    connect.py's DRC-pair router, orphan_sweep's dead-fragment pass —
+    to a fixpoint, re-checking with real kicad-cli DRC each round.
+    Set NO_DEEP_HEAL=1 to skip (e.g. when iterating on placement).
+    """
+    if os.environ.get("NO_DEEP_HEAL"):
+        return
+    os.makedirs(DRC_WORK, exist_ok=True)
+    drc_json = os.path.join(DRC_WORK, "drc-deep.json")
+    for rnd in range(rounds):
+        _sh(["kicad-cli", "pcb", "drc", "--format", "json",
+             "--severity-all", "-o", drc_json, PCB])
+        n = _unconnected(drc_json)
+        print(f"deep-repair round {rnd}: unconnected={n}", flush=True)
+        if n == 0:
+            break
+        if n < 0:
+            print("deep-repair: DRC failed — stopping", flush=True)
+            break
+        # duplicated heal routes wall off corridors for every other
+        # net — slim them before routing
+        _sh(["python3", os.path.join(TOOL, "dedup_copper.py"), PCB])
+        # union-find heal first: it sees pour islands connect.py can't
+        _sh(["python3", os.path.join(TOOL, "cluster_heal.py"), PCB])
+        # then route whatever DRC still names (zone outlines, near-miss
+        # stub pairs) with connect.py's DRC-pair mode
+        _sh(["kicad-cli", "pcb", "drc", "--format", "json",
+             "--severity-all", "-o", drc_json, PCB])
+        _sh(["python3", os.path.join(TOOL, "connect.py"), PCB,
+             "2000000", "400", drc_json])
+        # connect's grid emitter leaves 0.1-1 mm endpoint near-misses;
+        # bridge_pairs closes the ones with a legal direct/via stub
+        _sh(["kicad-cli", "pcb", "drc", "--format", "json",
+             "--severity-all", "-o", drc_json, PCB])
+        _sh(["python3", os.path.join(TOOL, "bridge_pairs.py"), PCB,
+             drc_json])
+        # strip dead fragments the routes leave behind
+        _sh(["python3", os.path.join(TOOL, "orphan_sweep.py"), PCB])
+    # final state for the record
+    _sh(["kicad-cli", "pcb", "drc", "--format", "json",
+         "--severity-all", "-o", drc_json, PCB])
+    n = _unconnected(drc_json)
+    print(f"deep-repair done: unconnected={n}", flush=True)
 
 
 def silk_cleanup():
@@ -1724,6 +1802,8 @@ def silk_cleanup():
 ses = os.environ.get("SES")
 if os.environ.get("POST_ONLY"):
     board = pcbnew.LoadBoard(PCB)
+    print("post-only loaded:", len(list(board.GetFootprints())),
+          "footprints,", len(list(board.GetTracks())), "tracks")
 if (ses and os.path.exists(ses)) or os.environ.get("STITCH") or \
         os.environ.get("POST_ONLY"):
     if ses and os.path.exists(ses):
