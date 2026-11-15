@@ -73,7 +73,10 @@ blew that way.
 Nutrients (nitrate/phosphate/ammonia), trace metals, selenium,
 pesticides/organics: no node-cost in-situ sensor exists or is
 evidence-grade. These lanes are automated **collection** (SPE cassettes,
-swapped on the service interval) plus optional co-located instrument-tier
-analyzers (RS-232/485 seam) — never dressed as node measurements.
+swapped on the service interval — custody chain:
+`tools/edge/spe_manifest.py`) plus optional co-located instrument-tier
+analyzers (RS-232/485 Modbus seam: `tools/edge/nutrient_probe.py`,
+records land as instrument-provenance imports, not node readings) —
+never dressed as node measurements.
 See `hardware/BOM.md` water-evidence section and
 `docs/salton-sea/monitoring-fit.md` for the full tier table.
