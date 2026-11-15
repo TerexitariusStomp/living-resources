@@ -55,11 +55,11 @@ Known substitutions vs the ideal BOM:
 | Artifact | Path / source | Status |
 |---|---|---|
 | Native KiCad schematic | `hardware/release/electrical/ecocell-ocean.net` | **present** — deterministic netlist emitter (SKiDL source lost in workspace wipe; regenerate `.kicad_sch` pending) |
-| Native KiCad PCB | `hardware/release/electrical/ecocell-ocean.kicad_pcb` | **present** — placed + autorouted; DRC status tracked below |
-| Gerbers + drill (or IPC-2581) | `hardware/release/electrical/` | **missing** — export after DRC is clean |
+| Native KiCad PCB | `hardware/release/electrical/ecocell-ocean.kicad_pcb` | **verified** — DRC 0 unconnected / 0 errors (`electrical/drc-report.txt`); warnings only |
+| Gerbers + drill (or IPC-2581) | `hardware/release/electrical/fab/ecocell-ocean/` | **present** — 4-layer Gerbers + NPTH/PTH drills, sha256-manifested |
 | Board stack-up / fab drawing | `hardware/release/FAB-NOTES.md` | **present** — stack-up + CAM notes; fiducials flagged as R0 gap |
 | Controlled BOM (MPN + alternates) | `hardware/release/electrical/ecocell-ocean-bom.csv` | **present** — generated from the netlist; MPNs/quoting unverified |
-| CPL with verified origin/rotation | `hardware/release/assembly/` | **missing** — export post-DRC |
+| CPL with verified origin/rotation | `hardware/release/electrical/fab/ecocell-ocean-cpl.csv` | **present** — exported from placed PCB; origin/rotation **unverified** against a supplier pick file |
 | Assembly drawing | `hardware/release/assembly/` | **missing** |
 | Harness drawings | `hardware/release/HARNESS.md` | **present** — connector pinouts + tether spec from the netlist |
 | Mechanical CAD + STEP + drawings | `hardware/release/mechanical/` | **missing** — pressure hull, optical port, tether, float |
@@ -86,8 +86,13 @@ procedure below and bumps the relevant revision.
 
 ## Honest-status notes
 
-- The board currently validates as *routed*, not *fabrication-ready*:
-  DRC must report 0 errors/0 unconnected before Gerbers are exported
-  and the "KiCad PCB" row moves to verified.
+- The board validates as *fabrication-ready for a prototype lot*:
+  DRC is clean (0 unconnected / 0 errors) and Gerbers + drills + CPL
+  are exported and manifested. **Production** still gates on: supplier
+  DFM/DFT review + quote-backed BOM, mechanical CAD (pressure hull +
+  float), pressure/leak verification on the hull, a successful bring-up
+  on the prototype lot, and second-reviewer sign-off per the ECO
+  procedure. Never board-spun, never powered — treat the first lot as
+  engineering prototypes, not saleable units.
 - Acoustic playback hardware (emit lane) is consent-gated in firmware
   and policy; no ecological effect is claimed from this package.
