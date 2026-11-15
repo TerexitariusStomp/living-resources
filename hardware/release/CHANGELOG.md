@@ -17,6 +17,16 @@
   UNIT-TRAVELER, checksummed manifest.
 - Generator self-heals to 0 unconnected / 0 DRC errors; Gerbers, drills,
   CPL exported and checksummed (fab/MANIFEST.sha256).
+- **BMP390 fab-blocking defect fixed** — U_PRES was placed as
+  `Bosch_LGA-8` (BME280 land pattern) with the BME280 pin convention;
+  BMP390 is a 10-pin 2×2 mm LGA with a different pinout. ECO
+  (`tools/pcb/eco_bmp390.py`, permanent record): correct project-local
+  `EcoCell:BMP390_LGA-10_2x2mm` footprint, netlist repinned to
+  `1/6/10=+3V3, 2=SCL, 3/5/8/9=GND (SDO low → addr 0x76), 4=SDA, 7=NC`,
+  part relocated (102,59) → (109.5,58.5) into the open pocket east of
+  the SCL/SDA/SD_CS stub field — the old site was unroutable without
+  disturbing the U_ENV SCL bus-bridge via at (102.3,58.5). Fresh DRC:
+  0 unconnected, 0 hard errors (declared fiducial deviations only).
 - **Fiducials placed** (scope: assembly automation; reason: close the
   flagged R0 gap; risk: low — bare pads, no routing change). Three per
   populated side, `Fiducial_1mm_Mask2mm`. FID1/FID2 top + FID4/FID5
