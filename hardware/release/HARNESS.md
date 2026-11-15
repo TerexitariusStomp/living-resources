@@ -14,7 +14,7 @@ shielded twisted pair where marked **STP**.
 
 | Conn | Type | Pin → net (1-based) | Harness note |
 |---|---|---|---|
-| J_BAT | JST XH-2 | 1 VBAT · 2 GND | 20 AWG red/black to 18650 holder; 30 mm max |
+| J_BAT | JST XH-2 | 1 VBAT · 2 GND | 20 AWG red/black to 18650 holder; 30 mm max. **Secondary-harvest path:** a supplemental source (in-pipe hydro, open-channel turbine, BMFC) terminates in its own regulator/charge module whose output ORs onto the battery rail here via Y-harness — never onto J_PWR's 5 V-class TP4056 input |
 | J_PWR | JST XH-2 | 1 VIN · 2 GND | 20 AWG to solar/DC input; fuse 1 A inline |
 | J_CAM | 1×5 hdr 2.54 | 1 CAM_3V3 · 2 GND · 3 UART3_RX · 4 UART3_TX · 5 CAM_RST | flat ribbon to camera flex; keep <15 cm, shield if longer |
 | J_GPS | 1×5 hdr 2.54 | 1 +3V3 · 2 GND · 3 UART2_RX · 4 UART2_TX · 5 PPS | GPS module on float tether head; PPS is the array timing edge — do not daisy-chain |

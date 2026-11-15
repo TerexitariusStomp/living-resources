@@ -38,7 +38,12 @@ store-and-forward; every record is content-addressed and attested.
 
 - ~90 g, weatherproof enclosure ~IP65 (land); potted pressure form
   (submerged); moored-float form (offshore)
-- Duty-cycled power: weeks on a commodity power bank †; solar option
+- Duty-cycled power: weeks on a commodity power bank †; solar primary
+- Secondary-harvest input: site-specific supplements (in-pipe hydro at
+  pressurized outfalls, open-channel kinetic at ≥0.5 m/s drains,
+  governance-gated sediment-MFC) OR onto the battery rail through their
+  own charge module — solar remains the qualified baseline until each
+  supplement is proven by field soak
 - No attachment to organisms; no soil insertion; no anchor mooring
 
 ## Compliance & licensing

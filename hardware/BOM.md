@@ -38,9 +38,25 @@ stays the hand-build/prototype list.
 |---|---|---:|---|
 | Weatherproof box/jar + cable gland | 3–5 | garden/shore form |
 | USB power bank (existing) or 18650 + holder | 0–10 | duty-cycled → weeks |
-| Solar panel 2 W + TP4056/CN3791 charge board | 10–15 | permanent deploys |
+| Solar panel 2 W + TP4056/CN3791 charge board | 10–15 | permanent deploys — **primary source, all forms** |
 | Potting epoxy + pressure tube (submerged pod) | 10–15 | reef variant only |
 | **Universal node total** | | **~$35–45** typical |
+
+### Optional power supplements (per site, never defaults)
+
+Solar is the qualified baseline everywhere — zero moving parts, stealth-integrable, best $/W at node scale. The supplements below attach through the **secondary-harvest path**: each source gets its own regulator/charge module and ORs onto the battery rail via a second charge module on the `J_BAT` harness (~$2, no board change; a dedicated `J_HARV` + ideal-diode OR is queued for the next board rev). The TP4056 input is 5 V-class only — never parallel an unregulated 12 V harvester onto `J_PWR`.
+
+| Source | ~$ | Where it applies | Verdict |
+|---|---:|---|---|
+| In-pipe micro-hydro (10 W class, 12 V) | 15–45 | pressurized WWTP effluent — outfall sites only | real supplement where pressure head exists; needs 0.05–1.2 MPa |
+| Open-channel hydrokinetic | research-tier | drains/termini with sustained ≥0.5 m/s flow | survey-gated; debris + fouling maintenance burden |
+| Sediment MFC (carbon-brush electrodes + PMU) | 50–100 | submerged pods on organic-rich sediment | mW-class trickle only; **governance-gated** — buried anodes conflict with the nothing-enters-soil rule; needs explicit per-site approval |
+| Li-SOCl₂ primary pack | 15–30 | submerged pods, retrieval-only missions | keeps pod passive for months without any float |
+| Wave energy | — | ocean reef pod-mode only | declared trail — no node-scale commodity WEC; moving parts + surface signature contradict stealth |
+| Wind micro-turbine | — | land nodes | declared trail — solar already closes the budget |
+| Thermoelectric / osmotic gradient | — | — | rejected (profiler-only / membrane fouling) |
+
+Every supplement ships a per-site energy row in the telemetry model (measured W vs predicted) and is claimed only after a field soak.
 
 ## Deployment kits (add per site)
 
