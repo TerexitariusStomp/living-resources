@@ -30,6 +30,14 @@ use listed.
 | ESP-IDF `adc_continuous` DMA | Apache-2.0 (via ESP-IDF) | high-rate hydrophone baseline capture | ✅ OK — external SPI ADC is the primary path for useful band |
 | OpenCTD (Rev 8 schematic/firmware) | MIT | CTD sensor stack + calibration protocol | ✅ adopted as reference, not forked |
 | Atlas EZO-EC (vendor example) | vendor (verify) | conductivity command wrapper | ⚠ verify license at selection |
+| `Atlas-Scientific/Ezo_I2c_lib` | MIT | EZO probe heads — pH, DO, ORP, ISE command wrapper + calibration records | ✅ verified MIT (official vendor repo); MicroPython port is a thin command/parse shim |
+| `timboring/atlas_i2c` (alt, Python edge) | MIT | EZO I2C at Pi/edge hosts (cal/maintenance tools) | ✅ verified MIT |
+| `Sensirion/embedded-i2c-sps30` | BSD-3 | SPS30 PM head (I2C 0x69) | ✅ verified BSD-3; MicroPython port is a thin wrapper over the register map |
+| `toddauer/SPS30-MicroPython` | ⚠ verify | MicroPython SPS30 alternative | ⚠ license unstated at review — prefer the BSD-3 Sensirion driver port |
+| `minimalmodbus` | Apache-2.0 | co-located nutrient analyzer RS-232/485 seam (Modbus RTU) | ✅ Apache-2.0 — thin parse seam; analyzer outputs concentrations, no analysis code |
+| Wind anemometer (pulse/vane) | MIT (MicroPython stdlib) | `Pin.irq` pulse counting + vane ADC | ✅ stdlib — no library needed |
+| Analog heads (turbidity, H₂S, glass pH→AIN) | MIT (MicroPython stdlib) | `machine.ADC`-class SPI/ADC reads | ✅ stdlib — calibration math is cited formulas, not library code |
+| SPE cassette lane | none | passive collection — no firmware | ✅ manifest records serial/dates/chain-of-custody only |
 | `bluerobotics/ms5837-python` | MIT | pressure/depth (MS5837-30BA) | ✅ OK |
 | MicroPython `onewire`/`ds18x20` | MIT (MicroPython) | water temperature (DS18B20) | ✅ OK |
 | Adafruit `CircuitPython_MAX31865` | MIT | PT1000 path (if adopted) | ⚠ MicroPython shim only |

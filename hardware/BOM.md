@@ -28,7 +28,7 @@ stays the hand-build/prototype list.
 | 8 | Ultrasonic MEMS | ICS-40730 breakout (20–100 kHz) | 4–5 | `ultra` — plant clicks, bats |
 | 9 | C4D front-end | AD7746 capacitance eval module + electrode pair (copper tape/rings) | 5 | `c4d` — biofilm readout |
 | 9b | **PM2.5** | Sensirion SPS30 (I2C 0x69, 5 V via J9) | ~40 | `pm` — dust events; see `docs/ENV-HEADS.md` |
-| 9c | H2S (optional) | SPEC 3SP_H2S_A4 electrochemical **or** MQ-136 + divider | 4–90 | `h2s` — indicative grade only; defer unless requested |
+| 9c | H2S | SPEC 3SP_H2S_A4 electrochemical **or** MQ-136 + divider | 4–90 | `h2s` — indicative grade only; **include on Salton Sea land nodes** — Centeno 2025 GeoHealth ties hypereutrophication to H₂S air-quality exceedances; pair with PM+wind for source attribution |
 | 10 | Emit transducer | 40 kHz ultrasonic transducer + logic MOSFET (2N7000/AO3400) + resistor | 3 | `emit` — bio-write, consent-gated |
 | | **Heads subtotal** | | **~17–21** (+~44 with PM, +H2S option) | |
 
