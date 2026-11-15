@@ -53,6 +53,12 @@ assembly, test, and deployment. Nothing ships without it.
 | Battery divider | | |
 | Hydrophone gain | | |
 | Mic SPL offset | | |
+| EZO-pH (probe serial) | | |
+| EZO-ORP (probe serial) | | |
+| EZO-DO (probe serial) | | |
+| Turbidity curve id | | |
+| Anemometer constant | | |
+| H2S bump-test (indicative) | | |
 
 ## Deployment record
 
@@ -64,3 +70,4 @@ assembly, test, and deployment. Nothing ships without it.
 | Consent token id (if emit enabled) | |
 | Date deployed / recovered | |
 | Condition on recovery | |
+| SPE cassette manifest hash | |

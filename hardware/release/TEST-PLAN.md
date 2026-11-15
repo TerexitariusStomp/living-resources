@@ -40,6 +40,30 @@ reworked past two attempts.
 - Hydrophone channel gain: record AFE gain code used at fixture level.
 - Mic SPL offset: store dB offset at 1 kHz ref.
 
+### Water-evidence heads (per probe serial, bench — never field-fudged)
+
+Calibration lives on the EZO circuit itself; the traveler stores the
+procedure record + probe serial, and the edge records each record's
+calibration SAID (see `docs/ENV-HEADS.md`).
+
+- **EZO-pH:** 2-point at pH 4/7 (mid first, then low), verify slope on
+  pH 10 buffer; log buffer lot + temp.
+- **EZO-ORP:** single-point quinhydrone or 225 mV ref solution; log
+  reference potential + temp.
+- **EZO-DO:** dry-zero then air-saturated water (or 100% air cal per
+  probe sheet); log method + barometric pressure.
+- **Turbidity:** 3-point NTU curve (0 / mid / high formazin or
+  OEM standard) → store the head's raw→NTU curve id at the edge;
+  node ships raw/mv only.
+- **Anemometer:** log head model + pulses-per-rev constant used by the
+  edge converter; bench spin check vs handheld reference.
+- **H2S (if fitted):** bump-test against calibration gas; log gas lot,
+  concentration, and response — indicative lane, flagged as such.
+- **SPE cassette custody:** every cassette swap produces a
+  `tools/edge/spe_manifest.py` chain event; the manifest file hash is
+  recorded on this unit's deployment record — collection evidence, not
+  a node measurement.
+
 ## 5. Environmental (per serialized batch, sampled)
 
 - Thermal soak −10…+50 °C: boot + uplink pass at endpoints.

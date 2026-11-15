@@ -26,3 +26,7 @@ paper/*.out
 paper/*.fls
 paper/*.fdb_latexmk
 paper/_minted-*/
+
+# generated PCB work products (regenerate per gen_ocean_pcb.py run)
+hardware/release/electrical/work/
+hardware/release/route*.log

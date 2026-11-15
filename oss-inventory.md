@@ -7,7 +7,8 @@ use listed.
 | Dependency | License | Role | Status |
 |---|---|---|---|
 | OpenSoundscape | MIT | edge bioacoustic ML | ✅ OK |
-| BirdNET-Analyzer | custom — free non-commercial | species classifier | ⚠ verify commercial terms; else train on xeno-canto CC |
+| BirdNET-Analyzer (code) | MIT | species classifier | ✅ verified MIT (repo LICENSE, 2026-11) — the *code* is commercial-OK |
+| BirdNET pretrained models | CC BY-NC-SA 4.0 | species model weights | ⚠ **non-commercial** — commercial path = custom-trained classifier on licensed recordings (xeno-canto per-recording terms, own data) or written Cornell permission |
 | xeno-canto data | CC (per-recording, varies) | training/reference audio | ⚠ per-recording terms |
 | Reticulum / LXMF | **Reticulum License (custom)** | field transport | ⚠ verified: MIT-like + two restrictions — **no AI/ML training-dataset use** (our detection traffic passes through, never retained for training — documented in adapters/reticulum.scm) and no harm-to-humans systems. Commercial use OK; custom license, review before shipping |
 | MicroReticulum | Apache-2.0 | Reticulum on ESP32 | ✅ verified — **but C++/PlatformIO, not MicroPython**: full RNS binding means an ESP-IDF/C++ firmware variant; MicroPython path runs the DET1/AUD1 frame contract without full RNS |
@@ -26,10 +27,10 @@ use listed.
 | OPA | Apache-2.0 | policy engine (lane-gate, consent) | ✅ OK |
 | hREA / ValueFlows | Apache-2.0 | accounting vocabulary | ✅ OK |
 | helia | Apache-2.0/MIT | content-addressed evidence store | ✅ OK |
-| ESP-ADF (Espressif Audio Dev Framework) | Espressif MIT | playback pipeline — WAV decode, I2S, amp control | ⚠ verify branch/version; commercial OK on Espressif parts |
+| ESP-ADF (Espressif Audio Dev Framework) | Espressif MIT | playback pipeline — WAV decode, I2S, amp control | ✅ verified Espressif MIT (repo LICENSE); commercial OK on Espressif parts — pin branch at adoption |
 | ESP-IDF `adc_continuous` DMA | Apache-2.0 (via ESP-IDF) | high-rate hydrophone baseline capture | ✅ OK — external SPI ADC is the primary path for useful band |
 | OpenCTD (Rev 8 schematic/firmware) | MIT | CTD sensor stack + calibration protocol | ✅ adopted as reference, not forked |
-| Atlas EZO-EC (vendor example) | vendor (verify) | conductivity command wrapper | ⚠ verify license at selection |
+| ~~Atlas EZO-EC (vendor example)~~ | — | conductivity command wrapper | superseded — the MIT `Ezo_I2c_lib` covers the same commands with a verified license |
 | `Atlas-Scientific/Ezo_I2c_lib` | MIT | EZO probe heads — pH, DO, ORP, ISE command wrapper + calibration records | ✅ verified MIT (official vendor repo); MicroPython port is a thin command/parse shim |
 | `timboring/atlas_i2c` (alt, Python edge) | MIT | EZO I2C at Pi/edge hosts (cal/maintenance tools) | ✅ verified MIT |
 | `Sensirion/embedded-i2c-sps30` | BSD-3 | SPS30 PM head (I2C 0x69) | ✅ verified BSD-3; MicroPython port is a thin wrapper over the register map |
@@ -42,17 +43,18 @@ use listed.
 | MicroPython `onewire`/`ds18x20` | MIT (MicroPython) | water temperature (DS18B20) | ✅ OK |
 | Adafruit `CircuitPython_MAX31865` | MIT | PT1000 path (if adopted) | ⚠ MicroPython shim only |
 | `micropyGPS` / NMEA parser | MIT | GPS parse; PPS interrupt timestamping is custom glue | ✅ OK |
-| esp32-camera / OV5640 driver | Apache-2.0/MIT (verify) | underwater camera head | ⚠ verify license at selection |
+| esp32-camera / OV5640 driver | Apache-2.0 | underwater camera head | ✅ verified Apache-2.0 (espressif/esp32-camera LICENSE + `CONFIG_OV5640_SUPPORT` in driver source) |
 | libFLAC (ESP-ADF component) | Xiph BSD | audio compression for hydro payloads | ✅ OK |
 | NumPy/SciPy | BSD-3 | edge DSP, particle-motion estimate, TDOA math | ✅ OK |
 | FishSounds / Watkins-MBARI / xeno-canto aquatic | CC per-recording | playback source assets | ⚠ per-recording terms; manifest records license + checksum |
 | ONNX Runtime | MIT | pretrained audio-embedding inference (onnx-embed backend) | ✅ OK |
-| Perch / Google Bioacoustics Model | ⚠ verify | pretrained audio embeddings — primary onnx-embed candidate | ⚠ resolve license + ONNX export before adoption; PANNs (`qiuqiangkong/audioset_tagging_cnn`) is the fallback, also ⚠ |
+| Perch / Hoplite (code) | Apache-2.0 | pretrained audio embeddings — primary onnx-embed candidate | ✅ verified Apache-2.0 (`google-research/perch`, `perch-hoplite`); model weights ride Kaggle Models — verify model-card terms at download; ONNX export is an integration task, not a license blocker |
+| PANNs (`qiuqiangkong/audioset_tagging_cnn`) | MIT | embedding-model fallback | ✅ verified MIT (LICENSE.MIT) — code + Zenodo checkpoints; commercially usable now |
 | scikit-learn | BSD-3 | unsupervised clustering head over embeddings (planned) | ✅ OK |
 | ModemManager + libqmi/qmicli | GPL-2.0 (tooling, not linked) | CAT-1/DTC modem control on phone/Pi edge | ⚠ verify on target OS; process boundary only |
 | paho-mqtt | EPL-2.0/EDPL | edge↔broker telemetry | ✅ copyleft-compatible |
-| starlink-grpc (community dish bindings) | ⚠ verify per repo | Starlink dish telemetry/status | ⚠ resolve at selection; optional — dish works without it |
-| Termux | ⚠ verify | Linux env on Android for phone_edge variant | ⚠ or plain Linux/Pi image — decide at deployment |
+| starlink-grpc-tools (`sparky8512`) | Unlicense (public domain) | Starlink dish telemetry/status | ✅ verified Unlicense — **caveat**: generated gRPC protocol modules aren't redistributable (SpaceX protos carry no license — upstream author's note); use the reflection path. Optional — dish works without it |
+| Termux | app GPLv3 / terminal libs Apache-2.0; per-package `TERMUX_PKG_LICENSE` | Linux env on Android for phone_edge variant | ✅ resolved — upstream policy **bars third-party apps from the official apt repos**, so it can't ship as our edge runtime; usable as on-device dev tooling only. **Decision: plain Linux/Pi image for the shipped edge** |
 | exiftool | Artistic/GPL dual | geotagged stills metadata | ✅ tooling |
 
 ## Adoption rule
