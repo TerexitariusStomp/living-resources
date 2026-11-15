@@ -53,6 +53,38 @@ stays the hand-build/prototype list.
 | Range ext. | **E32-900T20D UART LoRa module** (µReticulum-native, D6/D7) | ~12–15 | km-range cells — single-MCU mesh, no companion board (`docs/RNODE-MESH.md`) |
 | Range ext. (alt) | Wio-SX1262 SPI stack or SX1276 module ×2 | 15–25 ea | SPI path needs pin remap — see `docs/RNODE-MESH.md` pin budget |
 
+## Water-evidence heads (wet-side probe additions — no respin)
+
+Per the Salton Sea evidence review (`docs/salton-sea/monitoring-fit.md`):
+spare ADS8681 channels, the I2C bus, and the penetrator architecture
+absorb these as additional wet-side glands. Evidence tier is declared
+per head — never sold as more than it is.
+
+| Head | Part | Interface | ~$ | Evidence tier |
+|---|---|---|---|---|
+| pH | Atlas EZO-pH (or glass electrode → spare ADS8681 AIN) | I2C / AIN | 60 | measured |
+| Dissolved O₂ | Atlas EZO-DO | I2C | 70 | measured — fish-kill lane |
+| Turbidity | analog nephelometer (DFRobot TSW-class) | spare ADS8681 AIN | 25–40 | measured — TSS/metals *proxy*, corroborates Sentinel-2 screening |
+| ORP (optional) | Atlas EZO-ORP | I2C | 60 | measured — redox/Se-speciation context |
+| Wind (land nodes) | reed/hall anemometer + vane | pulse/ADC → MCU | 25–45 | measured — dust-source attribution |
+| Nutrient ISE (optional trigger) | nitrate/ammonium ISE or EZO-ISE | I2C | 100 | **event-detection only** — flags lab grabs, never an evidentiary concentration |
+
+**Instrument tier (co-located, not node BOM):** submersible wet-chem
+nutrient analyzer (Systea WIZ/NPA, or Kekan KK-750-class ~$2,750 —
+NH₃/NO₂/NO₃/PO₄, real concentrations, RS-232/485 seam) at top-priority
+river-terminus sites. Rent or 1–2 purchases; nodes flank them for
+cheap physical context.
+
+**Automated collection (no sensor):** passive SPE/sorbent cassettes —
+organics/metals/Se collected in-situ, swapped on the 6-month service
+interval, lab elutes + runs the panel. Serial, install/pull dates, and
+chain-of-custody ride the record manifest.
+
+**Honest limits (verified 2026-11-15):** no deployable in-situ sensor
+for selenium (ICP-MS only) or organics/PFAS/pesticides (fluorescence
+"risk index" products are screening-grade); in-situ voltammetric metal
+probes read the bioavailable fraction, not DMR-comparable totals.
+
 ## What's NOT in the BOM (by policy)
 
 - No flash/IR illuminator — emitting light is a bio-write, not a
