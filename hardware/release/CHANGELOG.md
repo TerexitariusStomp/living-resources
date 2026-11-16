@@ -59,12 +59,23 @@
   CAM_RST, 13/14 = LORA_M0/LORA_M1, 15–21 spares+A0 → GND,
   22 = SCL, 23 = SDA, 24 = +3V3.
   Live board rewired: pad stubs re-escaped, multilayer weave rebuilt
-  around U_EXP, adjacent-layer microvias (0.4/0.2 mm) used where
-  through-vias couldn't fit — separate blind-via Excellon files now
-  emit in the fab set. Three GND pads on dense connectors/U_EXP set to
+  around U_EXP. Three GND pads on dense connectors/U_EXP set to
   solid zone connection (starved-thermal ECO). DRC: 0 unconnected,
   errors = declared fiducial-keepout deviations only. Same pinout fix
   applied to the land node (U12).
+- **Microvias eliminated — standard-fab restored** — the rewire had
+  briefly introduced seven blind/buried microvias (0.4/0.2 mm,
+  HDI-class) in the U_EXP/FID3 pockets. All removed: four junctions
+  now use ordinary 0.5/0.3 mm through-vias at re-probed sites, and the
+  FID3-adjacent HYDRO_SIG junction threads the fiducial's 0.6 mm local
+  pad clearance on a 1.35 mm center-distance rule (through-via at
+  (61.1,67.05)); dead-end weave islands (ILLUM_5V, +5V, EXP_INT
+  fragments) were deleted rather than bridged. Board is back to a
+  through-via-only process: min via 0.5 mm OD / 0.3 mm drill
+  (0.1 mm annular — at JLCPCB/Seeed standard-process limit),
+  PTH+NPTH Excellon only, no blind-via drill files in the fab set.
+  DRC: 0 unconnected, errors = declared fiducial-keepout
+  deviations only.
 - **Quote bundle** — `electrical/ecocell-ocean-fab.zip` (Gerbers +
   drills + CPL + manifest).
 - **Native schematic closed** — `ecocell-ocean.kicad_sch` regenerated

@@ -14,7 +14,7 @@ package once exported.
 | Copper stack | F.Cu signal · In1.Cu = GND pour · In2.Cu = +3V3 pour · B.Cu signal+GND pour |
 | Min track | 0.25 mm routes (0.15 mm rule floor) |
 | Min clearance | 0.2 mm copper-to-copper |
-| Vias | 0.6 mm pad / 0.3 mm drill, through; blind/buried only if emitted by the stitcher (check drill table) |
+| Vias | Through only — no blind/buried. 0.6 mm pad / 0.3 mm drill typical; four U_EXP-pocket junction vias are 0.5/0.3 (0.1 mm annular — at standard-process limit) |
 | Copper-to-edge | ≥0.5 mm |
 | Min drilled hole | 0.2 mm (WROOM-1 thermal PTHs — confirm fab supports 0.2 mech or laser) |
 | Hole-to-hole edge | ≥0.2 mm |

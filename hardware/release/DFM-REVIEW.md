@@ -15,7 +15,7 @@ production gate, not a checklist item here.
 | Board size | 120 × 90 mm | ≤450×500 | ≤400×500 | OK |
 | Min track width | 0.25 mm | ≥0.10 mm | ≥0.09 mm | OK |
 | Min clearance | ~0.2 mm (netclass) | ≥0.10 mm | ≥0.09 mm | OK — confirm in Gerber |
-| Min via | 0.6 mm OD / 0.3 mm drill | 0.45/0.25 | 0.45/0.15 | OK |
+| Min via | 0.5 mm OD / 0.3 mm drill (0.6/0.3 typical; all through — no blind/buried) | 0.45/0.25 | 0.45/0.15 | OK |
 | Min PTH drill | 0.3 mm | ≥0.2 mm | ≥0.2 mm | OK |
 | Max PTH drill | 3.2 mm (mounts) | ≤6.3 | ≤6.3 | OK |
 | Min annular ring (PTH) | 0.15 mm | ≥0.15 mm | ≥0.13 mm | at limit — call out on order |
