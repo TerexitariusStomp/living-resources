@@ -1,4 +1,4 @@
-(pcb "hardware/release/electrical/ecocell-ocean.dsn"
+(pcb "ecocell-ocean.dsn"
   (parser
     (string_quote ")
     (space_in_quoted_tokens on)
@@ -129,8 +129,8 @@
     )
     (component Fiducial_1mm_Mask2mm
       (place FID3 62000 -66000 front 0 (PN Fiducial_1mm_Mask2mm))
-      (place FID1 11000 -9000 front 0 (PN Fiducial_1mm_Mask2mm))
-      (place FID2 54000 -9000 front 0 (PN Fiducial_1mm_Mask2mm))
+      (place FID1 10000 -78000 front 0 (PN Fiducial_1mm_Mask2mm))
+      (place FID2 111000 -14000 front 0 (PN Fiducial_1mm_Mask2mm))
     )
     (component "SOT-23"
       (place Q_EMIT 83000 -14000 front 0 (PN 2N7002))
@@ -225,8 +225,8 @@
       (place C_VB 26000 -36000 back 180 (PN TPS27081A))
     )
     (component Fiducial_1mm_Mask2mm::1
-      (place FID5 54000 -9000 back 0 (PN Fiducial_1mm_Mask2mm))
-      (place FID4 11000 -9000 back 0 (PN Fiducial_1mm_Mask2mm))
+      (place FID5 111000 -14000 back 0 (PN Fiducial_1mm_Mask2mm))
+      (place FID4 10000 -78000 back 0 (PN Fiducial_1mm_Mask2mm))
       (place FID6 100000 -66000 back 0 (PN Fiducial_1mm_Mask2mm))
     )
     (component LED_0603_1608Metric
@@ -95599,7 +95599,6 @@
     (via "Via[0-3]_600:300_um"  90300 -40200 (net GND)(type route))
     (via "Via[0-3]_600:300_um"  71475 -71475 (net GND)(type route))
     (via "Via[0-3]_600:300_um"  72900 -29400 (net GND)(type route))
-    (via "Via[0-3]_500:300_um"  91950 -23550 (net GND)(type route))
     (via "Via[0-3]_600:300_um"  13725 -81975 (net GND)(type route))
     (via "Via[0-3]_600:300_um"  75150 -13950 (net GND)(type route))
     (via "Via[0-3]_600:300_um"  34350 -37350 (net GND)(type route))
@@ -95861,6 +95860,7 @@
     (via "Via[0-3]_600:300_um"  100500 -42150 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  31050 -64350 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  6720 -35520 (net +3V3)(type route))
+    (via "Via[0-3]_600:300_um"  91500 -73550 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  32700 -53250 (net +3V3)(type route))
     (via "Via[0-3]_800:400_um"  111100 -58500 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  21450 -25500 (net +3V3)(type route))
@@ -95888,7 +95888,6 @@
     (via "Via[0-3]_600:300_um"  36450 -64650 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  26850 -61650 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  78600 -29850 (net +3V3)(type route))
-    (via "Via[0-3]_600:300_um"  93150 -73350 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  92250 -25650 (net +3V3)(type route))
     (via "Via[0-3]_800:400_um"  109700 -56800 (net +3V3)(type route))
     (via "Via[0-3]_600:300_um"  67350 -26250 (net +3V3)(type route))

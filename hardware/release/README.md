@@ -57,7 +57,7 @@ Known substitutions vs the ideal BOM:
 | Native KiCad schematic | `hardware/release/electrical/ecocell-ocean.kicad_sch` | **present** — `tools/pcb/net2sch.py` rebuilds it from `.net`; connectivity-exact (netlist round-trip: 79/79 nets, 0 diffs). Box symbols + net labels, not a redrawn sheet |
 | Native KiCad PCB | `hardware/release/electrical/ecocell-ocean.kicad_pcb` | **verified** — DRC 0 unconnected / 0 errors (`electrical/drc-report.txt`); warnings only |
 | Gerbers + drill (or IPC-2581) | `hardware/release/electrical/fab/ecocell-ocean/` | **present** — 4-layer Gerbers + NPTH/PTH drills, sha256-manifested |
-| Board stack-up / fab drawing | `hardware/release/FAB-NOTES.md` | **present** — stack-up + CAM notes; fiducials placed (declared keepout deviation) |
+| Board stack-up / fab drawing | `hardware/release/FAB-NOTES.md` | **present** — stack-up + CAM notes; fiducials placed clear of the antenna keepout |
 | Controlled BOM (MPN + alternates) | `hardware/release/electrical/ecocell-ocean-bom.csv` | **present** — generated from the netlist; MPNs/quoting unverified |
 | CPL with verified origin/rotation | `hardware/release/electrical/fab/ecocell-ocean-cpl.csv` | **present** — exported from placed PCB; origin/rotation **unverified** against a supplier pick file |
 | Assembly drawing | `hardware/release/assembly/` | **missing** |

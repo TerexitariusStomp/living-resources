@@ -76,6 +76,17 @@
   PTH+NPTH Excellon only, no blind-via drill files in the fab set.
   DRC: 0 unconnected, errors = declared fiducial-keepout
   deviations only.
+- **Fiducial-keepout deviation resolved** — FID1/FID4 and FID2/FID5
+  relocated out of the U_MCU antenna keepout: (11,9)/(54,9) →
+  (10,78) lower-left / (111,14) upper-right, F+B pairs kept stacked.
+  New sites verified clear of courtyards, mounting holes, and copper
+  (0.6 mm pad clearance honoured; the GND pour refills around each
+  pad). Spread per side: F (10,78)/(111,14)/(62,66),
+  B (10,78)/(111,14)/(100,66). Two redundant same-net via pairs
+  (GND at (92,23.5), +3V3 at (91.5–93.15,73)) collapsed — the +3V3
+  junction re-bridged by a single through-via at (91.5,73.55).
+  DRC: 0 unconnected, 0 errors; warnings only (silk/courtyard
+  cosmetics + dead-end weave stubs).
 - **Quote bundle** — `electrical/ecocell-ocean-fab.zip` (Gerbers +
   drills + CPL + manifest).
 - **Native schematic closed** — `ecocell-ocean.kicad_sch` regenerated

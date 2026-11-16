@@ -46,8 +46,8 @@ Ref,Val,Package,PosX,PosY,Rot,Side
 "C_VB","TPS27081A","C_0603_1608Metric",26.000000,-36.000000,0.000000,bottom
 "D_CHRG","TPS27081A","LED_0603_1608Metric",35.000000,-36.000000,0.000000,bottom
 "D_STDBY","TPS27081A","LED_0603_1608Metric",44.000000,-36.000000,0.000000,bottom
-"FID4","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",11.000000,-9.000000,180.000000,bottom
-"FID5","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",54.000000,-9.000000,180.000000,bottom
+"FID4","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",10.000000,-78.000000,180.000000,bottom
+"FID5","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",111.000000,-14.000000,180.000000,bottom
 "FID6","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",100.000000,-66.000000,180.000000,bottom
 "L_BOOST","TPS27081A","L_7.3x7.3_H4.5",107.000000,-8.000000,0.000000,bottom
 "R_AA","TPS27081A","R_0603_1608Metric",53.000000,-36.000000,0.000000,bottom
@@ -73,8 +73,8 @@ Ref,Val,Package,PosX,PosY,Rot,Side
 "R_VB1","TPS27081A","R_0603_1608Metric",26.000000,-44.000000,0.000000,bottom
 "R_VB2","TPS27081A","R_0603_1608Metric",35.000000,-44.000000,0.000000,bottom
 "C_REFI","100nF","C_0603_1608Metric",96.150000,-13.700000,180.000000,top
-"FID1","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",11.000000,-9.000000,0.000000,top
-"FID2","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",54.000000,-9.000000,0.000000,top
+"FID1","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",10.000000,-78.000000,0.000000,top
+"FID2","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",111.000000,-14.000000,0.000000,top
 "FID3","Fiducial_1mm_Mask2mm","Fiducial_1mm_Mask2mm",62.000000,-66.000000,0.000000,top
 "J_SD","microSD","microSD_HC_Molex_104031-0811",110.000000,-73.000000,0.000000,top
 "Q_EMIT","2N7002","SOT-23",83.000000,-14.000000,0.000000,top

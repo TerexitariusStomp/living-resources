@@ -22,14 +22,15 @@ production gate, not a checklist item here.
 | Aspect ratio | ~5.3 (1.6 mm / 0.3 mm) | ≤8:1 | ≤10:1 | OK |
 | Surface finish | TBD — spec ENIG or lead-free HASL | ENIG/HASL | ENIG/HASL | decide at PO (ENIG for LGA) |
 | Soldermask/silk | green/white assumed | any | any | OK |
-| Fiducials | 6× 1 mm/2 mm mask (see FAB-NOTES) | standard | standard | declared keepout deviation |
+| Fiducials | 6× 1 mm/2 mm mask (see FAB-NOTES) — all outside the antenna keepout | standard | standard | OK |
 
 ## Assembly-side flags for the assembler
 
 - Two-sided reflow: ICs/connectors top, 0603 passives + LDR bottom.
 - Fine-pitch: ADS8681 QFN-16 (0.65), ESP32-S3-WROOM module pads,
-  BME280/BMP390 LGA-8 — local fiducial coverage is FID3/FID6 region;
-  assembler should confirm vision against their machine.
+  BME280/BMP390 LGA-8 — nearest fiducials FID2/FID5 (111,14) and
+  FID3/FID6 (62,66)/(100,66); assembler should confirm vision against
+  their machine.
 - Molex 104031-0811 microSD wants paste-in-hole or hand reflow.
 - BME280/BMP390 are MSL-3 — bake control per J-STD-020.
 - TP4056 is in a substituted SOIC-8-1EP footprint (ESOP-8 MPN check

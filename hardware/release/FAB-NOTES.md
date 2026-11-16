@@ -43,13 +43,12 @@ package once exported.
   the bed-of-nails fixture (see `TEST-PLAN.md`).
 - **Panelization**: none for R0; ship as singletons.
 - **Fiducials**: placed — 1 mm pad / 2 mm mask, three per populated
-  side. FID1(11,9)/FID2(54,9) top and FID4/FID5 (same XY) bottom sit
-  inside the far ends of the U_MCU antenna keepout — a *declared
-  deviation*: the routed board has no other clear corner sites, the pad
-  is ≥20 mm lateral from the antenna feed, and RF impact must be
-  verified at bring-up. Third points: FID3 top (62,66), FID6 bottom
-  (100,66), in mid-board copper pockets. DRC flags 8 keepout +
-  2 courtyard findings for them — expected, not errors.
+  side, all clear of the U_MCU antenna keepout: FID1/FID4 lower-left
+  (10,78), FID2/FID5 upper-right (111,14), FID3 top (62,66) + FID6
+  bottom (100,66) in mid-board copper pockets. Pads sit inside the
+  copper pours — the zones refill with the pad's 0.6 mm local
+  clearance, so verify the Gerber pour cutouts around each fiducial
+  are open, not bridged.
 
 ## Assembly-side notes
 
