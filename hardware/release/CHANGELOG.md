@@ -48,6 +48,23 @@
   PCB vs published Seeed/JLCPCB capabilities; all vanilla except
   0.15 mm annular ring (at-limit, called out) and the declared fiducial
   keepout deviation.
+- **TCA9535DBT pinout corrected** — U_EXP's expander port map used a
+  fictional pinout (I2C/GND on wrong physical pads; nets on pins
+  25–27 of a 24-pin package). Netlist repinned to the verified
+  DB-24 map, same scheme as the land node's U12 fix
+  (`1=INT, 2=A1, 3=A2, 4–11=P00–P07, 12=GND, 13–20=P10–P17,
+  21=A0, 22=SCL, 23=SDA, 24=VCC`; address pins grounded → 0x20,
+  spare ports low): 1 = EXP_INT, 2/3 = A1/A2 → GND,
+  4–11 = PIR_OUT/CHRG_ST/STDBY_ST/EN_CAM/EN_AMP/EN_ILLUM/EN_PLAY/
+  CAM_RST, 13/14 = LORA_M0/LORA_M1, 15–21 spares+A0 → GND,
+  22 = SCL, 23 = SDA, 24 = +3V3.
+  Live board rewired: pad stubs re-escaped, multilayer weave rebuilt
+  around U_EXP, adjacent-layer microvias (0.4/0.2 mm) used where
+  through-vias couldn't fit — separate blind-via Excellon files now
+  emit in the fab set. Three GND pads on dense connectors/U_EXP set to
+  solid zone connection (starved-thermal ECO). DRC: 0 unconnected,
+  errors = declared fiducial-keepout deviations only. Same pinout fix
+  applied to the land node (U12).
 - **Quote bundle** — `electrical/ecocell-ocean-fab.zip` (Gerbers +
   drills + CPL + manifest).
 - **Native schematic closed** — `ecocell-ocean.kicad_sch` regenerated

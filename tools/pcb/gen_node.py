@@ -330,22 +330,21 @@ place("Package_SO.pretty", "TSSOP-16_4.4x5mm_P0.65mm", "U11",
                 "12": "+3V3", "13": "+3V3", "14": "CTD_DRDY",
                 "15": "MISO_D9", "16": "MOSI_D10"})
 
-# --- U12 TCA9535DBT I2C GPIO expander — REAL DBT pinout:
-# 1-8=P00-P07, 9-11=A0-A2, 12=SCL, 13=SDA, 14=GND, 15-22=P10-P17,
-# 23=INT (polled over I2C -> tied low), 24=VCC.
-# NOTE: the ocean netlist assigns U_EXP pins 25-27 which cannot exist
-# on SSOP-24 (LORA_M0/M1 + CAM_RST dangle) — logged in the changelog
-# as a deferred ocean ECO; this board uses the verified pinout.
+# --- U12 TCA9535DBT I2C GPIO expander — verified DB/PW-24 pinout:
+# 1=INT, 2=A1, 3=A2, 4-11=P00-P07, 12=GND, 13-20=P10-P17, 21=A0,
+# 22=SCL, 23=SDA, 24=VCC (TI datasheet Table 4-1). Address pins
+# grounded -> 0x20; spare P-ports and INT left low/NC (ports polled
+# over I2C). Fixes the fictional 27-pin mapping used earlier.
 place("Package_SO.pretty", "SSOP-24_5.3x8.2mm_P0.65mm", "U12",
       "TCA9535", (26, 45),
-      pin_nets={"1": "PIR_IN", "2": "CTD_DRDY", "3": "ADC_RST",
-                "4": "CAM_CS", "5": "EN_CAM", "6": "GND",
-                "7": "EN_ILLUM", "8": "EN_CTD",
-                "9": "GND", "10": "GND", "11": "GND",
-                "12": "SCL", "13": "SDA", "14": "GND",
-                "15": "GND", "16": "ADC_CS", "17": "CTD_CS",
-                "18": "CHRG_N", "19": "GND", "20": "GND",
-                "21": "GND", "22": "GND", "23": "GND", "24": "+3V3"})
+      pin_nets={"2": "GND", "3": "GND",
+                "4": "PIR_IN", "5": "CTD_DRDY", "6": "ADC_RST",
+                "7": "CAM_CS", "8": "EN_CAM", "9": "EN_ILLUM",
+                "10": "EN_CTD", "11": "GND",
+                "12": "GND", "13": "ADC_CS", "14": "CTD_CS",
+                "15": "CHRG_N", "16": "GND", "17": "GND",
+                "18": "GND", "19": "GND", "20": "GND",
+                "21": "GND", "22": "SCL", "23": "SDA", "24": "+3V3"})
 
 # --- U13 OPA333 hydrophone AFE (non-inverting, ~50x) — mirrors U_AFE
 place("Package_SO.pretty", "SOIC-8_3.9x4.9mm_P1.27mm", "U13",
@@ -832,9 +831,9 @@ def rp(ref, pin):
 
 # --- I2C taps: SCL joins the y50.1 feed; SDA hops the SCL column on
 #     B.Cu and joins the feed corner (46,37.2)
-seg([rp("U12", "12"), (21.5, 48.58), (21.5, 50.1), (43.5, 50.1)],
+seg([rp("U12", "22"), (32.6, 42.73), (32.6, 50.1), (43.5, 50.1)],
     F, TRACK, "SCL")
-seg([rp("U12", "13"), (32.5, 48.58), (32.5, 49.9), (42, 49.9)],
+seg([rp("U12", "23"), (33.3, 42.08), (33.3, 49.9), (42, 49.9)],
     F, TRACK, "SDA")
 via((42, 49.9), "SDA")
 seg([(42, 49.9), (42, 39.5)], B, TRACK, "SDA")
@@ -844,29 +843,24 @@ seg([(42, 39.5), (42, 37.4), (46, 37.2)], F, TRACK, "SDA")
 # --- U12 power: pin24 -> x31.6 column up to the y13 trunk
 seg([rp("U12", "24"), (32.6, 41.42), (32.6, 13.4), (31, 13)],
     F, TF, "+3V3")
-# pin9 (second VDD): west stub -> B.Cu sneak to the U10 rail segment
-seg([rp("U12", "9"), (21.3, 46.62), (21.15, 46.62)], F, TF, "+3V3")
-via((21.15, 46.62), "+3V3", *VF)
-seg([(21.15, 46.62), (21.15, 44.6), (46, 44.6), (46, 40),
-     (45.6, 40)], B, TRACK, "+3V3")
+# single VCC on pin24; pin9 is P05 (EN_ILLUM), not a rail
 
 # --- trapped SSOP GND pads: side stubs to adjacent vias (B.Cu pour)
-for pin, vx in [("6", 20.9), ("10", 20.9), ("11", 21.4)]:
+for pin, vx in [("2", 20.9), ("3", 21.4), ("11", 20.9), ("12", 21.4)]:
     px, py = rp("U12", pin)
     seg([(px, py), (vx, py)], F, TF, "GND")
     via((vx, py), "GND", *VF)
-for pin, vy, vx in [("14", 47.92, 31.7), ("15", 47.27, 31.75),
-                    ("19", 44.67, 31.8), ("20", 44.02, 32.45),
-                    ("21", 43.38, 31.8), ("22", 42.73, 32.45),
-                    ("23", 42.08, 32.45)]:
+for pin, vy, vx in [("16", 46.62, 31.7), ("17", 45.98, 31.75),
+                    ("18", 45.33, 31.8), ("19", 44.67, 32.45),
+                    ("20", 44.02, 31.8), ("21", 43.38, 32.45)]:
     px, py = rp("U12", pin)
     seg([(px, py), (vx, py)], F, TF, "GND")
     via((vx, py), "GND", *VF)
 
 # --- expander EN outputs: stub -> via -> B.Cu lane y44.4 -> hop the
 #     GND spine -> down each switch column (B.Cu) -> F.Cu into pin3
-for pin, netname, swx in [("5", "EN_CAM", 72.1), ("7", "EN_ILLUM", 78.1),
-                          ("8", "EN_CTD", 84.1)]:
+for pin, netname, swx in [("8", "EN_CAM", 72.1), ("9", "EN_ILLUM", 78.1),
+                          ("10", "EN_CTD", 84.1)]:
     px, py = rp("U12", pin)
     seg([(px, py), (20.6, py)], F, TF, netname)
     via((20.6, py), netname, *VF)
@@ -880,17 +874,17 @@ for pin, netname, swx in [("5", "EN_CAM", 72.1), ("7", "EN_ILLUM", 78.1),
                    "EN_CTD": "U18"}[netname], "3")
     seg([(swx, 57.8), (swx, ppy), (ppx, ppy)], F, TF, netname)
 
-# --- expander control outs: ADC_CS p16, CTD_CS p17, CHRG_N p18,
-#     CTD_DRDY p2, ADC_RST p3, CAM_CS p4, PIR_IN p1
-seg([rp("U12", "16"), (32.4, 46.62), (32.4, 43.9), (40.4, 43.9)],
+# --- expander control outs: ADC_CS p13, CTD_CS p14, CHRG_N p15,
+#     CTD_DRDY p5, ADC_RST p6, CAM_CS p7, PIR_IN p4
+seg([rp("U12", "13"), (32.4, 48.58), (32.4, 43.9), (40.4, 43.9)],
     F, TF, "ADC_CS")
 via((40.4, 43.9), "ADC_CS", *VF)
 seg([(40.4, 43.9), (40.4, 45.4), (43.5, 45.4)], B, TRACK, "ADC_CS")
 via((43.5, 45.4), "ADC_CS", *VF)
 seg([(43.5, 45.4), (43.5, 45), rp("U10", "9")], F, TF, "ADC_CS")
-seg([rp("U12", "17"), (32.4, 45.98), (32.4, 44.8), (46.6, 44.8),
+seg([rp("U12", "14"), (31.0, 47.92), (31.0, 44.8), (46.6, 44.8),
      (46.6, 43.6), rp("U11", "2")], F, TF, "CTD_CS")
-seg([rp("U12", "18"), (31.8, 45.33), (31.8, 46.2)], F, TF, "CHRG_N")
+seg([rp("U12", "15"), (31.8, 47.27), (31.8, 46.2)], F, TF, "CHRG_N")
 via((31.8, 46.2), "CHRG_N", *VF)
 seg([(31.8, 46.2), (31.8, 45.4), (59.5, 45.4)], B, TRACK, "CHRG_N")
 via((59.5, 45.4), "CHRG_N", *VF)
@@ -900,22 +894,22 @@ seg([(61.5, 45.4), (66, 45.4), (66, 72), (55, 72), (55, 84),
      (54.5, 84), (54.5, 83.4)], B, TRACK, "CHRG_N")
 via((54.5, 83.4), "CHRG_N")
 seg([(54.5, 83.4), (55.062, 83.4)], F, TRACK, "CHRG_N")
-# DRDY: U11.14 -> U12 p2, south around the SSOP pad field
+# DRDY: U11.14 -> U12 p5, south around the SSOP pad field
 seg([rp("U11", "14"), (55, 44.02), (55, 49.5), (20, 49.5),
-     (20, 42.08), rp("U12", "2")], F, TF, "CTD_DRDY")
-# ADC_RST: U12 p3 -> B.Cu sneak under the cluster -> U10 p7 (bottom row)
-seg([rp("U12", "3"), (20.9, 42.73), (20.9, 48.3)], F, TF, "ADC_RST")
+     (20, 44.02), rp("U12", "5")], F, TF, "CTD_DRDY")
+# ADC_RST: U12 p6 -> B.Cu sneak under the cluster -> U10 p7 (bottom row)
+seg([rp("U12", "6"), (20.9, 44.67), (20.9, 48.3)], F, TF, "ADC_RST")
 via((20.9, 48.3), "ADC_RST", *VF)
 seg([(20.9, 48.3), (20.9, 50.7), (41, 50.7), (41, 46.6)], B, TRACK,
     "ADC_RST")
 via((41, 46.6), "ADC_RST", *VF)
 seg([(41, 46.6), (41, 46.2), rp("U10", "7")], F, TF, "ADC_RST")
-# CAM_CS: U12 p4 -> J_CAM p6
-seg([rp("U12", "4"), (20.9, 43.38), (20.9, 34), (26.5, 34),
+# CAM_CS: U12 p7 -> J_CAM p6
+seg([rp("U12", "7"), (20.6, 45.33), (20.6, 34), (26.5, 34),
      (26.5, 11.2), (42.7, 11.2), (42.7, 8)], F, TF, "CAM_CS")
-# PIR_IN: J1.1 -> U12 p1
-seg([(10, 20), (17, 20), (17, 23), (20, 23), (20, 39.5), (20, 41.42),
-     rp("U12", "1")], F, TRACK, "PIR_IN")
+# PIR_IN: J1.1 -> U12 p4
+seg([(10, 20), (17, 20), (17, 23), (20, 23), (20, 39.5), (20, 43.38),
+     rp("U12", "4")], F, TRACK, "PIR_IN")
 
 # --- SPI taps: MOSI col x=45 / MISO x=25 / SCK x=26 (all B.Cu)
 # U10 p8 MOSI + U11 p16 MOSI ; p10/p1 SCK ; p11/p15 MISO

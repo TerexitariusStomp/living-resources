@@ -5,7 +5,7 @@
       "Application": "Pcbnew",
       "Version": "10.0.8"
     },
-    "CreationDate": "2026-11-15T20:31:05-07:00"
+    "CreationDate": "2026-11-16T13:51:35-07:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
@@ -27,7 +27,7 @@
       "PadToPad": 0.2,
       "PadToTrack": 0.2,
       "TrackToTrack": 0.2,
-      "MinLineWidth": 0.25,
+      "MinLineWidth": 0.2,
       "TrackToRegion": 0.35,
       "RegionToRegion": 0.35
     }
@@ -84,26 +84,6 @@
       "FilePolarity": "Negative"
     },
     {
-      "Path": "ecocell-node-User_Drawings.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "ecocell-node-User_Comments.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "ecocell-node-User_Eco1.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "ecocell-node-User_Eco2.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
       "Path": "ecocell-node-Edge_Cuts.gm1",
       "FileFunction": "Profile",
       "FilePolarity": "Positive"
@@ -125,16 +105,6 @@
     },
     {
       "Path": "ecocell-node-User_2.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "ecocell-node-User_3.gbr",
-      "FileFunction": "Other,User",
-      "FilePolarity": "Positive"
-    },
-    {
-      "Path": "ecocell-node-User_4.gbr",
       "FileFunction": "Other,User",
       "FilePolarity": "Positive"
     }
