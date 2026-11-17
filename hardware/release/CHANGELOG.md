@@ -87,6 +87,16 @@
   junction re-bridged by a single through-via at (91.5,73.55).
   DRC: 0 unconnected, 0 errors; warnings only (silk/courtyard
   cosmetics + dead-end weave stubs).
+- **Warning sweep** — cosmetic DRC findings cleaned to near-zero:
+  ~150 dead-end weave stubs pruned (DRC-flagged leaf tracks, peeled in
+  verified rounds; residual ~26 micro-stubs oscillate against pour
+  refills and are accepted), 2 orphaned vias removed, J_GPS pad 2 set
+  to solid zone connection (starved thermal), all 9 silk overlaps +
+  silk-over-copper + undersize U_PRES text fixed by repositioned
+  references, fiducial designators hidden (bare pads). DRC: 0
+  unconnected, 0 errors; warnings = ~26 dangling micro-stubs only.
+  `gen_ocean_pcb.py` FIDUCIALS synced to the shipped positions; the
+  release .kicad_pcb remains the canonical fab source.
 - **Quote bundle** — `electrical/ecocell-ocean-fab.zip` (Gerbers +
   drills + CPL + manifest).
 - **Native schematic closed** — `ecocell-ocean.kicad_sch` regenerated

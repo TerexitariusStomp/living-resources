@@ -346,13 +346,12 @@ if MH:
         f.SetPosition(pcbnew.VECTOR2I(MM(x), MM(y)))
         board.Add(f)
 
-# Fiducials — 3 per populated side. The routed board leaves no clean
-# corner site: the (11,9)/(54,9) pair sits inside the WROOM footprint
-# keepout's far ends (1 mm pad, ≥20 mm lateral from the antenna feed —
-# deliberate documented deviation, RF-verify at bring-up; see
-# FAB-NOTES.md). The third point per side uses a mid-board pocket.
-FIDUCIALS = ((11, 9, "F"), (54, 9, "F"), (62, 66, "F"),
-             (11, 9, "B"), (54, 9, "B"), (100, 66, "B"))
+# Fiducials — 3 per populated side, all clear of the WROOM antenna
+# keepout: stacked F+B pairs at lower-left (10,78) and upper-right
+# (111,14), third points in mid-board pockets. Matches the shipped
+# board; earlier in-keepout sites were relocated (see CHANGELOG).
+FIDUCIALS = ((10, 78, "F"), (111, 14, "F"), (62, 66, "F"),
+             (10, 78, "B"), (111, 14, "B"), (100, 66, "B"))
 for i, (x, y, side) in enumerate(FIDUCIALS):
     f = pcbnew.FootprintLoad(FPLIBS + "/Fiducial.pretty",
                              "Fiducial_1mm_Mask2mm")
