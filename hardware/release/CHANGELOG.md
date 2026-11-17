@@ -89,14 +89,21 @@
   cosmetics + dead-end weave stubs).
 - **Warning sweep** — cosmetic DRC findings cleaned to near-zero:
   ~150 dead-end weave stubs pruned (DRC-flagged leaf tracks, peeled in
-  verified rounds; residual ~26 micro-stubs oscillate against pour
-  refills and are accepted), 2 orphaned vias removed, J_GPS pad 2 set
+  verified rounds), 2 orphaned vias removed, J_GPS pad 2 set
   to solid zone connection (starved thermal), all 9 silk overlaps +
   silk-over-copper + undersize U_PRES text fixed by repositioned
-  references, fiducial designators hidden (bare pads). DRC: 0
-  unconnected, 0 errors; warnings = ~26 dangling micro-stubs only.
+  references, fiducial designators hidden (bare pads).
   `gen_ocean_pcb.py` FIDUCIALS synced to the shipped positions; the
   release .kicad_pcb remains the canonical fab source.
+- **Dangling stubs → zero** — the residual ~26 dead stubs turned out to
+  be twin-stacked track duplicates left by the Specctra weave passes:
+  16,677 exactly-coincident duplicate segments deduped, then ~1,100
+  dead-end weave links removed by recursive leaf-peel (each tip peeled
+  only after verifying its junction end stays connected; stops at
+  branch points and pad/via/zone anchors). Final spurs removed at
+  J_GPS.4 (PTH — B-side stub redundant), +3V3 In1 (60.75,66.0),
+  UART1_TX In2 (24.0,43.35). DRC: **0 unconnected, 0 errors, 0
+  warnings**. 981 through-vias, no blind/buried.
 - **Quote bundle** — `electrical/ecocell-ocean-fab.zip` (Gerbers +
   drills + CPL + manifest).
 - **Native schematic closed** — `ecocell-ocean.kicad_sch` regenerated
